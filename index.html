@@ -1119,20 +1119,103 @@
 
     <!-- API view — lightweight placeholder; real pricing comes later -->
     <div id="view-api" class="absolute hidden" style="left:76px; top:176px; width:1128px; height:624px;">
-      <section class="absolute bg-white border border-primary rounded-[4px] flex flex-col items-center justify-center text-center" style="left:24px; top:0; width:1080px; height:420px; padding: 48px;">
-        <div class="flex items-center justify-center gap-2 text-brand-500 mb-4">
-          <i class="ph-fill ph-code text-[28px]"></i>
-          <span class="text-[11px] font-bold tracking-[0.08em] uppercase">API pricing</span>
-        </div>
-        <h3 class="text-[28px] font-bold text-ink-primary leading-tight">Build with our API</h3>
-        <p class="text-[15px] text-ink-secondary leading-relaxed mt-3" style="max-width: 520px;">
-          Generate presentations programmatically from your product, with usage-based pricing and enterprise support. Pricing is tailored to your volume &mdash; talk to us.
-        </p>
-        <div class="flex items-center gap-3 mt-8">
-          <button class="h-11 px-5 rounded-[4px] pro-btn text-white text-[14px] font-bold">Contact sales</button>
-          <button class="h-11 px-5 rounded-[4px] border border-brand-500 text-brand-500 text-[14px] font-bold hover:bg-brand-50">Read the docs</button>
+
+      <!-- STARTER -->
+      <section class="absolute bg-white border border-primary rounded-[4px]" style="left:24px; top:0; width:360px; height:579px;">
+        <div class="p-6 flex flex-col gap-4 h-full">
+          <img src="assets/api/starter.png" alt="" class="block object-contain" style="width:60px; height:60px;" />
+          <div class="flex flex-col gap-3" style="width:312px;">
+            <div class="flex items-baseline justify-between gap-2" style="width:312px;">
+              <h3 class="text-[24px] font-bold text-ink-primary leading-none">Starter</h3>
+              <div class="flex flex-col items-end gap-1">
+                <div class="flex items-baseline gap-1">
+                  <p class="text-[24px] font-bold text-ink-primary leading-none"><span class="usd">$</span>199</p>
+                  <span class="text-[13px] font-medium text-ink-tertiary">/mo</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <button type="button" data-buy-now data-plan="Starter" class="w-full h-12 rounded-[4px] border border-brand-500 text-brand-500 text-[16px] font-bold hover:bg-brand-50">Go to Developer Console</button>
+
+          <ul class="flex flex-col gap-4 text-[14px] leading-[1.43] mt-2">
+            <li class="flex items-center gap-2">
+              <i class="ph-fill ph-sparkle text-brand-500 text-[18px]"></i>
+              <span><span class="font-medium text-ink-primary">2,000</span> <span class="text-ink-secondary">credits/mo</span></span>
+            </li>
+            <li class="flex items-center gap-2 text-ink-secondary"><i class="ph ph-presentation-chart text-[20px] text-ink-secondary"></i>400 slides</li>
+            <li class="flex items-center gap-2 text-ink-secondary"><i class="ph ph-star-four text-[20px] text-ink-secondary"></i>AI Model &mdash; Advanced</li>
+            <li class="flex items-start gap-2 text-ink-secondary"><i class="ph ph-database text-[20px] text-ink-secondary mt-[2px]"></i><span>Generate decks from structured data</span></li>
+            <li class="flex items-center gap-2 text-ink-secondary"><i class="ph ph-gauge text-[20px] text-ink-secondary"></i>Standard rate limits</li>
+            <li class="flex items-center gap-2 text-ink-secondary"><i class="ph ph-envelope-simple text-[20px] text-ink-secondary"></i>Email support</li>
+          </ul>
         </div>
       </section>
+
+      <!-- GROWTH (featured) -->
+      <section class="absolute pro-card-bg border-2 border-brand-secondary rounded-[4px] shadow-card" style="left:384px; top:-21px; width:360px; height:624px;">
+        <div class="pt-[45px] px-6 pb-6 flex flex-col gap-4 h-full">
+          <img src="assets/api/growth.png" alt="" class="block object-contain" style="width:60px; height:60px;" />
+          <div class="flex flex-col gap-3" style="width:312px;">
+            <div class="flex items-baseline justify-between gap-2" style="width:312px;">
+              <h3 class="text-[24px] font-bold text-ink-primary leading-none">Growth</h3>
+              <div class="flex flex-col items-end gap-1">
+                <div class="flex items-baseline gap-1">
+                  <p class="text-[24px] font-bold text-ink-primary leading-none"><span class="usd">$</span>499</p>
+                  <span class="text-[13px] font-medium text-ink-tertiary">/mo</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <button type="button" data-buy-now data-plan="Growth" class="pro-btn w-full h-12 rounded-[4px] text-white text-[16px] font-bold">Go to Developer Console</button>
+
+          <ul class="flex flex-col gap-4 text-[14px] leading-[1.43] mt-2">
+            <li class="flex items-center gap-2">
+              <i class="ph-fill ph-sparkle text-brand-500 text-[18px]"></i>
+              <span><span class="font-medium text-ink-primary">6,000</span> <span class="text-ink-secondary">credits/mo</span></span>
+            </li>
+            <li class="flex items-center gap-2 text-ink-secondary"><i class="ph ph-presentation-chart text-[20px] text-ink-secondary"></i>1,200 slides</li>
+            <li class="flex items-center gap-2 text-ink-secondary"><i class="ph ph-star-four text-[20px] text-ink-secondary"></i>AI Model &mdash; Ultra</li>
+            <li class="flex items-center gap-2 text-ink-secondary"><i class="ph ph-fast-forward text-[20px] text-ink-secondary"></i>Faster response times</li>
+            <li class="flex items-center gap-2 text-ink-secondary"><i class="ph ph-tree-structure text-[20px] text-ink-secondary"></i>Webhook support for updates</li>
+            <li class="flex items-center gap-2 text-ink-secondary"><i class="ph ph-storefront text-[20px] text-ink-secondary"></i>Commercial usage permitted</li>
+          </ul>
+        </div>
+      </section>
+
+      <!-- SCALE -->
+      <section class="absolute bg-white border border-primary rounded-[4px]" style="left:744px; top:0; width:360px; height:579px;">
+        <div class="p-6 flex flex-col gap-4 h-full">
+          <img src="assets/api/scale.png" alt="" class="block object-contain" style="width:60px; height:60px;" />
+          <div class="flex flex-col gap-3" style="width:312px;">
+            <div class="flex items-baseline justify-between gap-2" style="width:312px;">
+              <h3 class="text-[24px] font-bold text-ink-primary leading-none">Scale</h3>
+              <div class="flex flex-col items-end gap-1">
+                <div class="flex items-baseline gap-1">
+                  <p class="text-[24px] font-bold text-ink-primary leading-none"><span class="usd">$</span>1,999</p>
+                  <span class="text-[13px] font-medium text-ink-tertiary">/mo</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <button type="button" data-buy-now data-plan="Scale" class="w-full h-12 rounded-[4px] border border-brand-500 text-brand-500 text-[16px] font-bold hover:bg-brand-50">Go to Developer Console</button>
+
+          <ul class="flex flex-col gap-4 text-[14px] leading-[1.43] mt-2">
+            <li class="flex items-center gap-2">
+              <i class="ph-fill ph-sparkle text-brand-500 text-[18px]"></i>
+              <span><span class="font-medium text-ink-primary">30,000</span> <span class="text-ink-secondary">credits/mo</span></span>
+            </li>
+            <li class="flex items-center gap-2 text-ink-secondary"><i class="ph ph-presentation-chart text-[20px] text-ink-secondary"></i>6,000 slides</li>
+            <li class="flex items-center gap-2 text-ink-secondary"><i class="ph ph-star-four text-[20px] text-ink-secondary"></i>AI Model &mdash; Ultra</li>
+            <li class="flex items-start gap-2 text-ink-secondary"><i class="ph ph-gauge text-[20px] text-ink-secondary mt-[2px]"></i><span>Priority infrastructure &amp; rate limits</span></li>
+            <li class="flex items-center gap-2 text-ink-secondary"><i class="ph ph-shield-check text-[20px] text-ink-secondary"></i>SLA-backed reliability</li>
+            <li class="flex items-center gap-2 text-ink-secondary"><i class="ph ph-headphones text-[20px] text-ink-secondary"></i>Dedicated technical support</li>
+          </ul>
+        </div>
+      </section>
+
     </div>
 
     <!-- Spacer reserving vertical room for the absolutely-positioned card area above -->
