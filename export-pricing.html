@@ -2375,10 +2375,10 @@
           const goldTotal = (n * gr).toLocaleString();
           if (sPro)   sPro.innerHTML   = `<span class="usd">$</span>${proTotal}`;
           if (sProC)  sProC.textContent = `${n} seats · billed annually`;
-          if (sProB)  sProB.textContent = `Buy ${n} Seats`;
+          if (sProB)  sProB.textContent = `Buy Pro ${n} Seats`;
           if (sGold)  sGold.innerHTML   = `<span class="usd">$</span>${goldTotal}`;
           if (sGoldC) sGoldC.textContent= `${n} seats · billed annually`;
-          if (sGoldB) sGoldB.textContent= `Buy ${n} Seats`;
+          if (sGoldB) sGoldB.textContent= `Buy Gold ${n} Seats`;
           if (tblP)   tblP.textContent  = (n * TEAM_PLANS.pro.creditsPerSeat).toLocaleString();
           if (tblG)   tblG.textContent  = (n * TEAM_PLANS.gold.creditsPerSeat).toLocaleString();
         } else {
@@ -2386,6 +2386,8 @@
           if (sGold)  sGold.innerHTML   = '<span class="usd">$</span>99';
           if (sGoldC) sGoldC.textContent= 'billed annually';
           if (sGoldB) sGoldB.textContent= 'Buy Gold';
+          // Pro CTA: reset from team's "Buy Pro N Seats" back to "Buy Pro".
+          if (sProB)  sProB.textContent = 'Buy Pro';
           // Table credits: always annual on the individual view.
           if (tblP)   tblP.textContent  = '5,000';
           if (tblG)   tblG.textContent  = '50,000';
