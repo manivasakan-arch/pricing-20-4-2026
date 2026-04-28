@@ -1888,7 +1888,10 @@
         }
         if (sumCadence) sumCadence.textContent = 'billed annually';
         if (sumPill) {
-          sumPill.innerHTML = bumped ? `
+          // Only show the bumped pill when on the individual view — the bump
+          // doesn't apply to the team tab.
+          const isTeamView = (document.body.dataset.topView || 'individual') === 'team';
+          sumPill.innerHTML = (bumped && !isTeamView) ? `
             <span class="pro-bumped-pill">
               <span>$${save} off</span>
               <i class="ph-fill ph-clock"></i>
@@ -1997,7 +2000,10 @@
       };
 
       // Close-button opens the feedback modal (unless survey already completed
-      // this session or the bumped discount is already active)
+      // this session or the bumped discount is already active). If the user
+      // is on the Teams tab, snap the page back to Individual first so the
+      // bump (which only applies to Pro Annual on Individual) is the visible
+      // context behind the modal when it opens.
       if (closeBtn) {
         closeBtn.addEventListener('click', (e) => {
           if (sessionStorage.getItem('proFeedbackSubmitted') === 'true') return;
@@ -2005,6 +2011,10 @@
           if (typeof window.openFeedbackModal !== 'function') return;
           e.preventDefault();
           e.stopPropagation();
+          if ((document.body.dataset.topView || 'individual') !== 'individual'
+              && typeof setTopView === 'function') {
+            setTopView('individual');
+          }
           window.openFeedbackModal();
         });
       }
@@ -2095,6 +2105,10 @@
           if (sGoldB) sGoldB.textContent= `Buy Gold ${n} Seats`;
           if (tblP)   tblP.textContent  = (n * TEAM_PLANS.pro.creditsPerSeat).toLocaleString();
           if (tblG)   tblG.textContent  = (n * TEAM_PLANS.gold.creditsPerSeat).toLocaleString();
+          // Suppress the Pro bumped-pill on the team view — the bump only
+          // applies to Pro Annual on the individual plan.
+          const sumPill = document.getElementById('sum-pro-pill-slot');
+          if (sumPill) sumPill.innerHTML = '';
         } else {
           // Gold column summary has no renderer of its own — reset manually.
           if (sGold)  sGold.innerHTML   = '<span class="usd">$</span>99';
