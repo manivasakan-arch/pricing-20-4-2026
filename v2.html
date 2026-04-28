@@ -1084,10 +1084,9 @@
           <div class="flex flex-col gap-3" style="width:312px;">
             <div class="flex items-start justify-between">
               <div class="illus illus-pro" aria-hidden="true"></div>
-              <div class="plan-seg" role="tablist" aria-label="Billing period" data-pro-seg>
-                <button type="button" class="plan-seg-btn" data-period="monthly" role="tab" aria-selected="false">Monthly</button>
-                <button type="button" class="plan-seg-btn is-active" data-period="annual" role="tab" aria-selected="true">Annual</button>
-              </div>
+              <!-- Plan seg removed in v2 (Pro is annual-only); kept as a hidden
+                   anchor so renderPro / setProPeriod selectors still resolve. -->
+              <div class="plan-seg hidden" data-pro-seg aria-hidden="true"></div>
             </div>
             <div class="flex items-baseline justify-between gap-2" style="width:312px;">
               <h3 class="text-[24px] font-bold text-ink-primary leading-none">Pro</h3>

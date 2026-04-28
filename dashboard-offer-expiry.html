@@ -1,0 +1,630 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Offer-expiry explorations</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/regular/style.css" />
+<link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/bold/style.css" />
+<link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/fill/style.css" />
+<script src="https://cdn.tailwindcss.com"></script>
+
+<script>
+  tailwind.config = {
+    theme: {
+      extend: {
+        colors: {
+          ink:    { primary: '#171717', secondary: '#525252', tertiary: '#a3a3a3' },
+          brand:  { 50: '#fff5ee', 100: '#ffe4d3', 500: '#ff5500', 600: '#e14a00' },
+        },
+      },
+    },
+  };
+</script>
+
+<style>
+  html, body { background: #f5f5f5; color: #171717; }
+  body { font-family: 'Inter', system-ui, sans-serif; -webkit-font-smoothing: antialiased; }
+
+  .ds-elev-2 {
+    box-shadow:
+      0 0 0 1px rgba(10,25,37,0.09),
+      0 1px 2px 0 rgba(10,25,37,0.09),
+      inset 0 0 0 1px rgba(255,255,255,0.8);
+  }
+
+  /* ─── Active discount chip (shared with dashboard) ────────────────────── */
+  .up-discount-chip {
+    position: relative;
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 5px 12px;
+    background: #ff5500;
+    color: #ffffff;
+    border-radius: 999px;
+    font-size: 11px; font-weight: 800; letter-spacing: 0.06em;
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+    z-index: 5;
+    animation:
+      up-chip-bob  1.8s cubic-bezier(.45,.05,.55,.95) infinite,
+      up-chip-glow 2.2s ease-in-out infinite;
+  }
+  .up-discount-chip::after {
+    content: '';
+    position: absolute;
+    top: 50%; right: -3px;
+    width: 8px; height: 8px;
+    background: #ff5500;
+    transform: translateY(-50%) rotate(45deg);
+    border-radius: 1px;
+    z-index: -1;
+  }
+  .up-discount-chip i { font-size: 12px; color: #ffffff; }
+  @keyframes up-chip-bob {
+    0%, 100% { transform: translateX(0);     }
+    50%      { transform: translateX(-10px); }
+  }
+  @keyframes up-chip-glow {
+    0%, 100% { box-shadow: 0 6px 16px rgba(0,0,0,0.18),
+                           0 0 0 0   rgba(255, 85, 0, 0.55); }
+    70%      { box-shadow: 0 6px 16px rgba(0,0,0,0.18),
+                           0 0 0 9px rgba(255, 85, 0, 0); }
+    100%     { box-shadow: 0 6px 16px rgba(0,0,0,0.18),
+                           0 0 0 0   rgba(255, 85, 0, 0); }
+  }
+
+  /* ─── Expired (gray) chip — used in approach A ────────────────────────── */
+  .up-discount-chip.is-expired {
+    background: #e5e5e5;
+    color: #525252;
+    animation: none;
+    box-shadow: none;
+    cursor: pointer;
+  }
+  .up-discount-chip.is-expired::after { background: #e5e5e5; }
+  .up-discount-chip.is-expired i { color: #525252; }
+  .up-discount-chip.is-expired:hover {
+    background: #d4d4d4;
+  }
+  .up-discount-chip.is-expired:hover::after { background: #d4d4d4; }
+
+  /* Trial pill (shared) */
+  .trial-pill {
+    background: #fff;
+    border: 1px solid rgba(255, 85, 0, 0.12);
+    border-radius: 6px;
+    display: flex; align-items: center;
+    padding: 4px 4px 4px 10px;
+  }
+  .trial-pill > .copy {
+    font-size: 14px; font-weight: 500; color: #171717; line-height: 20px;
+    margin-right: 12px; white-space: nowrap;
+  }
+  .trial-pill > .upgrade {
+    display: inline-flex; align-items: center; gap: 6px;
+    height: 28px; padding: 0 14px; border-radius: 4px;
+    background: #ff5500; color: #fff;
+    font-size: 14px; font-weight: 500;
+    border: 0; cursor: pointer;
+  }
+  .trial-pill > .upgrade i { font-size: 16px; }
+
+  /* Mini-header strip simulating the dashboard top nav */
+  .mini-nav {
+    display: flex; align-items: center; gap: 12px;
+    height: 56px; padding: 0 24px;
+    background: #fff;
+    border-bottom: 1px solid rgba(10,25,37,0.09);
+  }
+  .mini-nav .icon-btn {
+    width: 36px; height: 36px;
+    display: inline-flex; align-items: center; justify-content: center;
+    border-radius: 8px;
+    color: #525252;
+  }
+  .mini-nav .avatar {
+    width: 28px; height: 28px; border-radius: 999px;
+    background:
+      radial-gradient(circle at 30% 30%, #fff0c8, transparent 55%),
+      linear-gradient(135deg, #f6b56b, #b76b1f);
+  }
+
+  /* ─── B: Toast slide-in ───────────────────────────────────────────────── */
+  .toast {
+    position: absolute;
+    top: 70px; right: 24px;
+    background: #fff;
+    border-radius: 12px;
+    padding: 14px 14px 14px 18px;
+    width: 360px;
+    display: flex; align-items: flex-start; gap: 12px;
+    transform: translateY(-12px);
+    opacity: 0;
+    pointer-events: none;
+    transition: transform .25s ease, opacity .25s ease;
+    box-shadow:
+      0 12px 32px rgba(10,25,37,0.18),
+      0 2px 6px rgba(10,25,37,0.10),
+      inset 0 0 0 1px rgba(10,25,37,0.05);
+  }
+  .toast[data-open="true"] {
+    transform: translateY(0);
+    opacity: 1;
+    pointer-events: auto;
+  }
+  .toast .icon {
+    width: 36px; height: 36px;
+    border-radius: 999px;
+    background: rgba(255,85,0,0.12);
+    color: #ff5500;
+    display: inline-flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+  }
+  .toast .body { flex: 1; min-width: 0; }
+  .toast h4 { font-size: 14px; font-weight: 700; color: #171717; line-height: 1.3; }
+  .toast p  { font-size: 13px; color: #525252; margin-top: 2px; line-height: 1.4; }
+  .toast .actions { display: flex; gap: 8px; margin-top: 10px; }
+  .toast .btn-primary {
+    height: 28px; padding: 0 12px; border-radius: 4px;
+    background: #ff5500; color: #fff;
+    font-size: 12px; font-weight: 600; border: 0; cursor: pointer;
+    display: inline-flex; align-items: center; gap: 4px;
+  }
+  .toast .btn-primary:hover { background: #e14a00; }
+  .toast .btn-secondary {
+    height: 28px; padding: 0 12px; border-radius: 4px;
+    background: #fff; color: #525252; border: 1px solid #e5e5e5;
+    font-size: 12px; font-weight: 600; cursor: pointer;
+  }
+  .toast .close {
+    position: absolute; top: 6px; right: 6px;
+    width: 24px; height: 24px; border-radius: 999px;
+    color: #a3a3a3; background: transparent; border: 0; cursor: pointer;
+    display: inline-flex; align-items: center; justify-content: center;
+  }
+  .toast .close:hover { background: rgba(0,0,0,0.05); color: #171717; }
+
+  /* ─── C: Modal lockout ────────────────────────────────────────────────── */
+  .modal-scrim {
+    position: absolute; inset: 0;
+    background: rgba(10,25,37,0.45);
+    display: flex; align-items: center; justify-content: center;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity .2s ease;
+    z-index: 10;
+  }
+  .modal-scrim[data-open="true"] {
+    opacity: 1;
+    pointer-events: auto;
+  }
+  .modal-card {
+    background: #fff;
+    border-radius: 12px;
+    padding: 24px 24px 20px;
+    width: 380px;
+    max-width: calc(100% - 32px);
+    text-align: left;
+    transform: translateY(8px);
+    transition: transform .22s ease;
+    box-shadow:
+      0 20px 60px rgba(10,25,37,0.32),
+      0 4px 10px rgba(10,25,37,0.14);
+  }
+  .modal-scrim[data-open="true"] .modal-card { transform: translateY(0); }
+  .modal-card .icon {
+    width: 44px; height: 44px;
+    border-radius: 999px;
+    background: rgba(255,85,0,0.12);
+    color: #ff5500;
+    display: inline-flex; align-items: center; justify-content: center;
+    margin-bottom: 12px;
+  }
+  .modal-card h3 { font-size: 18px; font-weight: 700; color: #171717; line-height: 1.25; letter-spacing: -0.01em; }
+  .modal-card p  { font-size: 13px; color: #525252; margin-top: 4px; line-height: 1.45; }
+  .modal-card .actions { display: flex; gap: 8px; justify-content: flex-end; margin-top: 18px; }
+  .modal-card .btn-primary {
+    height: 36px; padding: 0 16px; border-radius: 6px;
+    background: #ff5500; color: #fff;
+    font-size: 13px; font-weight: 700; border: 0; cursor: pointer;
+    display: inline-flex; align-items: center; gap: 6px;
+  }
+  .modal-card .btn-primary:hover { background: #e14a00; }
+  .modal-card .btn-secondary {
+    height: 36px; padding: 0 14px; border-radius: 6px;
+    background: #fff; color: #525252; border: 1px solid #e5e5e5;
+    font-size: 13px; font-weight: 600; cursor: pointer;
+  }
+
+  /* ─── D: Cooldown progress chip ───────────────────────────────────────── */
+  .cooldown-chip {
+    position: relative;
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 5px 12px;
+    background: #f5f5f5;
+    color: #525252;
+    border: 1px solid #e5e5e5;
+    border-radius: 999px;
+    font-size: 11px; font-weight: 700; letter-spacing: 0.06em;
+    white-space: nowrap;
+    overflow: hidden;
+  }
+  .cooldown-chip i { font-size: 12px; color: #525252; }
+  .cooldown-chip .fill {
+    position: absolute;
+    left: 0; top: 0; bottom: 0;
+    background: rgba(255, 85, 0, 0.18);
+    width: 0;
+    pointer-events: none;
+    z-index: 0;
+    animation: cooldown-fill 6s linear infinite;
+  }
+  .cooldown-chip > * { position: relative; z-index: 1; }
+  @keyframes cooldown-fill {
+    0%   { width: 0%; }
+    100% { width: 100%; }
+  }
+
+  /* Variant card layout */
+  .variant {
+    background: #fff;
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow:
+      0 0 0 1px rgba(10,25,37,0.09),
+      0 4px 12px rgba(10,25,37,0.06);
+    display: flex; flex-direction: column;
+    position: relative;
+  }
+  .variant-head {
+    padding: 18px 20px 14px;
+    border-bottom: 1px solid rgba(10,25,37,0.09);
+    background: #fafafa;
+  }
+  .variant-stage {
+    position: relative;
+    min-height: 220px;
+    overflow: hidden;
+  }
+  .variant-controls {
+    padding: 12px 16px;
+    border-top: 1px solid rgba(10,25,37,0.06);
+    display: flex; gap: 8px; align-items: center;
+    background: #fafafa;
+    flex-wrap: wrap;
+  }
+  .variant-controls .pill-btn {
+    height: 28px; padding: 0 12px; border-radius: 4px;
+    font-size: 12px; font-weight: 600;
+    border: 1px solid #e5e5e5; background: #fff; color: #525252;
+    cursor: pointer;
+  }
+  .variant-controls .pill-btn:hover { background: #f5f5f5; color: #171717; }
+  .variant-controls .pill-btn.is-primary {
+    background: #ff5500; color: #fff; border-color: #ff5500;
+  }
+  .variant-controls .pill-btn.is-primary:hover { background: #e14a00; border-color: #e14a00; }
+  .variant-controls .legend {
+    margin-left: auto;
+    font-size: 11px; color: #a3a3a3;
+    text-transform: uppercase; letter-spacing: 0.08em; font-weight: 700;
+  }
+</style>
+</head>
+<body>
+
+<header class="px-8 py-10 max-w-6xl mx-auto">
+  <p class="text-[11px] font-bold uppercase tracking-[0.16em] text-brand-500">Exploration</p>
+  <h1 class="text-[28px] font-bold text-ink-primary mt-2 tracking-[-0.01em]">After the Pro discount expires</h1>
+  <p class="text-[14px] text-ink-secondary mt-2 max-w-2xl">
+    Once the 60-minute discount countdown hits zero, what should the dashboard do?
+    Four directions, each with a "Re-arm" control so you can flip the chip back to active and watch the transition.
+  </p>
+</header>
+
+<main class="grid grid-cols-1 lg:grid-cols-2 gap-6 px-8 pb-16 max-w-6xl mx-auto">
+
+  <!-- ─── VARIANT A: Inline state swap ───────────────────────────────── -->
+  <article class="variant">
+    <div class="variant-head">
+      <p class="text-[11px] font-bold uppercase tracking-[0.16em] text-ink-tertiary">Approach A</p>
+      <h2 class="text-[16px] font-bold text-ink-primary mt-1">Inline state swap</h2>
+      <p class="text-[13px] text-ink-secondary mt-1.5">Chip stays in the header but turns gray. Tap "Try again" to re-arm. Lowest visual cost — easy to miss.</p>
+    </div>
+
+    <div class="variant-stage" data-variant="a">
+      <div class="mini-nav">
+        <div class="ml-auto flex items-center gap-3">
+          <span class="up-discount-chip" data-state-active>
+            <span>$60 off</span>
+            <i class="ph-fill ph-clock"></i>
+            <span>Ends in <span data-cd>59:51</span></span>
+          </span>
+          <span class="up-discount-chip is-expired hidden" data-state-expired title="Click to re-arm the offer">
+            <i class="ph ph-clock-counter-clockwise"></i>
+            <span>Offer expired · Try again</span>
+          </span>
+
+          <div class="trial-pill">
+            <span class="copy">🔥 Trial: 4 days left</span>
+            <button class="upgrade"><i class="ph-fill ph-rocket-launch"></i>Upgrade</button>
+          </div>
+
+          <span class="icon-btn"><i class="ph ph-magnifying-glass text-[18px]"></i></span>
+          <span class="icon-btn"><i class="ph ph-bell text-[18px]"></i></span>
+          <span class="avatar"></span>
+        </div>
+      </div>
+    </div>
+
+    <div class="variant-controls">
+      <button class="pill-btn" data-action="expire">Trigger expiry</button>
+      <button class="pill-btn is-primary" data-action="rearm">Re-arm offer</button>
+      <span class="legend">Inline · Quietest</span>
+    </div>
+  </article>
+
+  <!-- ─── VARIANT B: Toast slide-in ─────────────────────────────────── -->
+  <article class="variant">
+    <div class="variant-head">
+      <p class="text-[11px] font-bold uppercase tracking-[0.16em] text-ink-tertiary">Approach B</p>
+      <h2 class="text-[16px] font-bold text-ink-primary mt-1">Toast slide-in</h2>
+      <p class="text-[13px] text-ink-secondary mt-1.5">Chip dims; a top-right toast announces the miss with a "Generate again" CTA. Noticeable but not blocking.</p>
+    </div>
+
+    <div class="variant-stage" data-variant="b" style="position: relative; min-height: 240px;">
+      <div class="mini-nav">
+        <div class="ml-auto flex items-center gap-3">
+          <span class="up-discount-chip" data-state-active>
+            <span>$60 off</span>
+            <i class="ph-fill ph-clock"></i>
+            <span>Ends in <span data-cd>59:51</span></span>
+          </span>
+          <span class="up-discount-chip is-expired hidden" data-state-expired>
+            <i class="ph ph-clock-counter-clockwise"></i>
+            <span>Offer expired</span>
+          </span>
+
+          <div class="trial-pill">
+            <span class="copy">🔥 Trial: 4 days left</span>
+            <button class="upgrade"><i class="ph-fill ph-rocket-launch"></i>Upgrade</button>
+          </div>
+
+          <span class="icon-btn"><i class="ph ph-magnifying-glass text-[18px]"></i></span>
+          <span class="icon-btn"><i class="ph ph-bell text-[18px]"></i></span>
+          <span class="avatar"></span>
+        </div>
+      </div>
+
+      <!-- Toast -->
+      <div class="toast" data-open="false">
+        <span class="icon"><i class="ph-fill ph-rocket-launch text-[18px]"></i></span>
+        <div class="body">
+          <h4>You missed the $60 off offer</h4>
+          <p>Want another shot at the Pro Annual discount?</p>
+          <div class="actions">
+            <button class="btn-primary" data-toast-cta>
+              <i class="ph-bold ph-arrow-clockwise text-[12px]"></i>
+              Generate again
+            </button>
+            <button class="btn-secondary" data-toast-dismiss>No thanks</button>
+          </div>
+        </div>
+        <button class="close" data-toast-dismiss aria-label="Close">
+          <i class="ph ph-x text-[14px]"></i>
+        </button>
+      </div>
+    </div>
+
+    <div class="variant-controls">
+      <button class="pill-btn" data-action="expire">Trigger expiry</button>
+      <button class="pill-btn is-primary" data-action="rearm">Re-arm offer</button>
+      <span class="legend">Toast · Recommended</span>
+    </div>
+  </article>
+
+  <!-- ─── VARIANT C: Modal lockout ──────────────────────────────────── -->
+  <article class="variant">
+    <div class="variant-head">
+      <p class="text-[11px] font-bold uppercase tracking-[0.16em] text-ink-tertiary">Approach C</p>
+      <h2 class="text-[16px] font-bold text-ink-primary mt-1">Modal lockout</h2>
+      <p class="text-[13px] text-ink-secondary mt-1.5">Page dims, modal asks to extend or decline. Highest urgency; saves the conversion but disrupts flow.</p>
+    </div>
+
+    <div class="variant-stage" data-variant="c" style="position: relative; min-height: 240px;">
+      <div class="mini-nav">
+        <div class="ml-auto flex items-center gap-3">
+          <span class="up-discount-chip" data-state-active>
+            <span>$60 off</span>
+            <i class="ph-fill ph-clock"></i>
+            <span>Ends in <span data-cd>59:51</span></span>
+          </span>
+          <span class="up-discount-chip is-expired hidden" data-state-expired>
+            <i class="ph ph-clock-counter-clockwise"></i>
+            <span>Offer expired</span>
+          </span>
+
+          <div class="trial-pill">
+            <span class="copy">🔥 Trial: 4 days left</span>
+            <button class="upgrade"><i class="ph-fill ph-rocket-launch"></i>Upgrade</button>
+          </div>
+
+          <span class="icon-btn"><i class="ph ph-magnifying-glass text-[18px]"></i></span>
+          <span class="icon-btn"><i class="ph ph-bell text-[18px]"></i></span>
+          <span class="avatar"></span>
+        </div>
+      </div>
+
+      <!-- Sample dashboard body so the modal has context -->
+      <div class="px-6 pt-5 pb-6">
+        <p class="text-[18px] text-ink-tertiary">Great work on your last deck, John.</p>
+        <p class="text-[18px] text-ink-primary">What will you create next?</p>
+      </div>
+
+      <!-- Scrim + modal -->
+      <div class="modal-scrim" data-open="false">
+        <div class="modal-card">
+          <span class="icon"><i class="ph-fill ph-hourglass-low text-[20px]"></i></span>
+          <h3>You missed the $60 off offer</h3>
+          <p>The flash discount on Pro Annual just expired. Want one more chance to lock it in?</p>
+          <div class="actions">
+            <button class="btn-secondary" data-modal-dismiss>No thanks</button>
+            <button class="btn-primary" data-modal-cta>
+              <i class="ph-bold ph-arrow-clockwise text-[14px]"></i>
+              Generate one more chance
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="variant-controls">
+      <button class="pill-btn" data-action="expire">Trigger expiry</button>
+      <button class="pill-btn is-primary" data-action="rearm">Re-arm offer</button>
+      <span class="legend">Modal · Most urgent</span>
+    </div>
+  </article>
+
+  <!-- ─── VARIANT D: Auto-cooldown ──────────────────────────────────── -->
+  <article class="variant">
+    <div class="variant-head">
+      <p class="text-[11px] font-bold uppercase tracking-[0.16em] text-ink-tertiary">Approach D</p>
+      <h2 class="text-[16px] font-bold text-ink-primary mt-1">Auto cooldown</h2>
+      <p class="text-[13px] text-ink-secondary mt-1.5">Chip flips to a "Charging…" cooldown bar, then auto-rearms. Gentlest, never blocks the user.</p>
+    </div>
+
+    <div class="variant-stage" data-variant="d">
+      <div class="mini-nav">
+        <div class="ml-auto flex items-center gap-3">
+          <span class="up-discount-chip" data-state-active>
+            <span>$60 off</span>
+            <i class="ph-fill ph-clock"></i>
+            <span>Ends in <span data-cd>59:51</span></span>
+          </span>
+
+          <span class="cooldown-chip hidden" data-state-cooldown>
+            <span class="fill"></span>
+            <i class="ph ph-clock-counter-clockwise"></i>
+            <span>Charging next offer…</span>
+          </span>
+
+          <div class="trial-pill">
+            <span class="copy">🔥 Trial: 4 days left</span>
+            <button class="upgrade"><i class="ph-fill ph-rocket-launch"></i>Upgrade</button>
+          </div>
+
+          <span class="icon-btn"><i class="ph ph-magnifying-glass text-[18px]"></i></span>
+          <span class="icon-btn"><i class="ph ph-bell text-[18px]"></i></span>
+          <span class="avatar"></span>
+        </div>
+      </div>
+    </div>
+
+    <div class="variant-controls">
+      <button class="pill-btn" data-action="expire">Trigger expiry</button>
+      <button class="pill-btn is-primary" data-action="rearm">Re-arm offer</button>
+      <span class="legend">Auto · Gentlest</span>
+    </div>
+  </article>
+
+</main>
+
+<footer class="max-w-6xl mx-auto px-8 pb-16">
+  <div class="ds-elev-2 bg-white rounded-2xl px-6 py-5">
+    <h3 class="text-[14px] font-bold text-ink-primary">Suggested rollout</h3>
+    <ol class="mt-2 list-decimal list-inside text-[13px] text-ink-secondary leading-[1.6]">
+      <li>Ship <strong>Approach B (Toast)</strong> as the default — recovers conversions without breaking flow.</li>
+      <li>Cap the re-arm count at <strong>2 per session</strong> so the urgency stays believable.</li>
+      <li>Track click-through on "Generate again" — if it spikes above ~30%, the discount is too easy to recover and we should switch to Approach C for new accounts.</li>
+    </ol>
+  </div>
+</footer>
+
+<script>
+  // Each variant card scopes its own state. The buttons in `.variant-controls`
+  // call into the matching variant's logic. Re-arming sets the chip back to
+  // the active orange pill and re-starts a 60s "fast" countdown so reviewers
+  // can see the expiry behavior without waiting an hour.
+  function fakeCountdown(timerEl, seconds, onDone) {
+    let left = seconds;
+    const pad = (n) => String(n).padStart(2, '0');
+    const tick = () => {
+      const m = Math.floor(left / 60);
+      const s = left % 60;
+      timerEl.textContent = `${pad(m)}:${pad(s)}`;
+      if (left <= 0) { onDone && onDone(); return; }
+      left--;
+    };
+    tick();
+    return setInterval(tick, 1000);
+  }
+
+  document.querySelectorAll('.variant').forEach((card) => {
+    const stage = card.querySelector('.variant-stage');
+    const variant = stage.dataset.variant;
+    const expireBtn = card.querySelector('[data-action="expire"]');
+    const rearmBtn  = card.querySelector('[data-action="rearm"]');
+
+    const active   = stage.querySelector('[data-state-active]');
+    const expired  = stage.querySelector('[data-state-expired]');
+    const cooldown = stage.querySelector('[data-state-cooldown]');
+    const toast    = stage.querySelector('.toast');
+    const scrim    = stage.querySelector('.modal-scrim');
+
+    let cdInterval = null;
+    function startActiveCountdown() {
+      const t = active.querySelector('[data-cd]');
+      if (cdInterval) clearInterval(cdInterval);
+      cdInterval = fakeCountdown(t, 12, () => doExpire());
+    }
+
+    function doExpire() {
+      if (cdInterval) { clearInterval(cdInterval); cdInterval = null; }
+      active.classList.add('hidden');
+      if (expired)  expired.classList.remove('hidden');
+      if (cooldown) cooldown.classList.remove('hidden');
+      if (variant === 'b' && toast) toast.dataset.open = 'true';
+      if (variant === 'c' && scrim) scrim.dataset.open = 'true';
+
+      if (variant === 'd') {
+        // Auto re-arm after the cooldown bar fills (matches the 6s animation).
+        setTimeout(() => doRearm(), 6000);
+      }
+    }
+
+    function doRearm() {
+      active.classList.remove('hidden');
+      if (expired)  expired.classList.add('hidden');
+      if (cooldown) cooldown.classList.add('hidden');
+      if (toast)    toast.dataset.open = 'false';
+      if (scrim)    scrim.dataset.open = 'false';
+      startActiveCountdown();
+    }
+
+    expireBtn.addEventListener('click', doExpire);
+    rearmBtn.addEventListener('click', doRearm);
+
+    // Approach A: tapping the gray chip itself re-arms.
+    if (expired && variant === 'a') expired.addEventListener('click', doRearm);
+
+    // Approach B toast actions.
+    if (toast) {
+      toast.querySelector('[data-toast-cta]').addEventListener('click', doRearm);
+      toast.querySelectorAll('[data-toast-dismiss]').forEach((b) => b.addEventListener('click', () => toast.dataset.open = 'false'));
+    }
+    // Approach C modal actions.
+    if (scrim) {
+      scrim.querySelector('[data-modal-cta]').addEventListener('click', doRearm);
+      scrim.querySelector('[data-modal-dismiss]').addEventListener('click', () => scrim.dataset.open = 'false');
+    }
+
+    startActiveCountdown();
+  });
+</script>
+
+</body>
+</html>

@@ -1,0 +1,1022 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>crazy8s · Reactivation surface — Round 2</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/regular/style.css" />
+<link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/bold/style.css" />
+<link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/fill/style.css" />
+<script src="https://cdn.tailwindcss.com"></script>
+
+<script>
+  tailwind.config = {
+    theme: {
+      extend: {
+        colors: {
+          ink:    { primary: '#171717', secondary: '#525252', tertiary: '#a3a3a3' },
+          brand:  { 50: '#fff5ee', 100: '#ffe4d3', 500: '#ff5500', 600: '#e14a00', 700: '#b03a00' },
+        },
+      },
+    },
+  };
+</script>
+
+<style>
+  html, body { background: #f5f5f5; color: #171717; }
+  body { font-family: 'Inter', system-ui, sans-serif; -webkit-font-smoothing: antialiased; }
+
+  .ds-elev-2 {
+    box-shadow:
+      0 0 0 1px rgba(10,25,37,0.09),
+      0 1px 2px 0 rgba(10,25,37,0.09),
+      inset 0 0 0 1px rgba(255,255,255,0.8);
+  }
+
+  /* ─── Shared top-nav primitives ──────────────────────────────────────── */
+  .mini-nav {
+    display: flex; align-items: center; gap: 12px;
+    height: 56px; padding: 0 24px;
+    background: #fff;
+    border-bottom: 1px solid rgba(10,25,37,0.09);
+    position: relative;
+  }
+  .mini-nav .icon-btn {
+    width: 36px; height: 36px;
+    display: inline-flex; align-items: center; justify-content: center;
+    border-radius: 8px;
+    color: #525252;
+    position: relative;
+  }
+  .mini-nav .avatar {
+    width: 28px; height: 28px; border-radius: 999px;
+    background:
+      radial-gradient(circle at 30% 30%, #fff0c8, transparent 55%),
+      linear-gradient(135deg, #f6b56b, #b76b1f);
+  }
+  .trial-pill {
+    background: #fff;
+    border: 1px solid rgba(255, 85, 0, 0.12);
+    border-radius: 6px;
+    display: flex; align-items: center;
+    padding: 4px 4px 4px 10px;
+  }
+  .trial-pill > .copy {
+    font-size: 14px; font-weight: 500; color: #171717; line-height: 20px;
+    margin-right: 12px; white-space: nowrap;
+  }
+  .trial-pill > .upgrade {
+    display: inline-flex; align-items: center; gap: 6px;
+    height: 28px; padding: 0 14px; border-radius: 4px;
+    background: #ff5500; color: #fff;
+    font-size: 14px; font-weight: 500;
+    border: 0; cursor: pointer;
+    position: relative;
+  }
+  .trial-pill > .upgrade i { font-size: 16px; }
+
+  /* ─── Active orange chip (shared baseline for all variants) ──────────── */
+  .up-discount-chip {
+    position: relative;
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 5px 12px;
+    background: #ff5500;
+    color: #ffffff;
+    border-radius: 999px;
+    font-size: 11px; font-weight: 800; letter-spacing: 0.06em;
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+    z-index: 5;
+    animation:
+      up-chip-bob  1.8s cubic-bezier(.45,.05,.55,.95) infinite,
+      up-chip-glow 2.2s ease-in-out infinite;
+  }
+  .up-discount-chip::after {
+    content: '';
+    position: absolute;
+    top: 50%; right: -3px;
+    width: 8px; height: 8px;
+    background: #ff5500;
+    transform: translateY(-50%) rotate(45deg);
+    border-radius: 1px;
+    z-index: -1;
+  }
+  .up-discount-chip i { font-size: 12px; color: #ffffff; }
+  @keyframes up-chip-bob {
+    0%, 100% { transform: translateX(0);     }
+    50%      { transform: translateX(-10px); }
+  }
+  @keyframes up-chip-glow {
+    0%, 100% { box-shadow: 0 6px 16px rgba(0,0,0,0.18),
+                           0 0 0 0   rgba(255, 85, 0, 0.55); }
+    70%      { box-shadow: 0 6px 16px rgba(0,0,0,0.18),
+                           0 0 0 9px rgba(255, 85, 0, 0); }
+    100%     { box-shadow: 0 6px 16px rgba(0,0,0,0.18),
+                           0 0 0 0   rgba(255, 85, 0, 0); }
+  }
+
+  /* ─── Variant 01 (pinned from R1·09): regen chip + hover tooltip ─────── */
+  .regen-chip {
+    position: relative;
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 5px 14px;
+    background: #ff5500;
+    color: #ffffff;
+    border-radius: 999px;
+    font-size: 11px; font-weight: 800; letter-spacing: 0.04em;
+    white-space: nowrap;
+    z-index: 5;
+    cursor: pointer;
+    box-shadow: 0 6px 16px rgba(0,0,0,0.18);
+    transition: background .15s ease, transform .15s ease;
+  }
+  .regen-chip::after {
+    content: '';
+    position: absolute;
+    top: 50%; right: -3px;
+    width: 8px; height: 8px;
+    background: #ff5500;
+    transform: translateY(-50%) rotate(45deg);
+    border-radius: 1px;
+    z-index: -1;
+  }
+  .regen-chip i { font-size: 13px; color: #ffffff; }
+  .regen-chip .sep { opacity: 0.55; font-weight: 600; padding: 0 1px; }
+  .regen-chip .cta {
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    text-decoration-thickness: 1px;
+    font-weight: 800;
+  }
+  .regen-chip:hover { background: #e14a00; transform: translateY(-1px); }
+  .regen-chip:hover::after { background: #e14a00; }
+
+  .regen-tooltip {
+    position: absolute;
+    top: calc(100% + 10px);
+    left: 0;
+    background: #171717;
+    color: #ffffff;
+    border-radius: 8px;
+    padding: 14px 16px;
+    width: 320px;
+    max-width: calc(100vw - 32px);
+    font-size: 12px; line-height: 1.55;
+    letter-spacing: 0;
+    box-shadow: 0 12px 28px rgba(10,25,37,0.32),
+                0 2px 6px rgba(10,25,37,0.18);
+    opacity: 0;
+    transform: translateY(-4px);
+    pointer-events: none;
+    transition: opacity .18s ease, transform .18s ease;
+    z-index: 20;
+    text-transform: none;
+    font-weight: 500;
+    white-space: normal;
+    overflow-wrap: anywhere;
+  }
+  .regen-chip:hover .regen-tooltip { opacity: 1; transform: translateY(0); }
+  .regen-tooltip::before {
+    content: '';
+    position: absolute;
+    top: -4px; left: 28px;
+    width: 8px; height: 8px;
+    background: #171717;
+    transform: rotate(45deg);
+    border-radius: 1px;
+  }
+  .regen-tooltip strong {
+    display: block;
+    font-size: 13px; font-weight: 800; color: #fff;
+    margin-bottom: 4px;
+  }
+  .regen-tooltip .muted { display: block; color: #d4d4d4; }
+
+  /* ─── Variant 02: Ghost chip + caption ───────────────────────────────── */
+  .ghost-pair {
+    display: inline-flex; align-items: center; gap: 10px;
+  }
+  .ghost-pair .caption {
+    font-size: 12px; color: #525252; white-space: nowrap;
+  }
+  .ghost-pair .caption strong { color: #b03a00; font-weight: 700; }
+  .ghost-reactivate {
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 4px 12px;
+    background: #fff;
+    border: 1.5px solid #ff5500;
+    color: #ff5500;
+    border-radius: 999px;
+    font-size: 11px; font-weight: 800; letter-spacing: 0.06em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: background .15s ease, color .15s ease;
+  }
+  .ghost-reactivate:hover { background: #ff5500; color: #fff; }
+
+  /* ─── Variant 03: Sub-nav notification strip ─────────────────────────── */
+  .subnav-strip {
+    display: none;
+    align-items: center; gap: 12px;
+    padding: 9px 24px;
+    background: linear-gradient(90deg, rgba(255,85,0,0.10), rgba(255,85,0,0.05));
+    border-bottom: 1px solid rgba(255, 85, 0, 0.20);
+    font-size: 13px; color: #525252;
+  }
+  .subnav-strip[data-open="true"] { display: flex; }
+  .subnav-strip .icon {
+    width: 26px; height: 26px;
+    border-radius: 999px;
+    background: rgba(255,85,0,0.15);
+    color: #ff5500;
+    display: inline-flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+  }
+  .subnav-strip .copy { flex: 1; min-width: 0; }
+  .subnav-strip .copy strong { color: #b03a00; font-weight: 700; }
+  .subnav-strip .reactivate-btn {
+    background: #ff5500; color: #fff;
+    height: 28px; padding: 0 14px; border-radius: 4px;
+    font-size: 12px; font-weight: 700;
+    border: 0; cursor: pointer;
+    display: inline-flex; align-items: center; gap: 6px;
+  }
+  .subnav-strip .reactivate-btn:hover { background: #e14a00; }
+  .subnav-strip .dismiss {
+    width: 26px; height: 26px;
+    border-radius: 999px;
+    background: transparent; color: #525252; border: 0; cursor: pointer;
+    display: inline-flex; align-items: center; justify-content: center;
+  }
+  .subnav-strip .dismiss:hover { background: rgba(0,0,0,0.05); color: #171717; }
+
+  /* ─── Variant 04: Trial-pill nested CTA segment ──────────────────────── */
+  .trial-pill.has-reactivate {
+    padding: 4px 4px 4px 10px;
+  }
+  .trial-pill .reactivate-seg {
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 4px 10px;
+    margin-right: 8px;
+    background: rgba(255,85,0,0.12);
+    color: #b03a00;
+    border-radius: 4px;
+    font-size: 11px; font-weight: 800; letter-spacing: 0.06em; text-transform: uppercase;
+    cursor: pointer;
+    transition: background .15s ease;
+    position: relative;
+  }
+  .trial-pill .reactivate-seg:hover { background: rgba(255,85,0,0.22); }
+  .trial-pill .reactivate-seg i { font-size: 12px; }
+  .trial-pill .reactivate-seg::before {
+    content: '';
+    position: absolute;
+    left: -5px; top: 50%;
+    width: 1px; height: 18px;
+    background: rgba(0,0,0,0.08);
+    transform: translateY(-50%);
+  }
+
+  /* ─── Variant 05: Compact icon badge + popover ───────────────────────── */
+  .reactivate-icon-btn {
+    position: relative;
+    width: 36px; height: 36px;
+    border-radius: 999px;
+    background: rgba(255,85,0,0.12);
+    color: #ff5500;
+    display: inline-flex; align-items: center; justify-content: center;
+    cursor: pointer;
+    border: 0;
+  }
+  .reactivate-icon-btn:hover { background: rgba(255,85,0,0.22); }
+  .reactivate-icon-btn::after {
+    content: '1';
+    position: absolute;
+    top: 1px; right: 1px;
+    min-width: 14px; height: 14px;
+    border-radius: 999px;
+    background: #ff5500;
+    color: #fff;
+    border: 2px solid #fff;
+    font-size: 9px; font-weight: 800;
+    display: inline-flex; align-items: center; justify-content: center;
+    padding: 0 3px;
+  }
+  .reactivate-popover {
+    position: absolute;
+    top: calc(100% + 8px); right: 0;
+    background: #fff;
+    border-radius: 12px;
+    width: 300px;
+    padding: 16px;
+    box-shadow: 0 12px 32px rgba(10,25,37,0.18),
+                0 2px 6px rgba(10,25,37,0.10);
+    transform: translateY(-4px) scale(.98);
+    opacity: 0; pointer-events: none;
+    transition: transform .18s ease, opacity .18s ease;
+    z-index: 14;
+  }
+  .reactivate-popover[data-open="true"] {
+    transform: translateY(0) scale(1);
+    opacity: 1; pointer-events: auto;
+  }
+  .reactivate-popover h4 { font-size: 14px; font-weight: 700; color: #171717; }
+  .reactivate-popover p  { font-size: 13px; color: #525252; margin-top: 4px; line-height: 1.45; }
+  .reactivate-popover .actions { display: flex; gap: 8px; margin-top: 12px; }
+
+  /* ─── Variant 06: Slide-in invitation card ───────────────────────────── */
+  .invite-card {
+    position: absolute;
+    top: 70px; right: 24px;
+    background: linear-gradient(135deg, #fff5ee 0%, #ffffff 70%);
+    border-radius: 14px;
+    width: 340px;
+    padding: 16px 16px 14px;
+    display: flex; gap: 12px;
+    transform: translateX(20px);
+    opacity: 0;
+    pointer-events: none;
+    transition: transform .25s ease, opacity .25s ease;
+    box-shadow: 0 16px 36px rgba(10,25,37,0.18),
+                0 2px 6px rgba(10,25,37,0.10),
+                inset 0 0 0 1px rgba(255,85,0,0.2);
+    z-index: 12;
+  }
+  .invite-card[data-open="true"] {
+    transform: translateX(0); opacity: 1; pointer-events: auto;
+  }
+  .invite-card .icon {
+    width: 40px; height: 40px;
+    border-radius: 12px;
+    background: linear-gradient(135deg, #ff7a3d, #ff5500);
+    color: #fff;
+    display: inline-flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+    box-shadow: 0 6px 14px rgba(255,85,0,0.35);
+  }
+  .invite-card h4 { font-size: 14px; font-weight: 800; color: #171717; line-height: 1.25; }
+  .invite-card p  { font-size: 12px; color: #525252; margin-top: 4px; line-height: 1.45; }
+  .invite-card .reactivate-btn {
+    height: 32px; padding: 0 14px; border-radius: 4px;
+    background: #ff5500; color: #fff;
+    font-size: 12px; font-weight: 700; border: 0; cursor: pointer;
+    display: inline-flex; align-items: center; gap: 6px;
+    margin-top: 10px;
+  }
+  .invite-card .reactivate-btn:hover { background: #e14a00; }
+  .invite-card .close {
+    position: absolute; top: 6px; right: 6px;
+    width: 22px; height: 22px;
+    border-radius: 999px;
+    background: transparent; color: #a3a3a3; border: 0; cursor: pointer;
+    display: inline-flex; align-items: center; justify-content: center;
+  }
+  .invite-card .close:hover { background: rgba(0,0,0,0.05); color: #171717; }
+
+  /* ─── Variant 07: Marquee ticker strip ───────────────────────────────── */
+  .marquee-strip {
+    display: none;
+    align-items: center;
+    height: 30px;
+    overflow: hidden;
+    background: linear-gradient(90deg, #ff7a3d 0%, #ff5500 50%, #c63e00 100%);
+    color: #fff;
+    cursor: pointer;
+    position: relative;
+  }
+  .marquee-strip[data-open="true"] { display: flex; }
+  .marquee-strip::before, .marquee-strip::after {
+    content: ''; position: absolute; top: 0; bottom: 0; width: 32px;
+    z-index: 2; pointer-events: none;
+  }
+  .marquee-strip::before { left: 0;  background: linear-gradient(to right, #ff7a3d, transparent); }
+  .marquee-strip::after  { right: 0; background: linear-gradient(to left, #c63e00, transparent); }
+  .marquee-track {
+    display: inline-flex; align-items: center; gap: 36px;
+    animation: marquee-scroll 22s linear infinite;
+    white-space: nowrap;
+    padding-left: 32px;
+    font-size: 12px; font-weight: 700; letter-spacing: 0.06em;
+  }
+  .marquee-strip:hover .marquee-track { animation-play-state: paused; }
+  .marquee-track > span { display: inline-flex; align-items: center; gap: 8px; }
+  .marquee-track .pill {
+    background: rgba(255,255,255,0.22);
+    padding: 2px 8px; border-radius: 999px;
+    font-size: 10px; font-weight: 800; letter-spacing: 0.16em; text-transform: uppercase;
+  }
+  .marquee-track .cta {
+    background: #fff; color: #b03a00;
+    height: 22px; padding: 0 10px; border-radius: 999px;
+    font-size: 11px; font-weight: 800;
+    display: inline-flex; align-items: center; gap: 6px;
+  }
+  @keyframes marquee-scroll {
+    0%   { transform: translateX(0); }
+    100% { transform: translateX(-50%); }
+  }
+
+  /* ─── Variant 08: Split pill ─────────────────────────────────────────── */
+  .split-pill {
+    display: inline-flex;
+    border-radius: 999px;
+    overflow: hidden;
+    box-shadow: 0 1px 2px rgba(10,25,37,0.10),
+                0 0 0 1px rgba(10,25,37,0.10);
+    font-size: 11px; font-weight: 800; letter-spacing: 0.06em;
+    line-height: 1;
+  }
+  .split-pill > * {
+    padding: 6px 12px;
+    display: inline-flex; align-items: center; gap: 6px;
+  }
+  .split-pill .left {
+    background: #f5f5f5;
+    color: #a3a3a3;
+  }
+  .split-pill .right {
+    background: #ff5500;
+    color: #fff;
+    cursor: pointer;
+    border: 0;
+    transition: background .15s ease;
+    position: relative;
+    padding-right: 14px;
+  }
+  .split-pill .right:hover { background: #e14a00; }
+  .split-pill .right::after {
+    content: '';
+    position: absolute;
+    top: 50%; right: -3px;
+    width: 8px; height: 8px;
+    background: #ff5500;
+    transform: translateY(-50%) rotate(45deg);
+    border-radius: 1px;
+    z-index: -1;
+    transition: background .15s ease;
+  }
+  .split-pill .right:hover::after { background: #e14a00; }
+
+  /* ─── Variant card layout (shared) ───────────────────────────────────── */
+  .variant {
+    background: #fff;
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow:
+      0 0 0 1px rgba(10,25,37,0.09),
+      0 4px 12px rgba(10,25,37,0.06);
+    display: flex; flex-direction: column;
+    position: relative;
+  }
+  .variant-head {
+    padding: 18px 20px 14px;
+    border-bottom: 1px solid rgba(10,25,37,0.09);
+    background: #fafafa;
+  }
+  .variant-stage {
+    position: relative;
+    min-height: 240px;
+    overflow: hidden;
+  }
+  .variant-controls {
+    padding: 12px 16px;
+    border-top: 1px solid rgba(10,25,37,0.06);
+    display: flex; gap: 8px; align-items: center;
+    background: #fafafa;
+    flex-wrap: wrap;
+  }
+  .pill-btn {
+    height: 28px; padding: 0 12px; border-radius: 4px;
+    font-size: 12px; font-weight: 600;
+    border: 1px solid #e5e5e5; background: #fff; color: #525252;
+    cursor: pointer;
+  }
+  .pill-btn:hover { background: #f5f5f5; color: #171717; }
+  .pill-btn.is-primary {
+    background: #ff5500; color: #fff; border-color: #ff5500;
+  }
+  .pill-btn.is-primary:hover { background: #e14a00; border-color: #e14a00; }
+  .legend {
+    margin-left: auto;
+    font-size: 11px; color: #a3a3a3;
+    text-transform: uppercase; letter-spacing: 0.08em; font-weight: 700;
+  }
+
+  .round-tag {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: #171717; color: #fff;
+    padding: 6px 14px; border-radius: 999px;
+    font-size: 11px; font-weight: 700;
+    letter-spacing: 0.16em; text-transform: uppercase;
+  }
+</style>
+</head>
+<body>
+
+<header class="px-8 py-10 max-w-7xl mx-auto">
+  <span class="round-tag">Round 2 · 8 directions · Branched from R1·09</span>
+  <h1 class="text-[28px] font-bold text-ink-primary mt-3 tracking-[-0.01em]">How to surface the reactivation</h1>
+  <p class="text-[14px] text-ink-secondary mt-2 max-w-2xl leading-[1.55]">
+    Variant <strong class="text-ink-primary">01</strong> is the picked design from round 1
+    (regen chip with hover tooltip). Variants <strong class="text-ink-primary">02–08</strong>
+    explore different visual + interaction models for letting the user reactivate the missed
+    $60 off offer. Constants: brand orange <code class="font-mono text-[12px]">#ff5500</code>,
+    the dashboard top-nav frame, the 60-min revival behaviour. Pick one or say
+    <strong class="text-ink-primary">freeze it</strong>.
+  </p>
+</header>
+
+<main class="grid grid-cols-1 lg:grid-cols-2 gap-6 px-8 pb-10 max-w-7xl mx-auto">
+
+  <!-- ───────────────────────────────────────────────────────────────────
+       01 · Hover tooltip on regen chip (PINNED · was R1·09)
+       ─────────────────────────────────────────────────────────────────── -->
+  <article class="variant" data-variant-id="01">
+    <div class="variant-head">
+      <p class="text-[11px] font-bold uppercase tracking-[0.16em] text-ink-tertiary">01 · Pinned from Round 1</p>
+      <h2 class="text-[16px] font-bold text-ink-primary mt-1">Regen chip + hover tooltip</h2>
+      <p class="text-[13px] text-ink-secondary mt-1.5">Chip itself is the recovery CTA. Hover surfaces a dark tooltip explaining the offer; click reactivates the orange chip with a fresh 60-min timer.</p>
+    </div>
+    <div class="variant-stage" style="min-height: 280px;">
+      <div class="mini-nav">
+        <div class="ml-auto flex items-center gap-3">
+          <span class="up-discount-chip" data-state-active>
+            <span>$60 off</span>
+            <i class="ph-fill ph-clock"></i>
+            <span>Ends in <span data-cd>59:51</span></span>
+          </span>
+
+          <span class="regen-chip hidden" data-state-regen aria-label="Reactivate the $60 off offer">
+            <i class="ph-bold ph-arrow-clockwise"></i>
+            <span>You missed the $60 off Pro Annual offer</span>
+            <span class="sep">•</span>
+            <span class="cta">Reactivate</span>
+            <span class="regen-tooltip" role="tooltip">
+              <strong>You&rsquo;ve got one reactivation left</strong>
+              <span class="muted">Click to claim it. This is the last time we can bring it back.</span>
+            </span>
+          </span>
+
+          <div class="trial-pill">
+            <span class="copy">🔥 Trial: 4 days left</span>
+            <button class="upgrade"><i class="ph-fill ph-rocket-launch"></i>Upgrade</button>
+          </div>
+          <span class="icon-btn"><i class="ph ph-magnifying-glass text-[18px]"></i></span>
+          <span class="icon-btn"><i class="ph ph-bell text-[18px]"></i></span>
+          <span class="avatar"></span>
+        </div>
+      </div>
+    </div>
+    <div class="variant-controls">
+      <button class="pill-btn" data-action="expire">Trigger expiry</button>
+      <button class="pill-btn is-primary" data-action="rearm">Re-arm offer</button>
+      <span class="legend">Pinned · Round 1 winner</span>
+    </div>
+  </article>
+
+  <!-- ───────────────────────────────────────────────────────────────────
+       02 · Ghost chip + caption
+       ─────────────────────────────────────────────────────────────────── -->
+  <article class="variant" data-variant-id="02">
+    <div class="variant-head">
+      <p class="text-[11px] font-bold uppercase tracking-[0.16em] text-ink-tertiary">02</p>
+      <h2 class="text-[16px] font-bold text-ink-primary mt-1">Ghost chip + caption</h2>
+      <p class="text-[13px] text-ink-secondary mt-1.5">A subtle outlined orange "Reactivate" chip with the explanation visible right next to it as muted caption — no hover required.</p>
+    </div>
+    <div class="variant-stage">
+      <div class="mini-nav">
+        <div class="ml-auto flex items-center gap-3">
+          <span class="up-discount-chip" data-state-active>
+            <span>$60 off</span>
+            <i class="ph-fill ph-clock"></i>
+            <span>Ends in <span data-cd>59:51</span></span>
+          </span>
+
+          <span class="ghost-pair hidden" data-state-ghost>
+            <span class="caption"><strong>$60 off</strong> Pro Annual · last chance</span>
+            <button class="ghost-reactivate" data-ghost-cta>
+              <i class="ph-bold ph-arrow-clockwise text-[12px]"></i>
+              Reactivate
+            </button>
+          </span>
+
+          <div class="trial-pill">
+            <span class="copy">🔥 Trial: 4 days left</span>
+            <button class="upgrade"><i class="ph-fill ph-rocket-launch"></i>Upgrade</button>
+          </div>
+          <span class="icon-btn"><i class="ph ph-magnifying-glass text-[18px]"></i></span>
+          <span class="icon-btn"><i class="ph ph-bell text-[18px]"></i></span>
+          <span class="avatar"></span>
+        </div>
+      </div>
+    </div>
+    <div class="variant-controls">
+      <button class="pill-btn" data-action="expire">Trigger expiry</button>
+      <button class="pill-btn is-primary" data-action="rearm">Re-arm offer</button>
+      <span class="legend">Quiet · Always-readable</span>
+    </div>
+  </article>
+
+  <!-- ───────────────────────────────────────────────────────────────────
+       03 · Sub-nav notification strip
+       ─────────────────────────────────────────────────────────────────── -->
+  <article class="variant" data-variant-id="03">
+    <div class="variant-head">
+      <p class="text-[11px] font-bold uppercase tracking-[0.16em] text-ink-tertiary">03</p>
+      <h2 class="text-[16px] font-bold text-ink-primary mt-1">Sub-nav strip</h2>
+      <p class="text-[13px] text-ink-secondary mt-1.5">Chip vanishes, a thin tinted strip drops directly below the top-nav with the message and a Reactivate button on the right.</p>
+    </div>
+    <div class="variant-stage">
+      <div class="mini-nav">
+        <div class="ml-auto flex items-center gap-3">
+          <span class="up-discount-chip" data-state-active>
+            <span>$60 off</span>
+            <i class="ph-fill ph-clock"></i>
+            <span>Ends in <span data-cd>59:51</span></span>
+          </span>
+          <div class="trial-pill">
+            <span class="copy">🔥 Trial: 4 days left</span>
+            <button class="upgrade"><i class="ph-fill ph-rocket-launch"></i>Upgrade</button>
+          </div>
+          <span class="icon-btn"><i class="ph ph-magnifying-glass text-[18px]"></i></span>
+          <span class="icon-btn"><i class="ph ph-bell text-[18px]"></i></span>
+          <span class="avatar"></span>
+        </div>
+      </div>
+
+      <div class="subnav-strip" data-strip data-open="false">
+        <span class="icon"><i class="ph-fill ph-rocket-launch text-[14px]"></i></span>
+        <p class="copy">You missed the <strong>$60 off Pro Annual</strong> offer. You've got one reactivation left.</p>
+        <button class="reactivate-btn" data-strip-cta>
+          <i class="ph-bold ph-arrow-clockwise text-[12px]"></i>
+          Reactivate
+        </button>
+        <button class="dismiss" data-strip-dismiss aria-label="Dismiss"><i class="ph ph-x text-[14px]"></i></button>
+      </div>
+    </div>
+    <div class="variant-controls">
+      <button class="pill-btn" data-action="expire">Trigger expiry</button>
+      <button class="pill-btn is-primary" data-action="rearm">Re-arm offer</button>
+      <span class="legend">Strip · Mid visibility</span>
+    </div>
+  </article>
+
+  <!-- ───────────────────────────────────────────────────────────────────
+       04 · Trial-pill nested CTA
+       ─────────────────────────────────────────────────────────────────── -->
+  <article class="variant" data-variant-id="04">
+    <div class="variant-head">
+      <p class="text-[11px] font-bold uppercase tracking-[0.16em] text-ink-tertiary">04</p>
+      <h2 class="text-[16px] font-bold text-ink-primary mt-1">Nested in the trial pill</h2>
+      <p class="text-[13px] text-ink-secondary mt-1.5">Chip slot empties; the existing trial pill grows a "Reactivate $60 off" segment between the trial copy and the Upgrade button.</p>
+    </div>
+    <div class="variant-stage">
+      <div class="mini-nav">
+        <div class="ml-auto flex items-center gap-3">
+          <span class="up-discount-chip" data-state-active>
+            <span>$60 off</span>
+            <i class="ph-fill ph-clock"></i>
+            <span>Ends in <span data-cd>59:51</span></span>
+          </span>
+
+          <div class="trial-pill has-reactivate">
+            <span class="copy">🔥 Trial: 4 days left</span>
+            <button class="reactivate-seg hidden" data-state-trialseg data-trial-cta>
+              <i class="ph-bold ph-arrow-clockwise"></i>
+              Reactivate&nbsp;$60&nbsp;off
+            </button>
+            <button class="upgrade"><i class="ph-fill ph-rocket-launch"></i>Upgrade</button>
+          </div>
+
+          <span class="icon-btn"><i class="ph ph-magnifying-glass text-[18px]"></i></span>
+          <span class="icon-btn"><i class="ph ph-bell text-[18px]"></i></span>
+          <span class="avatar"></span>
+        </div>
+      </div>
+    </div>
+    <div class="variant-controls">
+      <button class="pill-btn" data-action="expire">Trigger expiry</button>
+      <button class="pill-btn is-primary" data-action="rearm">Re-arm offer</button>
+      <span class="legend">Co-located · Compact</span>
+    </div>
+  </article>
+
+  <!-- ───────────────────────────────────────────────────────────────────
+       05 · Compact icon badge + popover
+       ─────────────────────────────────────────────────────────────────── -->
+  <article class="variant" data-variant-id="05">
+    <div class="variant-head">
+      <p class="text-[11px] font-bold uppercase tracking-[0.16em] text-ink-tertiary">05</p>
+      <h2 class="text-[16px] font-bold text-ink-primary mt-1">Icon badge + popover</h2>
+      <p class="text-[13px] text-ink-secondary mt-1.5">Chip shrinks to a small orange icon button with a "1" badge. Click opens a popover with the message and Reactivate CTA. Lowest header noise.</p>
+    </div>
+    <div class="variant-stage" style="min-height: 280px;">
+      <div class="mini-nav">
+        <div class="ml-auto flex items-center gap-3">
+          <span class="up-discount-chip" data-state-active>
+            <span>$60 off</span>
+            <i class="ph-fill ph-clock"></i>
+            <span>Ends in <span data-cd>59:51</span></span>
+          </span>
+
+          <div class="relative" data-state-iconwrap style="display:none;">
+            <button class="reactivate-icon-btn" data-icon-trigger aria-label="Reactivate offer">
+              <i class="ph-fill ph-arrow-clockwise text-[16px]"></i>
+            </button>
+            <div class="reactivate-popover" data-popover data-open="false">
+              <h4>You&rsquo;ve got one reactivation left</h4>
+              <p>Click to claim it. This is the last time we can bring back your $60 off Pro Annual.</p>
+              <div class="actions">
+                <button class="pill-btn is-primary" data-popover-cta>
+                  <i class="ph-bold ph-arrow-clockwise text-[12px]"></i>
+                  Reactivate
+                </button>
+                <button class="pill-btn" data-popover-dismiss>Maybe later</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="trial-pill">
+            <span class="copy">🔥 Trial: 4 days left</span>
+            <button class="upgrade"><i class="ph-fill ph-rocket-launch"></i>Upgrade</button>
+          </div>
+          <span class="icon-btn"><i class="ph ph-magnifying-glass text-[18px]"></i></span>
+          <span class="icon-btn"><i class="ph ph-bell text-[18px]"></i></span>
+          <span class="avatar"></span>
+        </div>
+      </div>
+    </div>
+    <div class="variant-controls">
+      <button class="pill-btn" data-action="expire">Trigger expiry</button>
+      <button class="pill-btn is-primary" data-action="rearm">Re-arm offer</button>
+      <span class="legend">Icon · Lowest noise</span>
+    </div>
+  </article>
+
+  <!-- ───────────────────────────────────────────────────────────────────
+       06 · Slide-in invitation card
+       ─────────────────────────────────────────────────────────────────── -->
+  <article class="variant" data-variant-id="06">
+    <div class="variant-head">
+      <p class="text-[11px] font-bold uppercase tracking-[0.16em] text-ink-tertiary">06</p>
+      <h2 class="text-[16px] font-bold text-ink-primary mt-1">Slide-in invitation card</h2>
+      <p class="text-[13px] text-ink-secondary mt-1.5">Chip vanishes; a small branded card slides in from the right of the top-nav with full reactivation messaging + dismissible.</p>
+    </div>
+    <div class="variant-stage" style="min-height: 280px;">
+      <div class="mini-nav">
+        <div class="ml-auto flex items-center gap-3">
+          <span class="up-discount-chip" data-state-active>
+            <span>$60 off</span>
+            <i class="ph-fill ph-clock"></i>
+            <span>Ends in <span data-cd>59:51</span></span>
+          </span>
+          <div class="trial-pill">
+            <span class="copy">🔥 Trial: 4 days left</span>
+            <button class="upgrade"><i class="ph-fill ph-rocket-launch"></i>Upgrade</button>
+          </div>
+          <span class="icon-btn"><i class="ph ph-magnifying-glass text-[18px]"></i></span>
+          <span class="icon-btn"><i class="ph ph-bell text-[18px]"></i></span>
+          <span class="avatar"></span>
+        </div>
+      </div>
+
+      <div class="invite-card" data-invite data-open="false">
+        <span class="icon"><i class="ph-fill ph-rocket-launch text-[20px]"></i></span>
+        <div class="flex-1 min-w-0">
+          <h4>You&rsquo;ve got one reactivation left</h4>
+          <p>Bring back $60 off Pro Annual for a fresh 60-minute window. After this, the offer is gone.</p>
+          <button class="reactivate-btn" data-invite-cta>
+            <i class="ph-bold ph-arrow-clockwise text-[12px]"></i>
+            Reactivate offer
+          </button>
+        </div>
+        <button class="close" data-invite-dismiss aria-label="Close"><i class="ph ph-x text-[14px]"></i></button>
+      </div>
+    </div>
+    <div class="variant-controls">
+      <button class="pill-btn" data-action="expire">Trigger expiry</button>
+      <button class="pill-btn is-primary" data-action="rearm">Re-arm offer</button>
+      <span class="legend">Card · High polish</span>
+    </div>
+  </article>
+
+  <!-- ───────────────────────────────────────────────────────────────────
+       07 · Marquee ticker strip
+       ─────────────────────────────────────────────────────────────────── -->
+  <article class="variant" data-variant-id="07">
+    <div class="variant-head">
+      <p class="text-[11px] font-bold uppercase tracking-[0.16em] text-ink-tertiary">07</p>
+      <h2 class="text-[16px] font-bold text-ink-primary mt-1">Marquee ticker</h2>
+      <p class="text-[13px] text-ink-secondary mt-1.5">Chip vanishes; a thin orange marquee strip scrolls above the top-nav with looping copy. Click anywhere on the strip to reactivate.</p>
+    </div>
+    <div class="variant-stage">
+      <div class="marquee-strip" data-marquee data-open="false">
+        <div class="marquee-track">
+          <span><span class="pill">Last chance</span><span>You missed the $60 off Pro Annual offer · click to reactivate</span><span class="cta"><i class="ph-bold ph-arrow-clockwise text-[10px]"></i> Reactivate</span></span>
+          <span><span class="pill">Last chance</span><span>You missed the $60 off Pro Annual offer · click to reactivate</span><span class="cta"><i class="ph-bold ph-arrow-clockwise text-[10px]"></i> Reactivate</span></span>
+          <span><span class="pill">Last chance</span><span>You missed the $60 off Pro Annual offer · click to reactivate</span><span class="cta"><i class="ph-bold ph-arrow-clockwise text-[10px]"></i> Reactivate</span></span>
+        </div>
+      </div>
+      <div class="mini-nav">
+        <div class="ml-auto flex items-center gap-3">
+          <span class="up-discount-chip" data-state-active>
+            <span>$60 off</span>
+            <i class="ph-fill ph-clock"></i>
+            <span>Ends in <span data-cd>59:51</span></span>
+          </span>
+          <div class="trial-pill">
+            <span class="copy">🔥 Trial: 4 days left</span>
+            <button class="upgrade"><i class="ph-fill ph-rocket-launch"></i>Upgrade</button>
+          </div>
+          <span class="icon-btn"><i class="ph ph-magnifying-glass text-[18px]"></i></span>
+          <span class="icon-btn"><i class="ph ph-bell text-[18px]"></i></span>
+          <span class="avatar"></span>
+        </div>
+      </div>
+    </div>
+    <div class="variant-controls">
+      <button class="pill-btn" data-action="expire">Trigger expiry</button>
+      <button class="pill-btn is-primary" data-action="rearm">Re-arm offer</button>
+      <span class="legend">Marquee · Most playful</span>
+    </div>
+  </article>
+
+  <!-- ───────────────────────────────────────────────────────────────────
+       08 · Split pill (expired + reactivate)
+       ─────────────────────────────────────────────────────────────────── -->
+  <article class="variant" data-variant-id="08">
+    <div class="variant-head">
+      <p class="text-[11px] font-bold uppercase tracking-[0.16em] text-ink-tertiary">08</p>
+      <h2 class="text-[16px] font-bold text-ink-primary mt-1">Split pill</h2>
+      <p class="text-[13px] text-ink-secondary mt-1.5">Single segmented pill — gray "Offer expired" segment on the left, orange "Reactivate" segment on the right. State + action together.</p>
+    </div>
+    <div class="variant-stage">
+      <div class="mini-nav">
+        <div class="ml-auto flex items-center gap-3">
+          <span class="up-discount-chip" data-state-active>
+            <span>$60 off</span>
+            <i class="ph-fill ph-clock"></i>
+            <span>Ends in <span data-cd>59:51</span></span>
+          </span>
+
+          <span class="split-pill hidden" data-state-split>
+            <span class="left">
+              <i class="ph ph-clock-counter-clockwise text-[12px]"></i>
+              Offer expired
+            </span>
+            <button class="right" data-split-cta>
+              <i class="ph-bold ph-arrow-clockwise text-[12px]"></i>
+              Reactivate
+            </button>
+          </span>
+
+          <div class="trial-pill">
+            <span class="copy">🔥 Trial: 4 days left</span>
+            <button class="upgrade"><i class="ph-fill ph-rocket-launch"></i>Upgrade</button>
+          </div>
+          <span class="icon-btn"><i class="ph ph-magnifying-glass text-[18px]"></i></span>
+          <span class="icon-btn"><i class="ph ph-bell text-[18px]"></i></span>
+          <span class="avatar"></span>
+        </div>
+      </div>
+    </div>
+    <div class="variant-controls">
+      <button class="pill-btn" data-action="expire">Trigger expiry</button>
+      <button class="pill-btn is-primary" data-action="rearm">Re-arm offer</button>
+      <span class="legend">Split · State + action</span>
+    </div>
+  </article>
+
+</main>
+
+<footer class="max-w-7xl mx-auto px-8 pb-16">
+  <div class="ds-elev-2 bg-white rounded-2xl px-6 py-5">
+    <h3 class="text-[14px] font-bold text-ink-primary">Pick or freeze</h3>
+    <p class="mt-2 text-[13px] text-ink-secondary leading-[1.55]">
+      Tell me which to branch on next (e.g. <em>"branch on 06"</em>, <em>"the split pill"</em>) and I'll regenerate
+      this file with that variant pinned as 01 + 7 fresh branches off it. Or say
+      <strong class="text-ink-primary">freeze it</strong> and I'll merge into <code class="font-mono text-[12px]">dashboard-flash-sale.html</code>.
+    </p>
+  </div>
+</footer>
+
+<script>
+  function fakeCountdown(timerEl, seconds, onDone) {
+    let left = seconds;
+    const pad = (n) => String(n).padStart(2, '0');
+    const tick = () => {
+      const m = Math.floor(left / 60);
+      const s = left % 60;
+      timerEl.textContent = `${pad(m)}:${pad(s)}`;
+      if (left <= 0) { onDone && onDone(); return; }
+      left--;
+    };
+    tick();
+    return setInterval(tick, 1000);
+  }
+
+  document.querySelectorAll('.variant').forEach((card) => {
+    const id      = card.dataset.variantId;
+    const stage   = card.querySelector('.variant-stage');
+    const expBtn  = card.querySelector('[data-action="expire"]');
+    const rearmBtn= card.querySelector('[data-action="rearm"]');
+
+    const active   = stage.querySelector('[data-state-active]');
+    const regen    = stage.querySelector('[data-state-regen]');     // 01
+    const ghost    = stage.querySelector('[data-state-ghost]');     // 02
+    const strip    = stage.querySelector('[data-strip]');           // 03
+    const trialSeg = stage.querySelector('[data-state-trialseg]');  // 04
+    const iconWrap = stage.querySelector('[data-state-iconwrap]');  // 05
+    const popover  = stage.querySelector('[data-popover]');         // 05
+    const invite   = stage.querySelector('[data-invite]');          // 06
+    const marquee  = stage.querySelector('[data-marquee]');         // 07
+    const split    = stage.querySelector('[data-state-split]');     // 08
+
+    let cdInterval = null;
+    function startActiveCountdown() {
+      const t = active.querySelector('[data-cd]');
+      if (cdInterval) clearInterval(cdInterval);
+      cdInterval = fakeCountdown(t, 12, () => doExpire());
+    }
+
+    function showVariantSurface() {
+      if (id === '01' && regen)    regen.classList.remove('hidden');
+      if (id === '02' && ghost)    ghost.classList.remove('hidden');
+      if (id === '03' && strip)    strip.dataset.open = 'true';
+      if (id === '04' && trialSeg) trialSeg.classList.remove('hidden');
+      if (id === '05' && iconWrap) iconWrap.style.display = 'inline-block';
+      if (id === '06' && invite)   invite.dataset.open = 'true';
+      if (id === '07' && marquee)  marquee.dataset.open = 'true';
+      if (id === '08' && split)    split.classList.remove('hidden');
+    }
+    function hideVariantSurface() {
+      if (regen)    regen.classList.add('hidden');
+      if (ghost)    ghost.classList.add('hidden');
+      if (strip)    strip.dataset.open = 'false';
+      if (trialSeg) trialSeg.classList.add('hidden');
+      if (iconWrap) iconWrap.style.display = 'none';
+      if (popover)  popover.dataset.open = 'false';
+      if (invite)   invite.dataset.open = 'false';
+      if (marquee)  marquee.dataset.open = 'false';
+      if (split)    split.classList.add('hidden');
+    }
+
+    function doExpire() {
+      if (cdInterval) { clearInterval(cdInterval); cdInterval = null; }
+      active.classList.add('hidden');
+      showVariantSurface();
+    }
+
+    function doRearm() {
+      hideVariantSurface();
+      active.classList.remove('hidden');
+      startActiveCountdown();
+    }
+
+    expBtn.addEventListener('click', doExpire);
+    rearmBtn.addEventListener('click', doRearm);
+
+    // 01 — clicking the regen chip itself reactivates
+    if (id === '01' && regen) regen.addEventListener('click', doRearm);
+    // 02 — clicking the ghost button reactivates
+    if (id === '02' && ghost) ghost.querySelector('[data-ghost-cta]').addEventListener('click', doRearm);
+    // 03 — strip CTA + dismiss
+    if (id === '03' && strip) {
+      strip.querySelector('[data-strip-cta]').addEventListener('click', doRearm);
+      strip.querySelector('[data-strip-dismiss]').addEventListener('click', () => strip.dataset.open = 'false');
+    }
+    // 04 — trial-pill segment CTA
+    if (id === '04' && trialSeg) trialSeg.addEventListener('click', doRearm);
+    // 05 — icon trigger opens popover, popover CTA reactivates
+    if (id === '05' && iconWrap && popover) {
+      const trigger = iconWrap.querySelector('[data-icon-trigger]');
+      trigger.addEventListener('click', (e) => {
+        e.stopPropagation();
+        popover.dataset.open = popover.dataset.open === 'true' ? 'false' : 'true';
+      });
+      popover.querySelector('[data-popover-cta]').addEventListener('click', doRearm);
+      popover.querySelector('[data-popover-dismiss]').addEventListener('click', () => popover.dataset.open = 'false');
+      document.addEventListener('click', (e) => {
+        if (!popover.contains(e.target) && !trigger.contains(e.target)) popover.dataset.open = 'false';
+      });
+    }
+    // 06 — invite card CTA + dismiss
+    if (id === '06' && invite) {
+      invite.querySelector('[data-invite-cta]').addEventListener('click', doRearm);
+      invite.querySelector('[data-invite-dismiss]').addEventListener('click', () => invite.dataset.open = 'false');
+    }
+    // 07 — clicking anywhere on the marquee reactivates
+    if (id === '07' && marquee) marquee.addEventListener('click', doRearm);
+    // 08 — clicking the right segment of the split pill reactivates
+    if (id === '08' && split) split.querySelector('[data-split-cta]').addEventListener('click', doRearm);
+
+    startActiveCountdown();
+  });
+</script>
+
+</body>
+</html>

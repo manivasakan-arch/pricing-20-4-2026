@@ -136,9 +136,10 @@
   .recent-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
   .qa-grid     { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; max-width: 960px; }
 
-  /* Pro-style discount chip placed inline in the header, just left of the
-     Upgrade button. The notch sits on the chip's right side (vertical
-     center) so it points at the Upgrade CTA. */
+  /* Pro-style discount chip — sits inline in the top nav, just left of the
+     Upgrade button. Same visual vocabulary as `.pro-bumped-pill` from the
+     pricing page (orange pill, white text, soft halo pulse), but the bob
+     runs horizontally so it nudges left ↔ right toward the CTA. */
   .up-discount-chip {
     position: relative;
     display: inline-flex; align-items: center; gap: 6px;
@@ -146,42 +147,66 @@
     background: #ff5500;
     color: #ffffff;
     border-radius: 999px;
-    font: 700 12px/1 Inter, sans-serif;
-    letter-spacing: 0.04em;
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 0.06em;
+    font-variant-numeric: tabular-nums;
     white-space: nowrap;
     z-index: 5;
-    box-shadow: 0 4px 14px rgba(255, 85, 0, 0.35);
     animation:
-      up-chip-slide 2.6s ease-in-out infinite,
-      up-chip-glow  2.2s ease-in-out infinite;
+      up-chip-bob  1.8s cubic-bezier(.45, .05, .55, .95) infinite,
+      up-chip-glow 2.2s ease-in-out infinite;
   }
+  /* Right-side arrow on the chip — sized so half the wedge sits *inside*
+     the orange pill (no visible gap), with the tip protruding to the right
+     at the Upgrade button. */
   .up-discount-chip::after {
     content: '';
     position: absolute;
-    top: 50%;
-    right: -3px;
+    top: 50%; right: -3px;
     width: 8px; height: 8px;
     background: #ff5500;
     transform: translateY(-50%) rotate(45deg);
     border-radius: 1px;
+    z-index: -1;
   }
-  .up-discount-chip i { font-size: 12px; color: #fff; }
-  .up-discount-chip .timer { font-variant-numeric: tabular-nums; }
-  @keyframes up-chip-slide {
-    0%, 100% { transform: translateX(0); }
-    50%      { transform: translateX(-6px); }
+  .up-discount-chip i { font-size: 12px; color: #ffffff; }
+  @keyframes up-chip-bob {
+    0%, 100% { transform: translateX(0);    }
+    50%      { transform: translateX(-10px); }
   }
+/* Shimmer sweep on the orange Upgrade CTA — a soft white highlight glides
+     diagonally across the button every ~2.6s. */
+  .shimmer-cta { position: relative; overflow: hidden; }
+  .shimmer-cta::after {
+    content: '';
+    position: absolute;
+    top: 0; bottom: 0;
+    left: -75%;
+    width: 50%;
+    background: linear-gradient(
+      100deg,
+      rgba(255,255,255,0)    0%,
+      rgba(255,255,255,0.45) 50%,
+      rgba(255,255,255,0)    100%
+    );
+    transform: skewX(-20deg);
+    pointer-events: none;
+    animation: shimmer-sweep 2.6s ease-in-out infinite;
+  }
+  @keyframes shimmer-sweep {
+    0%   { left: -75%; }
+    55%  { left: 130%; }
+    100% { left: 130%; }
+  }
+
   @keyframes up-chip-glow {
-    0%, 100% {
-      box-shadow:
-        0 4px 14px rgba(255, 85, 0, 0.35),
-        0 0 0 0 rgba(255, 85, 0, 0.55);
-    }
-    70% {
-      box-shadow:
-        0 4px 14px rgba(255, 85, 0, 0.35),
-        0 0 0 9px rgba(255, 85, 0, 0);
-    }
+    0%, 100% { box-shadow: 0 6px 16px rgba(0,0,0,0.18),
+                           0 0 0 0   rgba(255, 85, 0, 0.55); }
+    70%      { box-shadow: 0 6px 16px rgba(0,0,0,0.18),
+                           0 0 0 9px rgba(255, 85, 0, 0); }
+    100%     { box-shadow: 0 6px 16px rgba(0,0,0,0.18),
+                           0 0 0 0   rgba(255, 85, 0, 0); }
   }
 </style>
 </head>
@@ -269,15 +294,15 @@
       <!-- Top nav -->
       <div class="flex items-center justify-end gap-3 h-14 border-b border-border-secondary px-6">
 
-        <!-- Pro-style discount chip — sits in the header just left of the
-             Upgrade button, with a right-pointing arrow aimed at it. -->
+        <!-- $60 off pill (pricing-page style) sits inline left of the Upgrade
+             button, with a right-side arrow aimed at the CTA. -->
         <span class="up-discount-chip" id="up-discount-chip" aria-live="polite">
           <span>$60 off</span>
           <i class="ph-fill ph-clock"></i>
           <span>Ends in <span class="timer" id="up-discount-timer">59:51</span></span>
         </span>
 
-        <!-- Trial / Credits chip with rotating copy + Upgrade button (brand-orange stroke @ 12%) -->
+        <!-- Trial / Credits chip with rotating copy + Upgrade button -->
         <div class="trial-chip-wrap bg-white rounded-md flex items-center pl-2.5 pr-1 py-1" style="border: 1px solid rgba(255, 85, 0, 0.12);">
           <div class="trial-chip-stack">
             <div class="trial-chip-track">
@@ -286,7 +311,7 @@
               <span class="text-[14px] font-medium text-ink-primary">🔥 Trial: 4 days left</span>
             </div>
           </div>
-          <button class="ml-3 inline-flex items-center gap-1.5 h-7 px-3.5 rounded text-white text-[14px] font-medium" style="background:#ff5500;">
+          <button class="shimmer-cta ml-3 inline-flex items-center gap-1.5 h-7 px-3.5 rounded text-white text-[14px] font-medium" style="background:#ff5500;">
             <i class="ph-fill ph-rocket-launch text-[16px]"></i>
             Upgrade
           </button>
