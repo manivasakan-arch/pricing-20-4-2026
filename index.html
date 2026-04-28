@@ -6,7 +6,7 @@
 <title>Presentations AI — Pricing</title>
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-<link href="https://fonts.googleapis.com/css2?family=Hedvig+Letters+Serif&family=Instrument+Serif:ital@0;1&family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
+<link href="https://fonts.googleapis.com/css2?family=Hedvig+Letters+Serif&family=Instrument+Serif:ital@0;1&family=Inter:wght@400;500;600;700;800;900&family=Roboto+Condensed:wght@400;500;600;700&display=swap" rel="stylesheet" />
 <link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/regular/style.css" />
 <link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/bold/style.css" />
 <link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/fill/style.css" />
@@ -109,8 +109,8 @@
   }
   .plan-seg-btn {
     padding: 5px 10px;
-    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
-    font-size: 10px;
+    font-family: 'Roboto Condensed', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+    font-size: 11px;
     font-weight: 700;
     letter-spacing: 0.6px;
     color: #525252;
@@ -206,6 +206,21 @@
                            0 0 0 0   rgba(255, 85, 0, 0); }
   }
 
+  /* Team view: hide Basic column in the sticky summary + feature comparison.
+     The 2nd grid child is always the Basic slot (summary: Basic col div;
+     feature rows: first data cell after each label). */
+  body[data-top-view="team"] .pricing-grid { grid-template-columns: 320px 1fr 1fr !important; }
+  body[data-top-view="team"] .pricing-grid > :nth-child(4n+2) { display: none; }
+
+  /* API endpoint card preview footer (flat image) */
+  .ep-footer {
+    height: 152px;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-color: #fafafa;
+  }
+
   /* Plan hover hint — soft light bubble above the card */
   .plan-hint {
     position: absolute;
@@ -274,15 +289,15 @@
   }
   .seat-chip-badge {
     position: absolute;
-    top: -7px; left: 0; right: 0;
+    top: -8px; left: 0; right: 0;
     margin: 0 auto;
-    padding: 1px 4px;
+    padding: 1px 5px;
     background: #ff5500;
     color: #fff;
-    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
-    font-size: 8px;
+    font-family: 'Roboto Condensed', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+    font-size: 10px;
     font-weight: 700;
-    letter-spacing: 0.3px;
+    letter-spacing: 0.4px;
     text-transform: uppercase;
     border-radius: 3px;
     line-height: 1.3;
@@ -378,6 +393,51 @@
 
   /* --- Two-column survey layout --- */
   .fb-survey-wrap { display: grid; grid-template-columns: 240px 1fr; }
+
+  /* Dev-console confirmation modal (triggered by API "Buy now" CTAs) */
+  .dc-card {
+    width: 460px;
+    max-width: calc(100vw - 48px);
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.25), 0 2px 6px rgba(0,0,0,0.1);
+    transform: translateY(12px);
+    transition: transform .22s ease;
+    padding: 28px 28px 24px;
+    position: relative;
+  }
+  .fb-backdrop[data-open="true"] .dc-card { transform: translateY(0); }
+  .dc-icon {
+    width: 48px; height: 48px; border-radius: 999px;
+    background: #eef2f6; color: #0A1925;
+    display: inline-flex; align-items: center; justify-content: center;
+    margin-bottom: 16px;
+  }
+  .dc-title { font: 600 20px/1.3 Inter, sans-serif; color: #0A1925; letter-spacing: -0.01em; }
+  .dc-body  { font: 400 14px/1.5 Inter, sans-serif; color: #525252; margin-top: 8px; }
+  .dc-actions { display: flex; gap: 8px; justify-content: flex-end; margin-top: 24px; }
+  .dc-btn-secondary {
+    height: 48px; padding: 0 20px; border-radius: 4px;
+    border: 1px solid #0A1925; background: #fff;
+    font: 700 16px/1 Inter, sans-serif; color: #0A1925; cursor: pointer;
+    display: inline-flex; align-items: center; justify-content: center;
+  }
+  .dc-btn-secondary:hover { background: #eef2f6; }
+  .dc-btn-primary {
+    height: 48px; padding: 0 20px; border-radius: 4px;
+    border: none;
+    background: linear-gradient(180deg, #1c3550 0%, #0A1925 100%);
+    font: 700 16px/1 Inter, sans-serif; color: #fff; cursor: pointer;
+    display: inline-flex; align-items: center; justify-content: center;
+  }
+  .dc-btn-primary:hover { filter: brightness(1.08); }
+  .dc-close {
+    position: absolute; top: 12px; right: 12px;
+    width: 32px; height: 32px; border-radius: 999px;
+    display: inline-flex; align-items: center; justify-content: center;
+    background: transparent; color: #737373; border: none; cursor: pointer;
+  }
+  .dc-close:hover { background: #fafafa; color: #171717; }
 
   /* Left offer panel — pale amber wash to mirror the chip's warmth */
   .fb-panel-left {
@@ -695,7 +755,7 @@
     align-items: center;
     justify-content: center;
     width: 14px; height: 14px;
-    font-size: 12px;
+    font-size: 14px;
     color: #a3a3a3;
     cursor: help;
   }
@@ -1227,8 +1287,94 @@
     <!-- Spacer reserving vertical room for the absolutely-positioned card area above -->
     <div aria-hidden="true" style="height:800px;"></div>
 
+    <!-- API-only content: Method + Endpoints (visible only when API view is active) -->
+    <div id="api-extras" class="hidden">
+
+      <!-- METHOD: two integration methods -->
+      <section style="padding: 0 140px; margin-top: 96px;">
+        <div class="flex flex-col gap-2 mb-8">
+          <p class="text-[11px] font-bold tracking-[0.12em] uppercase text-ink-tertiary" style="font-family: ui-monospace, 'SF Mono', Menlo, Consolas, monospace;">Method</p>
+          <h3 class="text-[28px] font-medium text-ink-primary leading-[1.2] tracking-[-0.01em]">Two Powerful Integration Methods</h3>
+        </div>
+
+        <div class="grid grid-cols-2 gap-6">
+          <div class="bg-white border border-primary rounded-[4px] flex items-start gap-4 p-5">
+            <span class="inline-flex shrink-0 items-center justify-center size-12 rounded-[4px] border border-primary bg-white">
+              <i class="ph ph-cube text-[24px] text-brand-500"></i>
+            </span>
+            <div class="flex flex-col gap-2 min-w-0">
+              <p class="text-[16px] font-medium text-ink-primary leading-none">REST API Integration</p>
+              <p class="text-[14px] leading-[1.43] text-ink-secondary">Traditional HTTP API with JSON responses and bearer token authentication &mdash; ideal for web, mobile, and backend apps.</p>
+            </div>
+          </div>
+
+          <div class="bg-white border border-primary rounded-[4px] flex items-start gap-4 p-5">
+            <span class="inline-flex shrink-0 items-center justify-center size-12 rounded-[4px] border border-primary bg-white">
+              <i class="ph ph-brain text-[24px] text-brand-500"></i>
+            </span>
+            <div class="flex flex-col gap-2 min-w-0">
+              <p class="text-[16px] font-medium text-ink-primary leading-none">MCP Integration</p>
+              <p class="text-[14px] leading-[1.43] text-ink-secondary">Claude Desktop: AI-powered chat, natural language slides, seamless workflow, and real-time collaboration for productivity.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- END POINTS: REST API endpoints -->
+      <section style="padding: 0 140px; margin-top: 96px;">
+        <div class="flex flex-col gap-2 mb-8">
+          <p class="text-[11px] font-bold tracking-[0.12em] uppercase text-ink-tertiary" style="font-family: ui-monospace, 'SF Mono', Menlo, Consolas, monospace;">End points</p>
+          <h3 class="text-[28px] font-medium text-ink-primary leading-[1.2] tracking-[-0.01em]">REST API endpoints includes</h3>
+        </div>
+
+        <div class="grid grid-cols-3 gap-6">
+
+          <a href="#" class="ep-card group bg-white border border-primary rounded-[4px] overflow-hidden flex flex-col hover:border-brand-500 transition-colors">
+            <div class="p-4 flex items-start justify-between gap-2">
+              <div class="flex flex-col gap-1 min-w-0">
+                <p class="text-[16px] font-medium text-ink-primary leading-none">/Topic</p>
+                <p class="text-[14px] leading-[1.43] text-ink-secondary">Generates a presentation on a topic using AI.</p>
+              </div>
+              <i class="ph ph-arrow-square-out text-[20px] text-ink-tertiary group-hover:text-brand-500 shrink-0"></i>
+            </div>
+            <div class="ep-footer" style="background-image:url('assets/api/ep-topic.png');"></div>
+          </a>
+
+          <a href="#" class="ep-card group bg-white border border-primary rounded-[4px] overflow-hidden flex flex-col hover:border-brand-500 transition-colors">
+            <div class="p-4 flex items-start justify-between gap-2">
+              <div class="flex flex-col gap-1 min-w-0">
+                <p class="text-[16px] font-medium text-ink-primary leading-none">/File</p>
+                <p class="text-[14px] leading-[1.43] text-ink-secondary">Generates a presentation from an uploaded file using AI analysis.</p>
+              </div>
+              <i class="ph ph-arrow-square-out text-[20px] text-ink-tertiary group-hover:text-brand-500 shrink-0"></i>
+            </div>
+            <div class="ep-footer" style="background-image:url('assets/api/ep-file.png');"></div>
+          </a>
+
+          <a href="#" class="ep-card group bg-white border border-primary rounded-[4px] overflow-hidden flex flex-col hover:border-brand-500 transition-colors">
+            <div class="p-4 flex items-start justify-between gap-2">
+              <div class="flex flex-col gap-1 min-w-0">
+                <p class="text-[16px] font-medium text-ink-primary leading-none">/SingleSlide</p>
+                <p class="text-[14px] leading-[1.43] text-ink-secondary">Creates a single slide on a topic using AI.</p>
+              </div>
+              <i class="ph ph-arrow-square-out text-[20px] text-ink-tertiary group-hover:text-brand-500 shrink-0"></i>
+            </div>
+            <div class="ep-footer" style="background-image:url('assets/api/ep-singleslide.png');"></div>
+          </a>
+
+        </div>
+      </section>
+
+      <!-- Empty space at the bottom of the API view -->
+      <div aria-hidden="true" style="height:160px;"></div>
+
+    </div><!-- /#api-extras -->
+
+    <!-- Everything below is hidden on the API view -->
+    <div id="below-views">
+
     <!-- TESTIMONIALS -->
-    <section class="grid grid-cols-3 gap-6" style="padding: 0 140px; margin: 80px 0;">
+    <section class="grid grid-cols-3 gap-6" data-testimonials="individual" style="padding: 0 140px; margin: 80px 0;">
       <figure class="rounded-[4px] border border-primary bg-white flex flex-col" style="padding: 32px 24px; gap: 32px;">
         <blockquote class="text-[17px] leading-[1.45] text-ink-primary italic" style="font-family: 'Hedvig Letters Serif', Georgia, serif; font-weight: 400;">&ldquo;Finally sleep well before big presentations. No more 3am panic!&rdquo;</blockquote>
         <div class="flex items-center gap-3 mt-auto">
@@ -1261,8 +1407,42 @@
       </figure>
     </section>
 
+    <!-- TESTIMONIALS (Team view) -->
+    <section class="grid grid-cols-3 gap-6 hidden" data-testimonials="team" style="padding: 0 140px; margin: 80px 0;">
+      <figure class="rounded-[4px] border border-primary bg-white flex flex-col" style="padding: 32px 24px; gap: 32px;">
+        <blockquote class="text-[17px] leading-[1.45] text-ink-primary italic" style="font-family: 'Hedvig Letters Serif', Georgia, serif; font-weight: 400;">&ldquo;Decks that used to take the team a full day now ship in under an hour. Launches don&rsquo;t wait on slides anymore.&rdquo;</blockquote>
+        <div class="flex items-center gap-3 mt-auto">
+          <span class="avatar-patrick" aria-hidden="true"></span>
+          <div class="leading-tight">
+            <p class="text-[13px] font-semibold text-ink-primary">Marcus</p>
+            <p class="text-[12px] text-ink-tertiary mt-[2px]">Marketing Director &bull; SaaS Scale-up</p>
+          </div>
+        </div>
+      </figure>
+      <figure class="rounded-[4px] border border-primary bg-white flex flex-col" style="padding: 32px 24px; gap: 32px;">
+        <blockquote class="text-[17px] leading-[1.45] text-ink-primary italic" style="font-family: 'Hedvig Letters Serif', Georgia, serif; font-weight: 400;">&ldquo;Product, marketing, and sales all build the same deck in real time. No more four versions floating around Slack.&rdquo;</blockquote>
+        <div class="flex items-center gap-3 mt-auto">
+          <span class="avatar-angela" aria-hidden="true"></span>
+          <div class="leading-tight">
+            <p class="text-[13px] font-semibold text-ink-primary">Desmond</p>
+            <p class="text-[12px] text-ink-tertiary mt-[2px]">VP Marketing &bull; Enterprise Tech</p>
+          </div>
+        </div>
+      </figure>
+      <figure class="rounded-[4px] border border-primary bg-white flex flex-col" style="padding: 32px 24px; gap: 32px;">
+        <blockquote class="text-[17px] leading-[1.45] text-ink-primary italic" style="font-family: 'Hedvig Letters Serif', Georgia, serif; font-weight: 400;">&ldquo;Onboarded 15 new reps last month. Everyone&rsquo;s pitching on-brand from day one.&rdquo;</blockquote>
+        <div class="flex items-center gap-3 mt-auto">
+          <span class="avatar-walter" aria-hidden="true"></span>
+          <div class="leading-tight">
+            <p class="text-[13px] font-semibold text-ink-primary">Elena</p>
+            <p class="text-[12px] text-ink-tertiary mt-[2px]">Head of Enablement &bull; Fintech Unicorn</p>
+          </div>
+        </div>
+      </figure>
+    </section>
+
     <!-- MINI PLAN SUMMARY (sticks to the top of the viewport on scroll) -->
-    <section class="grid grid-cols-[320px_1fr_1fr_1fr] gap-0 bg-white sticky top-0 z-40 border-b border-tertiary" style="margin: 0 140px;">
+    <section class="grid pricing-grid grid-cols-[320px_1fr_1fr_1fr] gap-0 bg-white sticky top-0 z-40 border-b border-tertiary" style="margin: 0 140px;">
       <div class="flex items-center p-5">
         <p class="text-[28px] font-medium text-ink-primary leading-[1.2] tracking-[-0.01em]">Compare features across all our plans</p>
       </div>
@@ -1276,7 +1456,7 @@
           </div>
           <p class="text-[11px] font-medium text-ink-tertiary">billed annually</p>
         </div>
-        <button class="mt-2 h-9 px-4 rounded-[4px] border border-brand-500 text-brand-500 text-[13px] font-bold hover:bg-brand-50">Buy Basic</button>
+        <button class="mt-2 h-9 min-w-[180px] px-4 rounded-[4px] border border-brand-500 text-brand-500 text-[13px] font-bold hover:bg-brand-50">Buy Basic</button>
       </div>
       <div class="flex flex-col items-center justify-center gap-2 p-5 border-l border-tertiary">
         <div class="flex flex-col items-center leading-none gap-1">
@@ -1287,18 +1467,18 @@
           </div>
           <p class="text-[11px] font-medium text-ink-tertiary" id="sum-pro-cadence">billed annually</p>
         </div>
-        <button class="pro-btn mt-2 h-9 px-4 rounded-[4px] text-white text-[13px] font-bold">Buy Pro</button>
+        <button id="sum-pro-cta" class="pro-btn mt-2 h-9 min-w-[180px] px-4 rounded-[4px] text-white text-[13px] font-bold">Buy Pro</button>
         <div id="sum-pro-pill-slot" class="flex justify-center"></div>
       </div>
       <div class="flex flex-col items-center justify-center gap-2 p-5 border-l border-tertiary">
         <div class="flex flex-col items-center leading-none gap-1">
           <div class="flex items-baseline gap-1">
-            <p class="text-[22px] font-bold text-ink-primary leading-none"><span class="usd">$</span>99</p>
+            <p class="text-[22px] font-bold text-ink-primary leading-none" id="sum-gold-price"><span class="usd">$</span>99</p>
             <p class="text-[12px] text-ink-tertiary">/mo</p>
           </div>
-          <p class="text-[11px] font-medium text-ink-tertiary">billed annually</p>
+          <p class="text-[11px] font-medium text-ink-tertiary" id="sum-gold-cadence">billed annually</p>
         </div>
-        <button class="mt-2 h-9 px-4 rounded-[4px] border border-brand-500 text-brand-500 text-[13px] font-bold hover:bg-brand-50">Buy Gold</button>
+        <button id="sum-gold-cta" class="mt-2 h-9 min-w-[180px] px-4 rounded-[4px] border border-brand-500 text-brand-500 text-[13px] font-bold hover:bg-brand-50">Buy Gold</button>
       </div>
     </section>
 
@@ -1308,33 +1488,33 @@
       <div class="mt-6">
         <h3 class="text-[18px] font-bold text-ink-primary mb-3 pl-5">AI Features</h3>
         <div>
-          <div class="grid grid-cols-[320px_1fr_1fr_1fr] text-[14px]">
-            <div class="feature-row-label">AI Credits (annual) <span class="feature-tip" title="Annual credits consumed by AI tasks">&#9432;</span></div>
+          <div class="grid pricing-grid grid-cols-[320px_1fr_1fr_1fr] text-[14px]">
+            <div class="feature-row-label">AI Credits (annual) <span class="feature-tip" title="Annual credits consumed by AI tasks"><i class="ph ph-info"></i></span></div>
             <div class="feature-row-cell">1,500</div>
-            <div class="feature-row-cell">5,000</div>
-            <div class="feature-row-cell">50,000</div>
+            <div class="feature-row-cell" id="table-pro-credits">5,000</div>
+            <div class="feature-row-cell" id="table-gold-credits">50,000</div>
 
-            <div class="feature-row-label">AI models <span class="feature-tip" title="Choose from basic to frontier AI models">&#9432;</span></div>
+            <div class="feature-row-label">AI models <span class="feature-tip" title="Choose from basic to frontier AI models"><i class="ph ph-info"></i></span></div>
             <div class="feature-row-cell"><i class="ph ph-star-four text-ink-secondary"></i> Standard</div>
             <div class="feature-row-cell"><i class="ph ph-star-four text-ink-secondary"></i> Advanced</div>
             <div class="feature-row-cell"><i class="ph ph-star-four text-brand-500"></i> Frontier Models</div>
 
-            <div class="feature-row-label">Generation Speed <span class="feature-tip" title="Controls how fast AI generates your slides">&#9432;</span></div>
+            <div class="feature-row-label">Generation Speed <span class="feature-tip" title="Controls how fast AI generates your slides"><i class="ph ph-info"></i></span></div>
             <div class="feature-row-cell">Medium</div>
             <div class="feature-row-cell">Fast</div>
             <div class="feature-row-cell">Ultra</div>
 
-            <div class="feature-row-label">Presentation Refresh <span class="feature-tip" title="Refresh your presentation's data">&#9432;</span> <span class="coming-soon">Coming Soon</span></div>
+            <div class="feature-row-label">Presentation Refresh <span class="feature-tip" title="Refresh your presentation's data"><i class="ph ph-info"></i></span> <span class="coming-soon">Coming Soon</span></div>
             <div class="feature-row-cell feat-dash">—</div>
             <div class="feature-row-cell feat-dash">—</div>
             <div class="feature-row-cell"><i class="ph-fill ph-check-circle text-success-fg text-[18px]"></i></div>
 
-            <div class="feature-row-label">Project knowledge <span class="feature-tip" title="Upload brand guides and reference material">&#9432;</span></div>
+            <div class="feature-row-label">Project knowledge <span class="feature-tip" title="Upload brand guides and reference material"><i class="ph ph-info"></i></span></div>
             <div class="feature-row-cell feat-dash">—</div>
             <div class="feature-row-cell feat-dash">—</div>
             <div class="feature-row-cell"><i class="ph-fill ph-check-circle text-success-fg text-[18px]"></i></div>
 
-            <div class="feature-row-label">Agents <span class="feature-tip" title="AI agent that autonomously builds presentations">&#9432;</span> <span class="coming-soon">Coming Soon</span></div>
+            <div class="feature-row-label">Agents <span class="feature-tip" title="AI agent that autonomously builds presentations"><i class="ph ph-info"></i></span> <span class="coming-soon">Coming Soon</span></div>
             <div class="feature-row-cell feat-dash">—</div>
             <div class="feature-row-cell feat-dash">—</div>
             <div class="feature-row-cell"><i class="ph-fill ph-check-circle text-success-fg text-[18px]"></i></div>
@@ -1346,23 +1526,23 @@
       <div class="mt-8">
         <h3 class="text-[18px] font-bold text-ink-primary mb-3 pl-5">Sharing &amp; Export</h3>
         <div>
-          <div class="grid grid-cols-[320px_1fr_1fr_1fr] text-[14px]">
-            <div class="feature-row-label">PowerPoint/PDF Export <span class="feature-tip" title="Download as PDF or PPT">&#9432;</span></div>
+          <div class="grid pricing-grid grid-cols-[320px_1fr_1fr_1fr] text-[14px]">
+            <div class="feature-row-label">PowerPoint/PDF Export <span class="feature-tip" title="Download as PDF or PPT"><i class="ph ph-info"></i></span></div>
             <div class="feature-row-cell"><i class="ph-fill ph-check-circle text-success-fg text-[18px]"></i></div>
             <div class="feature-row-cell"><i class="ph-fill ph-check-circle text-success-fg text-[18px]"></i></div>
             <div class="feature-row-cell"><i class="ph-fill ph-check-circle text-success-fg text-[18px]"></i></div>
 
-            <div class="feature-row-label">Presentation Embed <span class="feature-tip" title="Embed on websites or blogs">&#9432;</span></div>
+            <div class="feature-row-label">Presentation Embed <span class="feature-tip" title="Embed on websites or blogs"><i class="ph ph-info"></i></span></div>
             <div class="feature-row-cell"><i class="ph-fill ph-check-circle text-success-fg text-[18px]"></i></div>
             <div class="feature-row-cell"><i class="ph-fill ph-check-circle text-success-fg text-[18px]"></i></div>
             <div class="feature-row-cell"><i class="ph-fill ph-check-circle text-success-fg text-[18px]"></i></div>
 
-            <div class="feature-row-label">Unbranded Public Links <span class="feature-tip" title="Public links without our branding">&#9432;</span></div>
+            <div class="feature-row-label">Unbranded Public Links <span class="feature-tip" title="Public links without our branding"><i class="ph ph-info"></i></span></div>
             <div class="feature-row-cell"><i class="ph-fill ph-check-circle text-success-fg text-[18px]"></i></div>
             <div class="feature-row-cell"><i class="ph-fill ph-check-circle text-success-fg text-[18px]"></i></div>
             <div class="feature-row-cell"><i class="ph-fill ph-check-circle text-success-fg text-[18px]"></i></div>
 
-            <div class="feature-row-label">Password-Protected Links <span class="feature-tip" title="Add password protection to shared links">&#9432;</span></div>
+            <div class="feature-row-label">Password-Protected Links <span class="feature-tip" title="Add password protection to shared links"><i class="ph ph-info"></i></span></div>
             <div class="feature-row-cell feat-dash">—</div>
             <div class="feature-row-cell"><i class="ph-fill ph-check-circle text-success-fg text-[18px]"></i></div>
             <div class="feature-row-cell"><i class="ph-fill ph-check-circle text-success-fg text-[18px]"></i></div>
@@ -1374,13 +1554,13 @@
       <div class="mt-8">
         <h3 class="text-[18px] font-bold text-ink-primary mb-3 pl-5">Collaboration</h3>
         <div>
-          <div class="grid grid-cols-[320px_1fr_1fr_1fr] text-[14px]">
-            <div class="feature-row-label">Guests <span class="feature-tip" title="External collaborators without a workspace seat">&#9432;</span></div>
+          <div class="grid pricing-grid grid-cols-[320px_1fr_1fr_1fr] text-[14px]">
+            <div class="feature-row-label">Guests <span class="feature-tip" title="External collaborators without a workspace seat"><i class="ph ph-info"></i></span></div>
             <div class="feature-row-cell">Up to 5 guests</div>
             <div class="feature-row-cell">Up to 10 guests</div>
             <div class="feature-row-cell">Unlimited guests</div>
 
-            <div class="feature-row-label">Present Remotely <span class="feature-tip" title="Share live presentation sessions">&#9432;</span></div>
+            <div class="feature-row-label">Present Remotely <span class="feature-tip" title="Share live presentation sessions"><i class="ph ph-info"></i></span></div>
             <div class="feature-row-cell"><i class="ph-fill ph-check-circle text-success-fg text-[18px]"></i></div>
             <div class="feature-row-cell"><i class="ph-fill ph-check-circle text-success-fg text-[18px]"></i></div>
             <div class="feature-row-cell"><i class="ph-fill ph-check-circle text-success-fg text-[18px]"></i></div>
@@ -1392,28 +1572,28 @@
       <div class="mt-8">
         <h3 class="text-[18px] font-bold text-ink-primary mb-3 pl-5">Brand kit</h3>
         <div>
-          <div class="grid grid-cols-[320px_1fr_1fr_1fr] text-[14px]">
-            <div class="feature-row-label">Custom Brand Colors <span class="feature-tip" title="Set your brand's color palette">&#9432;</span></div>
+          <div class="grid pricing-grid grid-cols-[320px_1fr_1fr_1fr] text-[14px]">
+            <div class="feature-row-label">Custom Brand Colors <span class="feature-tip" title="Set your brand's color palette"><i class="ph ph-info"></i></span></div>
             <div class="feature-row-cell"><i class="ph-fill ph-check-circle text-success-fg text-[18px]"></i></div>
             <div class="feature-row-cell"><i class="ph-fill ph-check-circle text-success-fg text-[18px]"></i></div>
             <div class="feature-row-cell"><i class="ph-fill ph-check-circle text-success-fg text-[18px]"></i></div>
 
-            <div class="feature-row-label">Custom Brand Fonts <span class="feature-tip" title="Upload your brand fonts">&#9432;</span></div>
+            <div class="feature-row-label">Custom Brand Fonts <span class="feature-tip" title="Upload your brand fonts"><i class="ph ph-info"></i></span></div>
             <div class="feature-row-cell"><i class="ph-fill ph-check-circle text-success-fg text-[18px]"></i></div>
             <div class="feature-row-cell"><i class="ph-fill ph-check-circle text-success-fg text-[18px]"></i></div>
             <div class="feature-row-cell"><i class="ph-fill ph-check-circle text-success-fg text-[18px]"></i></div>
 
-            <div class="feature-row-label">Custom Templates <span class="feature-tip" title="Save your own branded templates">&#9432;</span></div>
+            <div class="feature-row-label">Custom Templates <span class="feature-tip" title="Save your own branded templates"><i class="ph ph-info"></i></span></div>
             <div class="feature-row-cell feat-dash">—</div>
             <div class="feature-row-cell feat-dash">—</div>
             <div class="feature-row-cell"><i class="ph-fill ph-check-circle text-success-fg text-[18px]"></i></div>
 
-            <div class="feature-row-label">Custom Brand Assets <span class="feature-tip" title="Upload logos, images, and brand assets">&#9432;</span></div>
+            <div class="feature-row-label">Custom Brand Assets <span class="feature-tip" title="Upload logos, images, and brand assets"><i class="ph ph-info"></i></span></div>
             <div class="feature-row-cell feat-dash">—</div>
             <div class="feature-row-cell">10 MB</div>
             <div class="feature-row-cell">Unlimited storage</div>
 
-            <div class="feature-row-label">Custom Brand Voice <span class="feature-tip" title="Train the AI in your brand's tone">&#9432;</span> <span class="coming-soon">Coming Soon</span></div>
+            <div class="feature-row-label">Custom Brand Voice <span class="feature-tip" title="Train the AI in your brand's tone"><i class="ph ph-info"></i></span> <span class="coming-soon">Coming Soon</span></div>
             <div class="feature-row-cell feat-dash">—</div>
             <div class="feature-row-cell">1 voice</div>
             <div class="feature-row-cell">Unlimited voices</div>
@@ -1425,28 +1605,28 @@
       <div class="mt-8">
         <h3 class="text-[18px] font-bold text-ink-primary mb-3 pl-5">Analytics</h3>
         <div>
-          <div class="grid grid-cols-[320px_1fr_1fr_1fr] text-[14px]">
-            <div class="feature-row-label">Views <span class="feature-tip" title="Track how many times your presentation was viewed">&#9432;</span></div>
+          <div class="grid pricing-grid grid-cols-[320px_1fr_1fr_1fr] text-[14px]">
+            <div class="feature-row-label">Views <span class="feature-tip" title="Track how many times your presentation was viewed"><i class="ph ph-info"></i></span></div>
             <div class="feature-row-cell"><i class="ph-fill ph-check-circle text-success-fg text-[18px]"></i></div>
             <div class="feature-row-cell"><i class="ph-fill ph-check-circle text-success-fg text-[18px]"></i></div>
             <div class="feature-row-cell"><i class="ph-fill ph-check-circle text-success-fg text-[18px]"></i></div>
 
-            <div class="feature-row-label">Slide Engagement <span class="feature-tip" title="Time spent on each slide">&#9432;</span></div>
+            <div class="feature-row-label">Slide Engagement <span class="feature-tip" title="Time spent on each slide"><i class="ph ph-info"></i></span></div>
             <div class="feature-row-cell feat-dash">—</div>
             <div class="feature-row-cell"><i class="ph-fill ph-check-circle text-success-fg text-[18px]"></i></div>
             <div class="feature-row-cell"><i class="ph-fill ph-check-circle text-success-fg text-[18px]"></i></div>
 
-            <div class="feature-row-label">Viewer Demographics <span class="feature-tip" title="Country, device, and more about viewers">&#9432;</span></div>
+            <div class="feature-row-label">Viewer Demographics <span class="feature-tip" title="Country, device, and more about viewers"><i class="ph ph-info"></i></span></div>
             <div class="feature-row-cell feat-dash">—</div>
             <div class="feature-row-cell">Standard</div>
             <div class="feature-row-cell">Advanced</div>
 
-            <div class="feature-row-label">Email Capture <span class="feature-tip" title="Collect viewer emails before access">&#9432;</span></div>
+            <div class="feature-row-label">Email Capture <span class="feature-tip" title="Collect viewer emails before access"><i class="ph ph-info"></i></span></div>
             <div class="feature-row-cell feat-dash">—</div>
             <div class="feature-row-cell feat-dash">—</div>
             <div class="feature-row-cell"><i class="ph-fill ph-check-circle text-success-fg text-[18px]"></i></div>
 
-            <div class="feature-row-label">Visit Notifications <span class="feature-tip" title="Real-time alerts when someone views your deck">&#9432;</span></div>
+            <div class="feature-row-label">Visit Notifications <span class="feature-tip" title="Real-time alerts when someone views your deck"><i class="ph ph-info"></i></span></div>
             <div class="feature-row-cell feat-dash">—</div>
             <div class="feature-row-cell feat-dash">—</div>
             <div class="feature-row-cell"><i class="ph-fill ph-check-circle text-success-fg text-[18px]"></i></div>
@@ -1458,43 +1638,43 @@
       <div class="mt-8">
         <h3 class="text-[18px] font-bold text-ink-primary mb-3 pl-5">Integrations</h3>
         <div>
-          <div class="grid grid-cols-[320px_1fr_1fr_1fr] text-[14px]">
-            <div class="feature-row-label">PowerPoint <span class="feature-tip" title="Use Presentations.ai inside PowerPoint">&#9432;</span></div>
+          <div class="grid pricing-grid grid-cols-[320px_1fr_1fr_1fr] text-[14px]">
+            <div class="feature-row-label">PowerPoint <span class="feature-tip" title="Use Presentations.ai inside PowerPoint"><i class="ph ph-info"></i></span></div>
             <div class="feature-row-cell"><i class="ph-fill ph-check-circle text-success-fg text-[18px]"></i></div>
             <div class="feature-row-cell"><i class="ph-fill ph-check-circle text-success-fg text-[18px]"></i></div>
             <div class="feature-row-cell"><i class="ph-fill ph-check-circle text-success-fg text-[18px]"></i></div>
 
-            <div class="feature-row-label">Google Slides <span class="feature-tip" title="Use Presentations.ai inside Google Slides">&#9432;</span></div>
+            <div class="feature-row-label">Google Slides <span class="feature-tip" title="Use Presentations.ai inside Google Slides"><i class="ph ph-info"></i></span></div>
             <div class="feature-row-cell"><i class="ph-fill ph-check-circle text-success-fg text-[18px]"></i></div>
             <div class="feature-row-cell"><i class="ph-fill ph-check-circle text-success-fg text-[18px]"></i></div>
             <div class="feature-row-cell"><i class="ph-fill ph-check-circle text-success-fg text-[18px]"></i></div>
 
-            <div class="feature-row-label">Notion <span class="feature-tip" title="Pull pages from Notion">&#9432;</span></div>
+            <div class="feature-row-label">Notion <span class="feature-tip" title="Pull pages from Notion"><i class="ph ph-info"></i></span></div>
             <div class="feature-row-cell feat-dash">—</div>
             <div class="feature-row-cell feat-dash">—</div>
             <div class="feature-row-cell"><i class="ph-fill ph-check-circle text-success-fg text-[18px]"></i></div>
 
-            <div class="feature-row-label">Google Drive <span class="feature-tip" title="Import files from Google Drive">&#9432;</span></div>
+            <div class="feature-row-label">Google Drive <span class="feature-tip" title="Import files from Google Drive"><i class="ph ph-info"></i></span></div>
             <div class="feature-row-cell feat-dash">—</div>
             <div class="feature-row-cell"><i class="ph-fill ph-check-circle text-success-fg text-[18px]"></i></div>
             <div class="feature-row-cell"><i class="ph-fill ph-check-circle text-success-fg text-[18px]"></i></div>
 
-            <div class="feature-row-label">Salesforce CRM <span class="feature-tip" title="Pull CRM data">&#9432;</span> <span class="coming-soon">Coming Soon</span></div>
+            <div class="feature-row-label">Salesforce CRM <span class="feature-tip" title="Pull CRM data"><i class="ph ph-info"></i></span> <span class="coming-soon">Coming Soon</span></div>
             <div class="feature-row-cell feat-dash">—</div>
             <div class="feature-row-cell feat-dash">—</div>
             <div class="feature-row-cell"><i class="ph-fill ph-check-circle text-success-fg text-[18px]"></i></div>
 
-            <div class="feature-row-label">HubSpot <span class="feature-tip" title="Sync marketing and sales data">&#9432;</span> <span class="coming-soon">Coming Soon</span></div>
+            <div class="feature-row-label">HubSpot <span class="feature-tip" title="Sync marketing and sales data"><i class="ph ph-info"></i></span> <span class="coming-soon">Coming Soon</span></div>
             <div class="feature-row-cell feat-dash">—</div>
             <div class="feature-row-cell feat-dash">—</div>
             <div class="feature-row-cell"><i class="ph-fill ph-check-circle text-success-fg text-[18px]"></i></div>
 
-            <div class="feature-row-label">Slack <span class="feature-tip" title="Share updates in Slack">&#9432;</span> <span class="coming-soon">Coming Soon</span></div>
+            <div class="feature-row-label">Slack <span class="feature-tip" title="Share updates in Slack"><i class="ph ph-info"></i></span> <span class="coming-soon">Coming Soon</span></div>
             <div class="feature-row-cell feat-dash">—</div>
             <div class="feature-row-cell feat-dash">—</div>
             <div class="feature-row-cell"><i class="ph-fill ph-check-circle text-success-fg text-[18px]"></i></div>
 
-            <div class="feature-row-label">Workflow Automation <span class="feature-tip" title="Zapier, webhooks, and form triggers">&#9432;</span> <span class="coming-soon">Coming Soon</span></div>
+            <div class="feature-row-label">Workflow Automation <span class="feature-tip" title="Zapier, webhooks, and form triggers"><i class="ph ph-info"></i></span> <span class="coming-soon">Coming Soon</span></div>
             <div class="feature-row-cell feat-dash">—</div>
             <div class="feature-row-cell feat-dash">—</div>
             <div class="feature-row-cell"><i class="ph-fill ph-check-circle text-success-fg text-[18px]"></i></div>
@@ -1503,18 +1683,19 @@
       </div>
     </section>
 
-    <!-- TRUST BADGES -->
-    <section class="flex items-center gap-4" style="padding: 0 140px; margin-top: 40px;">
-      <div class="flex items-center gap-3">
-        <span class="inline-flex items-center justify-center size-10 rounded-full border border-primary bg-white">
-          <i class="ph ph-shield-check text-[20px] text-ink-primary"></i>
-        </span>
-        <span class="inline-flex items-center justify-center size-10 rounded-full border border-primary bg-white">
-          <i class="ph ph-lock-key text-[20px] text-ink-primary"></i>
-        </span>
+    <!-- TRUST BADGES — AICPA SOC 2 + GDPR, 60px circular, with 20px body copy -->
+    <section class="flex items-center justify-center gap-[10px]" style="padding: 0 140px; margin-top: 40px;">
+      <div class="flex items-center gap-2">
+        <img src="assets/trust/soc2.svg"  width="60" height="60" alt="AICPA SOC 2 Type II certified" class="block" />
+        <img src="assets/trust/gdpr.svg"  width="60" height="60" alt="GDPR compliant"                class="block" />
       </div>
-      <p class="text-[13px] font-medium text-ink-secondary">We're a SOC 2 Type II, GDPR-compliant organization.</p>
+      <p class="text-[14px] font-medium whitespace-nowrap" style="color:#525252;">We're a SOC 2 Type II, GDPR-compliant organization.</p>
     </section>
+
+    <!-- Bottom breathing room before the sticky social-proof footer -->
+    <div aria-hidden="true" style="height:60px;"></div>
+
+    </div><!-- /#below-views -->
 
   </div>
 
@@ -1824,6 +2005,9 @@
       };
       const topSeg = document.querySelector('[data-top-seg]');
 
+      const belowViews = document.getElementById('below-views');
+      const apiExtras  = document.getElementById('api-extras');
+      const testimonialBlocks = document.querySelectorAll('[data-testimonials]');
       function setTopView(target) {
         topSeg.querySelectorAll('.top-view-seg-btn').forEach(b => {
           const active = b.dataset.view === target;
@@ -1833,6 +2017,17 @@
         Object.entries(views).forEach(([key, el]) => {
           if (el) el.classList.toggle('hidden', key !== target);
         });
+        // API view: drop the long content below (testimonials, table, trust),
+        // and surface the API-only Method + Endpoints sections instead.
+        if (belowViews) belowViews.classList.toggle('hidden', target === 'api');
+        if (apiExtras)  apiExtras.classList.toggle('hidden',  target !== 'api');
+        // Swap testimonial blocks to match the active top view.
+        testimonialBlocks.forEach(el => {
+          el.classList.toggle('hidden', el.dataset.testimonials !== target);
+        });
+        // Feed the active view to the compare-table renderer + hide Basic col.
+        document.body.dataset.topView = target;
+        if (typeof renderCompareSummary === 'function') renderCompareSummary();
       }
       topSeg.querySelectorAll('.top-view-seg-btn').forEach(btn => {
         btn.addEventListener('click', () => setTopView(btn.dataset.view));
@@ -1861,7 +2056,51 @@
       // value should NOT be overwritten during render. Clicks on +/- sync
       // both inputs normally.
       let typingIn = null;
-      function renderAllTeams() { teamRenders.forEach(fn => fn()); }
+      function renderAllTeams() {
+        teamRenders.forEach(fn => fn());
+        renderCompareSummary();
+      }
+
+      // Sync the sticky compare summary + credits row to the active top view.
+      // Team view swaps Pro/Gold price + CTA + credits to reflect the shared
+      // seat count; individual view restores the static defaults and lets
+      // renderPro() own the Pro column.
+      function renderCompareSummary() {
+        const view  = document.body.dataset.topView || 'individual';
+        const sPro  = document.getElementById('sum-pro-price');
+        const sProC = document.getElementById('sum-pro-cadence');
+        const sProB = document.getElementById('sum-pro-cta');
+        const sGold = document.getElementById('sum-gold-price');
+        const sGoldC= document.getElementById('sum-gold-cadence');
+        const sGoldB= document.getElementById('sum-gold-cta');
+        const tblP  = document.getElementById('table-pro-credits');
+        const tblG  = document.getElementById('table-gold-credits');
+
+        if (view === 'team') {
+          const n  = teamState.n;
+          const pr = rateFor(TEAM_PLANS.pro,  n);
+          const gr = rateFor(TEAM_PLANS.gold, n);
+          const proTotal  = (n * pr).toLocaleString();
+          const goldTotal = (n * gr).toLocaleString();
+          if (sPro)   sPro.innerHTML   = `<span class="usd">$</span>${proTotal}`;
+          if (sProC)  sProC.textContent = `${n} seats · billed annually`;
+          if (sProB)  sProB.textContent = `Buy ${n} Seats`;
+          if (sGold)  sGold.innerHTML   = `<span class="usd">$</span>${goldTotal}`;
+          if (sGoldC) sGoldC.textContent= `${n} seats · billed annually`;
+          if (sGoldB) sGoldB.textContent= `Buy ${n} Seats`;
+          if (tblP)   tblP.textContent  = (n * TEAM_PLANS.pro.creditsPerSeat).toLocaleString();
+          if (tblG)   tblG.textContent  = (n * TEAM_PLANS.gold.creditsPerSeat).toLocaleString();
+        } else {
+          // Gold column has no renderer of its own — reset it manually.
+          if (sGold)  sGold.innerHTML   = '<span class="usd">$</span>99';
+          if (sGoldC) sGoldC.textContent= 'billed annually';
+          if (sGoldB) sGoldB.textContent= 'Buy Gold';
+          if (tblP)   tblP.textContent  = '5,000';
+          if (tblG)   tblG.textContent  = '50,000';
+          // Pro column: let renderPro repaint it (static $20 / Buy Pro).
+          if (typeof renderPro === 'function') renderPro();
+        }
+      }
 
       function wireTeamCard(planKey) {
         const plan       = TEAM_PLANS[planKey];
@@ -2251,6 +2490,68 @@
       // Expose a way for the main close (X) button to trigger the feedback flow
       window.openFeedbackModal = openModal;
     })();
+  </script>
+
+  <!-- Developer Console confirmation modal (API "Buy now" CTAs) -->
+  <div class="fb-backdrop" id="dc-modal" role="dialog" aria-modal="true" aria-labelledby="dc-title" data-open="false">
+    <div class="dc-card">
+      <span class="dc-icon"><i class="ph-fill ph-code text-[22px]"></i></span>
+      <p class="dc-title" id="dc-title">Continue to the Presentations AI Developer Console</p>
+      <p class="dc-body">You're about to leave Presentations.ai and open the Developer Console, where you'll complete your purchase, generate API keys, and manage usage.</p>
+      <div class="dc-actions">
+        <button type="button" class="dc-btn-secondary" id="dc-cancel">Cancel</button>
+        <button type="button" class="dc-btn-primary" id="dc-continue">Continue to Developer Console</button>
+      </div>
+    </div>
+  </div>
+  <script>
+    (function () {
+      const modal    = document.getElementById('dc-modal');
+      const cancelBtn= document.getElementById('dc-cancel');
+      const continueBtn = document.getElementById('dc-continue');
+      if (!modal || !cancelBtn || !continueBtn) return;
+
+      const DEV_CONSOLE_URL = 'https://console.presentations.ai';
+      let lastFocus = null;
+
+      function openModal() {
+        lastFocus = document.activeElement;
+        modal.setAttribute('data-open', 'true');
+        document.body.style.overflow = 'hidden';
+        continueBtn.focus();
+      }
+      function closeModal() {
+        modal.setAttribute('data-open', 'false');
+        document.body.style.overflow = '';
+        if (lastFocus && typeof lastFocus.focus === 'function') lastFocus.focus();
+      }
+
+      document.querySelectorAll('[data-buy-now]').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          e.preventDefault();
+          openModal();
+        });
+      });
+
+      cancelBtn.addEventListener('click', closeModal);
+      continueBtn.addEventListener('click', () => {
+        window.open(DEV_CONSOLE_URL, '_blank', 'noopener,noreferrer');
+        closeModal();
+      });
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && modal.getAttribute('data-open') === 'true') closeModal();
+      });
+    })();
+  </script>
+
+  <!-- Agentation: visual feedback toolbar (bottom-right). React is loaded via esm.sh CDN. -->
+  <div id="agentation-root"></div>
+  <script type="module">
+    import React from 'https://esm.sh/react@18';
+    import { createRoot } from 'https://esm.sh/react-dom@18/client';
+    import { Agentation } from 'https://esm.sh/agentation@3?deps=react@18,react-dom@18';
+    createRoot(document.getElementById('agentation-root'))
+      .render(React.createElement(Agentation));
   </script>
 </body>
 </html>

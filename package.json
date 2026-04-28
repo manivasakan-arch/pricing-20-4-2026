@@ -1,0 +1,16 @@
+{
+  "name": "belo-horizonte",
+  "version": "1.0.0",
+  "description": "Single-file pricing page prototype (`pricing-20-4-2026.html`). Tailwind (CDN), Inter, Phosphor icons. Designed at a fixed 1280px viewport. Plan illustrations are embedded as base64 data URIs — no external assets required.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "devDependencies": {
+    "agentation": "^3.0.2"
+  }
+}
