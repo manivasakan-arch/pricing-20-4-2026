@@ -10,9 +10,12 @@ The prototype is a **single self-contained HTML file** that pulls Tailwind, Inte
 
 ## 1. What `v2.html` is
 
-`v2.html` is the **canonical pricing-modal screen** with one deliberate change vs. the baseline (`index.html`):
+`v2.html` is the **canonical pricing-modal screen** with four deliberate diffs vs. the baseline (`index.html`):
 
-> **The Pro card has no Monthly ↔ Annual billing-period control.** Pro is annual-only. The seg-control is preserved as a hidden anchor (`<div class="plan-seg hidden" data-pro-seg aria-hidden="true">`) so the existing JS selectors keep working and `getProPeriod()` falls through to its `'annual'` default.
+1. **Pro card has no Monthly ↔ Annual billing-period control.** Pro is annual-only. The seg-control is preserved as a hidden anchor (`<div class="plan-seg hidden" data-pro-seg aria-hidden="true">`) so the existing JS selectors keep working and `getProPeriod()` falls through to its `'annual'` default.
+2. **`Export to PowerPoint and Google Slides`** bullet is removed from the Basic feature list and the Pro Team feature list. Pro Individual already had it removed in the baseline.
+3. **The bumped `$60 off · Ends in MM:SS` pill is suppressed on the Teams tab.** The bump applies only to Pro Annual on Individual, so showing it in the team-view sticky summary was misleading. Both `renderPro()` and `renderCompareSummary()` now check `body.dataset.topView` before painting the slot.
+4. **Closing the modal from the Teams tab snaps the page back to Individual first.** So if a user is on Teams when they hit the ✕ Close button, the page flips to `setTopView('individual')` *before* the feedback modal opens — the bump unlock then lands in the correct (Individual) Pro Annual context behind the modal.
 
 Use this variant when running pricing experiments where you don't want to expose monthly billing for Pro.
 
@@ -97,6 +100,10 @@ User clicks ✕ Close
     │
     ├─ already submitted survey or bump active?  → Yes → close normally
     │
+    ├─ on Teams tab? → setTopView('individual')   (run before opening modal so the
+    │                                              Pro Annual context is visible
+    │                                              behind the modal when it appears)
+    │
     └─ open Feedback modal (#fb-modal, window.openFeedbackModal)
             │
             ├─ Step 1: survey (sentiment smiley + improvement chip)
@@ -115,6 +122,8 @@ User clicks ✕ Close
 
 State flags: `localStorage.proBumpStart`, `sessionStorage.proFeedbackSubmitted`, `sessionStorage.proBumpOffered`.
 
+The bumped pill (`.pro-bumped-pill` in the sticky compare summary's `#sum-pro-pill-slot`) is **only painted while `body.dataset.topView === 'individual'`** — `renderPro()` writes an empty string to the slot otherwise. This prevents the timer leaking into the Teams tab on every 1s tick, and `renderCompareSummary()` clears the slot in its team branch as a belt-and-braces.
+
 **Production checklist:**
 - The bump state should live on the **server** in production (not localStorage), keyed by user. The 60-min window starts at the moment they unlock the bump.
 - `window.openFeedbackModal` / `window.applyProBump` are the integration points — wire your equivalent to the actual offer endpoint.
@@ -132,6 +141,8 @@ State flags: `localStorage.proBumpStart`, `sessionStorage.proFeedbackSubmitted`,
 | Gold Team | $99 | $89 | $84 | 50,000 |
 
 - CTAs: `Buy {n} Seats`. Hint copy below the CTA: dynamic savings line ("You're saving $<x> every year") when the user hits a tier discount.
+- The Pro Team feature list **does not include the "Export to PowerPoint and Google Slides" bullet** in v2 (it was removed from Basic and Pro Team for the trimmed product copy).
+- The Pro Annual bump **is not applied or surfaced on the Teams tab.** The sticky-summary `$60 off · Ends in MM:SS` pill is suppressed by `renderPro()` while `body.dataset.topView === 'team'`, and `renderCompareSummary()` clears the slot defensively. The bump is exclusively an Individual-Pro-Annual offer.
 
 ### 4.7 Sticky compare summary + feature comparison table
 Below the cards (`#below-views`):

@@ -147,8 +147,13 @@ The sticky mini-summary above the feature comparison table reacts to view + stat
 ---
 
 ### 2. `v2.html` — Pro annual-only variant
-- Identical to `index.html` **except** the Pro card has no billing-period seg-control. The `<div class="plan-seg" data-pro-seg>` element is kept as a **hidden anchor** (empty `aria-hidden="true"` div) so that `renderPro` / `getProPeriod` selectors still resolve — `getProPeriod()` falls through to its `'annual'` default and the price stays locked at $20/mo annual.
-- Use this when running pricing experiments where you don't want to expose monthly billing for Pro.
+Differs from `index.html` in four ways:
+- **Pro card has no billing-period seg-control.** The `<div class="plan-seg" data-pro-seg>` element is kept as a **hidden anchor** (empty `aria-hidden="true"` div) so that `renderPro` / `getProPeriod` selectors still resolve — `getProPeriod()` falls through to its `'annual'` default and the price stays locked at $20/mo annual.
+- **`Export to PowerPoint and Google Slides`** bullet removed from the Basic and Pro Team feature lists (Pro Individual already had it removed in the baseline).
+- **Bumped `$60 off · Ends in MM:SS` pill is suppressed on the Teams tab.** Both `renderPro()` and `renderCompareSummary()` check `body.dataset.topView` before painting `#sum-pro-pill-slot`. The bump only applies to Pro Annual on Individual.
+- **Closing the modal from the Teams tab snaps the page back to Individual first.** The ✕ Close click handler runs `setTopView('individual')` before opening the feedback modal so the bump unlock lands in the Pro Annual context behind the modal.
+
+Use this when running pricing experiments where you don't want to expose monthly billing for Pro.
 
 ---
 
