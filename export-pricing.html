@@ -53,7 +53,7 @@
       width: 100% !important;
       max-width: 100% !important;
       transform: none !important;
-      padding: 0 16px 24px !important;
+      padding: 0 16px 96px !important; /* room for the sticky social-proof footer */
       box-sizing: border-box;
     }
 
@@ -62,22 +62,29 @@
       position: static !important;
       transform: none !important;
       width: auto !important;
-      margin: 20px 40px 0 !important;
-      font-size: 20px !important;
+      margin: 12px 48px 0 !important;
+      font-size: 18px !important;
     }
+    /* Outer close button: pinned to the top of the viewport */
     body > .relative.mx-auto > button[aria-label="Close"] {
-      position: absolute !important;
-      top: 16px !important; right: 16px !important; left: auto !important;
+      position: fixed !important;
+      top: 10px !important; right: 10px !important; left: auto !important;
+      z-index: 60;
     }
     body > .relative.mx-auto > [data-top-seg] {
-      position: static !important;
+      position: sticky !important;
+      top: 0 !important;
+      left: auto !important;
       transform: none !important;
-      left: auto !important; top: auto !important;
-      margin: 16px auto 0 !important;
+      z-index: 50;
+      background: #ffffff;
+      margin: 16px -16px 0 !important;
+      padding: 10px 16px;
+      border-bottom: 1px solid #e5e5e5;
       display: flex; justify-content: center;
     }
 
-    /* Views → flex column */
+    /* Views → flex column, but respect the `.hidden` toggle from setTopView */
     #view-individual, #view-team, #view-api {
       position: static !important;
       width: 100% !important;
@@ -85,9 +92,12 @@
       left: auto !important; top: auto !important;
       display: flex !important;
       flex-direction: column !important;
-      gap: 16px !important;
-      margin-top: 24px !important;
+      gap: 12px !important;
+      margin-top: 16px !important;
     }
+    #view-individual.hidden,
+    #view-team.hidden,
+    #view-api.hidden { display: none !important; }
 
     /* Cards → full-width column items with consistent rounded borders */
     #view-individual > section,
@@ -120,10 +130,13 @@
       order: -1 !important;
     }
 
-    /* Strip fixed 312px inner widths */
+    /* Strip fixed 312px inner widths and seat-chip-row's fixed width so
+       both the chips and the Buy button stretch to the card edges. */
     #view-individual section [style*="width:312px"],
     #view-team section [style*="width:312px"],
     #view-api section [style*="width:312px"] { width: 100% !important; }
+    #view-team .seat-chip-row { width: 100% !important; }
+    #view-team [style*="height:60px"] { height: auto !important; }
 
     /* Hide desktop-only layout helpers: OR divider, 800px spacer */
     #view-individual > div[aria-hidden="true"],
@@ -136,11 +149,18 @@
     /* Hide the comparison table block */
     .compare-block { display: none !important; }
 
+    /* Hover tooltips don't make sense on touch — drop them on mobile */
+    .plan-hint { display: none !important; }
+
+    /* Individual tab on mobile: only show the 3 subscription cards
+       (Basic / Pro / Gold) — drop the Single Export card. */
+    #card-single-export { display: none !important; }
+
     /* Testimonials: 3-col grid → stacked */
     section[data-testimonials] {
       grid-template-columns: 1fr !important;
-      padding: 0 16px !important;
-      margin: 40px 0 !important;
+      padding: 0 0 !important;
+      margin: 24px 0 !important;
     }
 
     /* API-extras sections: shrink padding and collapse inner grids */
@@ -165,8 +185,62 @@
       text-align: center;
     }
 
-    /* Sticky footer: stop being fixed on mobile */
-    .site-footer { position: static !important; }
+    /* Sticky social-proof footer — pinned to the viewport bottom on mobile.
+       Layout: "Loved by 10M+" caption on top, logo marquee below, full-width. */
+    .site-footer {
+      position: fixed !important;
+      left: 0 !important; right: 0 !important; bottom: 0 !important;
+      z-index: 40;
+      background: #ffffff;
+      border-top: 1px solid #e5e5e5;
+    }
+    .site-footer .mx-auto { padding: 8px 0 !important; max-width: 100% !important; }
+    .site-footer [style*="gap:32px"] { gap: 6px !important; }
+    /* The row wrapping the caption + marquee flips to a vertical stack */
+    .site-footer [style*="padding-top:12px"] {
+      flex-direction: column !important;
+      align-items: stretch !important;
+      gap: 4px !important;
+      padding-top: 0 !important;
+    }
+    .site-footer p {
+      font-size: 14px !important;
+      font-weight: 600 !important;
+      letter-spacing: 0.28px !important;
+      text-align: center !important;
+      white-space: normal !important;
+    }
+    .site-footer .sp-wrap {
+      flex: 0 0 auto !important;
+      width: 100% !important;
+      height: 40px !important;
+    }
+
+    /* Feedback modal: stack vertically; survey form on the first fold,
+       offer panel (emoji + tag + title) below it. */
+    .fb-card {
+      width: 100% !important;
+      max-width: calc(100vw - 24px) !important;
+    }
+    .fb-survey-wrap {
+      display: flex !important;
+      flex-direction: column !important;
+      grid-template-columns: none !important;
+    }
+    .fb-panel-left { order: 0 !important; padding: 24px 20px !important; }
+    .fb-right-col  { order: 1 !important; padding: 24px 20px 20px !important; }
+    .fb-close { top: 8px !important; right: 8px !important; }
+    .fb-gift { display: block !important; font-size: 40px !important; margin-bottom: 10px !important; }
+    .fb-tag  { margin-bottom: 12px !important; }
+    .fb-panel-title .amt { font-size: 30px !important; }
+    .fb-panel-title .off { font-size: 18px !important; }
+    .fb-chip { padding: 6px 12px !important; font-size: 12px !important; }
+    .fb-smiley-row { gap: 10px !important; }
+
+    /* Dev-console modal: tighter padding on mobile */
+    .dc-card { width: calc(100vw - 24px) !important; padding: 24px 20px 20px !important; }
+    .dc-actions { flex-wrap: wrap; }
+    .dc-btn-primary, .dc-btn-secondary { flex: 1 1 auto; }
   }
   body {
     font-family: 'Inter', system-ui, sans-serif;
@@ -967,7 +1041,7 @@
     <div id="view-individual" class="absolute" style="left:-104px; top:176px; width:1488px; height:624px;">
 
       <!-- SINGLE EXPORT (isolated card, paid one-time) -->
-      <section class="absolute bg-white border border-primary rounded-[4px]" style="left:0; top:0; width:360px; height:579px;">
+      <section id="card-single-export" class="absolute bg-white border border-primary rounded-[4px]" style="left:0; top:0; width:360px; height:579px;">
         <div class="plan-hint">For one polished PPT you need right now — no subscription</div>
 
         <div class="p-6 flex flex-col gap-4 h-full">
@@ -1966,16 +2040,11 @@
             render('annual');
           });
         }
-        // Credits: Gold annual = 50,000 / year; Gold monthly = 5,000 / month.
-        // Always repaint the card; repaint the table only on the individual view
-        // (team view owns table credits via renderCompareSummary).
+        // Credits: repaint the Gold *card* only. The comparison table below
+        // stays locked to the annual figure regardless of the card's period.
         const goldCreditsNum = period === 'monthly' ? '5,000' : '50,000';
         const goldIndCredits = document.getElementById('gold-ind-credits');
         if (goldIndCredits) goldIndCredits.textContent = goldCreditsNum;
-        if ((document.body.dataset.topView || 'individual') !== 'team') {
-          const tblGold = document.getElementById('table-gold-credits');
-          if (tblGold) tblGold.textContent = goldCreditsNum;
-        }
       }
       window.renderGoldIndividual = render;
 
@@ -2124,16 +2193,11 @@
             renderPro();
           });
         }
-        // Credits: Pro annual = 5,000 / year; Pro monthly = 500 / month.
-        // Always repaint the card; repaint the table only on the individual view
-        // (team view owns table credits via renderCompareSummary).
+        // Credits: repaint the Pro *card* only. The comparison table below
+        // stays locked to the annual figure regardless of the card's period.
         const proCreditsNum = period === 'monthly' ? 'X,XXX' : '5,000';
         const proIndCredits = document.getElementById('pro-ind-credits');
         if (proIndCredits) proIndCredits.textContent = proCreditsNum;
-        if ((document.body.dataset.topView || 'individual') !== 'team') {
-          const tblPro = document.getElementById('table-pro-credits');
-          if (tblPro) tblPro.textContent = proCreditsNum;
-        }
       }
 
       proSeg.querySelectorAll('.plan-seg-btn').forEach(btn => {
@@ -2291,10 +2355,12 @@
           if (sGold)  sGold.innerHTML   = '<span class="usd">$</span>99';
           if (sGoldC) sGoldC.textContent= 'billed annually';
           if (sGoldB) sGoldB.textContent= 'Buy Gold';
-          // Pro column: renderPro repaints price + card credits + table credits.
+          // Table credits: always annual on the individual view.
+          if (tblP)   tblP.textContent  = '5,000';
+          if (tblG)   tblG.textContent  = '50,000';
+          // Pro card: renderPro repaints price + card credits.
           if (typeof renderPro === 'function') renderPro();
-          // Gold column: the Gold card renderer repaints card credits + table
-          // credits based on its currently selected period.
+          // Gold card: mirror its currently-selected period.
           const goldActive = document.querySelector('[data-gold-seg] .plan-seg-btn.is-active');
           if (typeof window.renderGoldIndividual === 'function') {
             window.renderGoldIndividual(goldActive ? goldActive.dataset.period : 'annual');
