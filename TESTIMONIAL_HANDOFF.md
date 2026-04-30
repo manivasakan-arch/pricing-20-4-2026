@@ -188,7 +188,8 @@ FEELINGS.forEach((f) => track.appendChild(buildChip(f)));
 - Padding `6px 12px`, border `1px rgba(26,26,26,0.15)`, radius `4px`, font 13px/500 `#525252`.
 - **Hover:** border `#171717`, color `#171717`, `transform: rotate(-3deg) scale(1.06) translateY(-2px)`, shadow lifts. z-index 2.
 - **Active:** border `#0A1925`, bg `#f2f5f9`, color `#0A1925`.
-- **Marquee:** `animation: emoji-marquee 36s linear infinite` on `.emoji-track`. `from { translate3d(0,0,0) }` → `to { translate3d(-50%, 0, 0) }`. Pause on `.emoji-row:hover`.
+- **Marquee:** `animation: emoji-marquee 60s linear infinite` on `.emoji-track`. `from { translate3d(0,0,0) }` → `to { translate3d(-50%, 0, 0) }`. Pause on `.emoji-row:hover`.
+- **Marquee viewport:** sits flush at `bottom: 0` of the input card.
 
 ---
 
@@ -254,6 +255,50 @@ The pulsing orange `.fb-cta-badge` floats above the CTA (animation `fb-cta-badge
 
 ---
 
+## 8b. Price reveal — skeleton → odometer roll
+
+The `$60` amount in both modes simulates a server fetch on page load:
+
+```html
+<span class="amt" data-price-loading="true" data-price-from="40" data-price-target="60">
+  <span class="amt-skeleton" aria-hidden="true"></span>
+  <span class="amt-real"><span class="sym">$</span><span class="amt-num">60</span></span>
+</span>
+```
+
+### Sequence
+
+| Phase | Duration | What happens |
+|---|---|---|
+| Loading | 0 → 2000ms | `.amt-skeleton` shows: 92×36 peach gradient block, shimmer (`skeleton-shimmer 1.1s ∞`). `.amt-real` is `display: none`. |
+| Reveal | 2000 → 2250ms | JS flips `data-price-loading="false"`. Skeleton hides, real fades in (`price-fade-in 0.25s`). |
+| Roll | 2000 → 3000ms | `rollNumber()` walks `.amt-num` from `data-price-from` → `data-price-target` over 1000ms with cubic ease-out. Default 40 → 60. |
+
+### Configuration (per `.amt` element)
+
+- `data-price-from="40"` — start value (default 40 in JS fallback)
+- `data-price-target="60"` — end value (default 60)
+- `data-price-loading="true|false"` — toggled by JS at the 2s mark
+
+To change the delay, edit the `setTimeout(..., 2000)` in the `<script>` block.
+
+### Why the gradient lives on `.amt-real`, not `.amt`
+
+`.amt` is `display: inline-flex` with two children (skeleton + real). Putting `background-clip: text` on `.amt` broke the gradient propagation when text was wrapped in `.amt-real .amt-num`. The gradient is applied directly to `.amt-real` so the inner `.sym` + `.amt-num` spans inherit transparent fill and the gradient clips correctly to text shape.
+
+```css
+.price-line .amt      { color: #ff5500; }            /* fallback */
+.price-line .amt-real {
+  background: linear-gradient(180deg, #ff732d 0%, #ff5500 100%);
+  -webkit-background-clip: text; background-clip: text;
+  color: transparent;
+}
+```
+
+Same pattern repeats for `.fb-panel-title .amt-real` in V2 mode.
+
+---
+
 ## 9. CTA — lock-pop + shine
 
 Identical visual + behavior in both modes (testimonial mode uses `.cta`, v2 uses `.fb-btn-primary` — same gradient, same lock pattern):
@@ -299,13 +344,16 @@ Mix of rect chips (rotated) + circle dots in 5 colors: `#ff5500`, `#ff732d`, `#f
 |----------|----------|-------|---------|
 | `gift-bounce` | 1.8s ∞ | `.gift-emoji`, `.fb-gift` | 🎁 bobs up/down |
 | `conf-drift` | 4.2–6s ∞ | `.conf`, `.fb-conf` | confetti drift + rotate |
-| `emoji-marquee` | 36s linear ∞ | `.emoji-track` | right-to-left infinite scroll |
+| `emoji-marquee` | 60s linear ∞ | `.emoji-track` | right-to-left infinite scroll (slow) |
+| `skeleton-shimmer` | 1.1s ∞ | `.amt-skeleton` | peach gradient sweep during 2s load |
+| `price-fade-in` | 0.25s ease-out | `.amt[data-price-loading="false"] .amt-real` | $XX fades in after skeleton |
 | `lock-pop` | 0.55s spring | `.cta-lock .ph-lock-open` | padlock unlocks on enable |
 | `cta-shine` | 0.75s linear | `.cta.just-unlocked::before` | white sweep across CTA |
 | `fb-arrow-pulse` | 1.4s ∞ | `.fb-panel-sub .arrow` | rightward nudge (V2 left panel) |
-| `fb-cta-badge-pulse` | 1.8s ∞ | `.fb-cta-badge` | timer badge bobs |
+| `fb-cta-badge-pulse` | 1.8s ∞ | `.fb-cta-badge` | success timer badge bobs |
 | `nudge-pop` | 0.45s spring | `.offer-nudge` | modal scale-in on mount |
-| `fade-in` | 0.35s ease | `[data-step].on` | step transition |
+| `fade-in` | 0.35s ease | `[data-step].on` | form → success transition |
+| `rollNumber` (JS) | 1000ms ease-out | `.amt-num` | digit count from `from` → `to` |
 
 ---
 
@@ -357,6 +405,7 @@ None. Everything is IIFE-scoped.
 - `startTimer(el, totalSec)` — countdown helper, `setInterval` 1000ms.
 - `showSuccess(shellName)` — swaps step from form → success, swaps tag copy, kicks off countdown.
 - `focusActiveQuote()` — auto-focus contenteditable on load + on toggle switch.
+- `rollNumber(el, from, to, dur)` — odometer-style digit count using `requestAnimationFrame`, cubic ease-out.
 
 ### Wiring at boot
 ```js
@@ -433,3 +482,4 @@ Wrap `.offer-nudge` in your own container, drop `.modal-backdrop` and `.close-bt
 |------|--------|
 | 2026-04-29 | Initial scaffold ported from `crazy8s.html` Round 1 V1. |
 | 2026-04-30 | Added v2 toggle mode, full v2 popup parity, success step + countdown, expanded confetti, contenteditable text field, 50 randomized presentation testimonials, lock-pop CTA, infinite marquee. Handoff doc written. |
+| 2026-04-30 | Price reveal: 2s peach skeleton → odometer roll `$40 → $60` (configurable via `data-price-from` / `data-price-target`) + 0.25s fade-in. Marquee speed slowed `36s → 60s`. Marquee row aligned flush at `bottom: 0`. Removed earlier scale-pop / blur reveal — just clean fade + roll. Gradient `background-clip:text` moved from `.amt` → `.amt-real` to fix invisible-digits bug. |

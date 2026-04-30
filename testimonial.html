@@ -173,24 +173,13 @@
     .amt[data-price-loading="true"] .amt-real { display: none; }
     .amt[data-price-loading="false"] .amt-skeleton { display: none; }
 
-    /* Reveal sequence: scale-pop the $ + count-up digits */
+    /* Reveal: simple fade-in, then digits roll via JS */
     .amt[data-price-loading="false"] .amt-real {
-      animation: price-pop 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+      animation: price-fade-in 0.25s ease-out;
     }
-    .amt[data-price-loading="false"] .sym {
-      animation: sym-pop 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
-      display: inline-block;
-    }
-    @keyframes price-pop {
-      0%   { opacity: 0; transform: scale(0.4); filter: blur(8px); }
-      55%  { opacity: 1; filter: blur(0); transform: scale(1.12); }
-      80%  { transform: scale(0.96); }
-      100% { transform: scale(1); }
-    }
-    @keyframes sym-pop {
-      0%   { opacity: 0; transform: translateX(-8px) scale(0.6); }
-      60%  { opacity: 1; transform: translateX(2px) scale(1.1); }
-      100% { transform: translateX(0) scale(1); }
+    @keyframes price-fade-in {
+      from { opacity: 0; }
+      to   { opacity: 1; }
     }
     /* V2 panel-title amount: skeleton inherits base color but uses larger height */
     .fb-panel-title .amt { min-width: 92px; min-height: 36px; }
@@ -508,7 +497,7 @@
     .emoji-row {
       position: absolute;
       left: 0; right: 0;
-      bottom: 8px;
+      bottom: 0;
       height: 70px;
       overflow: visible;
       pointer-events: none;
@@ -544,7 +533,7 @@
       width: max-content;
       height: 100%;
       padding: 0 4px;
-      animation: emoji-marquee 36s linear infinite;
+      animation: emoji-marquee 60s linear infinite;
       will-change: transform;
       transform: translate3d(0,0,0);
       backface-visibility: hidden;
@@ -718,7 +707,7 @@
           <div class="nudge-copy">
             <span class="badge">Help us improve and get</span>
             <div class="price-line">
-              <span class="amt" data-price-loading="true" data-price-target="60">
+              <span class="amt" data-price-loading="true" data-price-from="40" data-price-target="60">
                 <span class="amt-skeleton" aria-hidden="true"></span>
                 <span class="amt-real"><span class="sym">$</span><span class="amt-num">60</span></span>
               </span>
@@ -787,7 +776,7 @@
                 <span class="fb-gift">🎁</span>
                 <span class="fb-tag">Help us improve and get</span>
                 <div class="fb-panel-title">
-                  <span class="amt" data-price-loading="true" data-price-target="60">
+                  <span class="amt" data-price-loading="true" data-price-from="40" data-price-target="60">
                 <span class="amt-skeleton" aria-hidden="true"></span>
                 <span class="amt-real"><span class="sym">$</span><span class="amt-num">60</span></span>
               </span>
@@ -985,15 +974,16 @@
       wireInputCard('input-card', 'emoji-track', 'quote', 'cta');
       wireInputCard('input-card-v2', 'emoji-track-v2', 'quote-v2', 'fb-submit');
 
-      // Simulate 2s server fetch → reveal price with count-up + pop
-      const countUp = (el, target, dur) => {
+      // Simulate 2s server fetch → reveal price with odometer roll 40 → 60
+      const rollNumber = (el, from, to, dur) => {
         const start = performance.now();
         const easeOut = (t) => 1 - Math.pow(1 - t, 3);
         const tick = (now) => {
           const t = Math.min(1, (now - start) / dur);
-          el.textContent = String(Math.round(target * easeOut(t)));
+          const v = Math.round(from + (to - from) * easeOut(t));
+          el.textContent = String(v);
           if (t < 1) requestAnimationFrame(tick);
-          else el.textContent = String(target);
+          else el.textContent = String(to);
         };
         requestAnimationFrame(tick);
       };
@@ -1001,11 +991,11 @@
         document.querySelectorAll('.amt[data-price-loading="true"]').forEach((el) => {
           el.dataset.priceLoading = 'false';
           const target = parseInt(el.dataset.priceTarget, 10) || 60;
+          const startVal = parseInt(el.dataset.priceFrom, 10) || 40;
           const num = el.querySelector('.amt-num');
           if (num) {
-            num.textContent = '0';
-            // Slight delay so pop animation kicks in then number tallies
-            setTimeout(() => countUp(num, target, 700), 80);
+            num.textContent = String(startVal);
+            rollNumber(num, startVal, target, 1000);
           }
         });
       }, 2000);
