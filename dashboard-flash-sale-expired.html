@@ -456,23 +456,29 @@
           </span>
         </div>
 
-        <!-- NUDGE STATE: orange "Help us improve and get $60" tag + bouncing
-             arrow + shimmer survey CTA -->
+        <!-- NUDGE STATE: "Help us improve and get $60 • Claim Discount" chip
+             + Trial/Credits cycler + Upgrade CTA -->
         <div data-state="nudge" class="ds-state flex items-center gap-3">
-          <span class="up-discount-chip">
+          <span class="up-discount-chip" id="nudge-discount-chip">
             <span style="font-size:14px;">🎁</span>
             <span>Help us improve and get $60</span>
+            <span class="opacity-60">•</span>
+            <button id="claim-discount-btn" type="button" class="font-bold underline underline-offset-2 hover:opacity-90" style="background:transparent; border:0; padding:0; color:inherit; font:inherit; cursor:pointer;">Claim Discount</button>
           </span>
-          <span class="reactivate-wrap">
-            <button id="nudge-cta" class="shimmer-cta inline-flex items-center gap-2 h-9 px-5 rounded text-white text-[14px] font-bold" style="background:#ff5500;">
-              <i class="ph-fill ph-chat-circle-text text-[16px]"></i>
-              Take survey and upgrade
+
+          <div class="trial-chip-wrap bg-white rounded-md flex items-center pl-2.5 pr-1 py-1" style="border: 1px solid rgba(255, 85, 0, 0.12);">
+            <div class="trial-chip-stack">
+              <div class="trial-chip-track">
+                <span class="text-[14px] font-medium text-ink-primary">🔥 Trial: 4 days left</span>
+                <span class="text-[14px] font-medium text-ink-primary">✨ Credits: 60 left</span>
+                <span class="text-[14px] font-medium text-ink-primary">🔥 Trial: 4 days left</span>
+              </div>
+            </div>
+            <button id="nudge-cta" class="shimmer-cta ml-3 inline-flex items-center gap-1.5 h-7 px-3.5 rounded text-white text-[14px] font-medium" style="background:#ff5500;">
+              <i class="ph-fill ph-rocket-launch text-[16px]"></i>
+              Upgrade
             </button>
-            <span class="reactivate-tooltip" role="tooltip">
-              <strong>Two quick questions</strong>
-              <span class="muted">Share your feedback and we&rsquo;ll unlock $60 off Pro Annual right away.</span>
-            </span>
-          </span>
+          </div>
         </div>
 
         <!-- Utility icons -->
@@ -632,6 +638,8 @@
     if (cta) cta.addEventListener('click', () => setState('active'));
     const nudgeCta = document.getElementById('nudge-cta');
     if (nudgeCta) nudgeCta.addEventListener('click', () => setState('active'));
+    const claimBtn = document.getElementById('claim-discount-btn');
+    if (claimBtn) claimBtn.addEventListener('click', () => setState('active'));
   })();
 </script>
 
