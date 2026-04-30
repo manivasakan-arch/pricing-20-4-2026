@@ -1,0 +1,721 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>crazy8s · Missed offer top message — Round 3</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/regular/style.css" />
+<link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/bold/style.css" />
+<link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/fill/style.css" />
+<script src="https://cdn.tailwindcss.com"></script>
+
+<script>
+  tailwind.config = {
+    theme: {
+      extend: {
+        colors: {
+          ink:    { primary: '#171717', secondary: '#525252', tertiary: '#a3a3a3' },
+          brand:  { 50: '#fff5ee', 100: '#ffe4d3', 500: '#ff5500', 600: '#e14a00', 700: '#b03a00' },
+        },
+      },
+    },
+  };
+</script>
+
+<style>
+  html, body { background: #f5f5f5; color: #171717; }
+  body { font-family: 'Inter', system-ui, sans-serif; -webkit-font-smoothing: antialiased; }
+
+  .ds-elev-2 {
+    box-shadow:
+      0 0 0 1px rgba(10,25,37,0.09),
+      0 1px 2px 0 rgba(10,25,37,0.09),
+      inset 0 0 0 1px rgba(255,255,255,0.8);
+  }
+
+  /* ─── Shared top-nav primitives ──────────────────────────────────────── */
+  .mini-nav {
+    display: flex; align-items: center; gap: 12px;
+    height: 56px; padding: 0 24px;
+    background: #fff;
+    border-bottom: 1px solid rgba(10,25,37,0.09);
+    position: relative;
+  }
+  .mini-nav .icon-btn {
+    width: 36px; height: 36px;
+    display: inline-flex; align-items: center; justify-content: center;
+    border-radius: 8px;
+    color: #525252;
+    position: relative;
+  }
+  .mini-nav .avatar {
+    width: 28px; height: 28px; border-radius: 999px;
+    background:
+      radial-gradient(circle at 30% 30%, #fff0c8, transparent 55%),
+      linear-gradient(135deg, #f6b56b, #b76b1f);
+  }
+  .trial-pill {
+    background: #fff;
+    border: 1px solid rgba(255, 85, 0, 0.12);
+    border-radius: 6px;
+    display: flex; align-items: center;
+    padding: 4px 4px 4px 10px;
+  }
+  .trial-pill > .copy {
+    font-size: 14px; font-weight: 500; color: #171717; line-height: 20px;
+    margin-right: 12px; white-space: nowrap;
+  }
+  .trial-pill > .upgrade {
+    display: inline-flex; align-items: center; gap: 6px;
+    height: 28px; padding: 0 14px; border-radius: 4px;
+    background: #ff5500; color: #fff;
+    font-size: 14px; font-weight: 500;
+    border: 0; cursor: pointer;
+    position: relative;
+  }
+  .trial-pill > .upgrade i { font-size: 16px; }
+
+  /* ─── Acknowledgment toast (every variant uses this on click) ────────── */
+  .ack-toast {
+    position: absolute;
+    bottom: 14px; left: 50%; transform: translate(-50%, 12px);
+    background: #171717; color: #fff;
+    padding: 8px 14px;
+    border-radius: 999px;
+    font-size: 12px; font-weight: 600;
+    opacity: 0; pointer-events: none;
+    transition: transform .22s ease, opacity .22s ease;
+    z-index: 30;
+    box-shadow: 0 8px 18px rgba(10,25,37,0.25);
+  }
+  .ack-toast[data-open="true"] { opacity: 1; transform: translate(-50%, 0); }
+
+  /* ─── Variant 01: Full-width banner ribbon ───────────────────────────── */
+  .v01-banner {
+    background: linear-gradient(135deg, #ff7a3d 0%, #ff5500 50%, #c63e00 100%);
+    color: #fff;
+    padding: 10px 24px;
+    display: flex; align-items: center; gap: 14px;
+    position: relative;
+    overflow: hidden;
+  }
+  .v01-banner::before {
+    content: '';
+    position: absolute; inset: 0;
+    background:
+      radial-gradient(circle at 8% 50%, rgba(255,255,255,0.18), transparent 35%),
+      radial-gradient(circle at 92% 50%, rgba(255,255,255,0.10), transparent 30%);
+    pointer-events: none;
+  }
+  .v01-banner > * { position: relative; z-index: 1; }
+  .v01-banner .icon { width: 26px; height: 26px; border-radius: 999px; background: rgba(255,255,255,0.18); display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .v01-banner .copy { flex: 1; min-width: 0; font-size: 13px; font-weight: 600; }
+  .v01-banner .copy strong { font-weight: 800; }
+  .v01-banner .copy .sep { opacity: 0.7; padding: 0 6px; font-weight: 500; }
+  .v01-banner .copy .last { letter-spacing: 0.06em; text-transform: uppercase; font-size: 11px; font-weight: 800; }
+  .v01-banner .cta {
+    background: #fff; color: #b03a00;
+    height: 30px; padding: 0 14px; border-radius: 6px;
+    font-size: 12px; font-weight: 800; border: 0; cursor: pointer;
+    display: inline-flex; align-items: center; gap: 6px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.18);
+  }
+  .v01-banner .cta:hover { background: #fff5ee; }
+
+  /* ─── Variant 02: Compact orange pill (inline in the nav) ────────────── */
+  .v02-pill {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: #ff5500; color: #fff;
+    border-radius: 999px;
+    padding: 4px 4px 4px 12px;
+    font-size: 12px; font-weight: 700; letter-spacing: 0.02em;
+    box-shadow: 0 4px 12px rgba(255,85,0,0.32);
+    animation: v02-glow 2.4s ease-in-out infinite;
+  }
+  .v02-pill .last {
+    text-transform: uppercase; letter-spacing: 0.14em; font-size: 10px; font-weight: 800;
+    background: rgba(255,255,255,0.22); padding: 2px 6px; border-radius: 999px;
+  }
+  .v02-pill .sep { opacity: 0.7; }
+  .v02-pill .cta {
+    background: #fff; color: #b03a00;
+    height: 24px; padding: 0 12px; border-radius: 999px;
+    font-size: 11px; font-weight: 800; border: 0; cursor: pointer;
+    display: inline-flex; align-items: center; gap: 4px;
+  }
+  .v02-pill .cta:hover { background: #fff5ee; }
+  @keyframes v02-glow {
+    0%, 100% { box-shadow: 0 4px 12px rgba(255,85,0,0.32), 0 0 0 0 rgba(255,85,0,0.45); }
+    70%      { box-shadow: 0 4px 12px rgba(255,85,0,0.32), 0 0 0 8px rgba(255,85,0,0); }
+  }
+
+  /* ─── Variant 03: Stacked badge block ─────────────────────────────────── */
+  .v03-block {
+    padding: 16px 24px;
+    background: linear-gradient(135deg, #fff5ee 0%, #ffe4d3 100%);
+    border-bottom: 1px solid rgba(255,85,0,0.18);
+    display: flex; flex-direction: column; gap: 10px;
+  }
+  .v03-block .row1 {
+    display: flex; align-items: center; gap: 10px;
+  }
+  .v03-block .last-badge {
+    display: inline-flex; align-items: center; gap: 6px;
+    background: #ff5500; color: #fff;
+    padding: 3px 10px; border-radius: 999px;
+    font-size: 10px; font-weight: 800; letter-spacing: 0.16em; text-transform: uppercase;
+  }
+  .v03-block .headline { font-size: 15px; font-weight: 800; color: #171717; letter-spacing: -0.005em; }
+  .v03-block .actions { display: flex; gap: 8px; }
+  .v03-block .btn-primary {
+    background: #ff5500; color: #fff;
+    height: 30px; padding: 0 14px; border-radius: 6px;
+    font-size: 12px; font-weight: 700; border: 0; cursor: pointer;
+    display: inline-flex; align-items: center; gap: 6px;
+  }
+  .v03-block .btn-primary:hover { background: #e14a00; }
+  .v03-block .btn-link {
+    background: transparent; color: #b03a00;
+    border: 0; cursor: pointer;
+    font-size: 12px; font-weight: 700;
+    text-decoration: underline; text-underline-offset: 3px;
+  }
+
+  /* ─── Variant 04: Slot-divided pill ──────────────────────────────────── */
+  .v04-pill {
+    display: inline-flex; align-items: stretch;
+    border-radius: 999px;
+    overflow: hidden;
+    box-shadow: 0 1px 2px rgba(10,25,37,0.10),
+                0 0 0 1px rgba(10,25,37,0.10);
+    font-size: 11px; font-weight: 800; letter-spacing: 0.06em;
+    line-height: 1;
+  }
+  .v04-pill > * { padding: 7px 12px; display: inline-flex; align-items: center; gap: 6px; }
+  .v04-pill .left  { background: #f5f5f5; color: #525252; }
+  .v04-pill .mid   { background: #171717; color: #fff; }
+  .v04-pill .last  { background: #ff5500; color: #fff; }
+  .v04-pill .cta {
+    background: #fff; color: #b03a00;
+    border-left: 1px solid rgba(255,255,255,0.4);
+    cursor: pointer; border-radius: 0;
+    box-shadow: inset 0 0 0 1px rgba(0,0,0,0.04);
+  }
+  .v04-pill .cta:hover { background: #fff5ee; }
+
+  /* ─── Variant 05: Hero strip ─────────────────────────────────────────── */
+  .v05-hero {
+    padding: 18px 24px;
+    background: #ffffff;
+    border-bottom: 1px solid rgba(10,25,37,0.09);
+    display: flex; align-items: center; gap: 18px;
+  }
+  .v05-hero .icon {
+    width: 44px; height: 44px;
+    border-radius: 12px;
+    background: linear-gradient(135deg, #ff7a3d, #ff5500);
+    color: #fff;
+    display: inline-flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+    box-shadow: 0 8px 18px rgba(255,85,0,0.32);
+  }
+  .v05-hero .copy { flex: 1; min-width: 0; }
+  .v05-hero h3 {
+    font-size: 17px; font-weight: 800; color: #171717;
+    letter-spacing: -0.01em; line-height: 1.25;
+  }
+  .v05-hero h3 strong { color: #b03a00; }
+  .v05-hero p {
+    font-size: 12px; color: #525252;
+    margin-top: 2px;
+    display: inline-flex; align-items: center; gap: 6px;
+  }
+  .v05-hero p .timer {
+    font-variant-numeric: tabular-nums;
+    background: rgba(255,85,0,0.12); color: #b03a00;
+    padding: 1px 6px; border-radius: 4px;
+    font-weight: 800; font-size: 11px; letter-spacing: 0.04em;
+  }
+  .v05-hero .cta {
+    background: #ff5500; color: #fff;
+    height: 38px; padding: 0 18px; border-radius: 6px;
+    font-size: 13px; font-weight: 800; border: 0; cursor: pointer;
+    display: inline-flex; align-items: center; gap: 8px;
+    box-shadow: 0 6px 16px rgba(255,85,0,0.32);
+  }
+  .v05-hero .cta:hover { background: #e14a00; }
+
+  /* ─── Variant 06: Amber alert ────────────────────────────────────────── */
+  .v06-alert {
+    padding: 12px 24px;
+    background: linear-gradient(180deg, #fff5ee 0%, #ffeede 100%);
+    border-bottom: 1px solid rgba(255,85,0,0.20);
+    border-left: 3px solid #ff5500;
+    display: flex; align-items: center; gap: 12px;
+    color: #b03a00;
+  }
+  .v06-alert .icon { width: 22px; height: 22px; flex-shrink: 0; color: #ff5500; display: inline-flex; align-items: center; justify-content: center; }
+  .v06-alert .copy { flex: 1; min-width: 0; font-size: 13px; font-weight: 600; color: #b03a00; }
+  .v06-alert .copy strong { color: #171717; font-weight: 800; }
+  .v06-alert .actions { display: flex; gap: 4px; align-items: center; }
+  .v06-alert .btn-link {
+    background: transparent; color: #b03a00; border: 0; cursor: pointer;
+    font-size: 12px; font-weight: 800;
+    text-decoration: underline; text-underline-offset: 3px;
+    padding: 4px 6px;
+  }
+  .v06-alert .btn-link:hover { color: #ff5500; }
+
+  /* ─── Variant 07: Marquee with embedded CTAs ─────────────────────────── */
+  .v07-marquee {
+    display: flex; align-items: center;
+    height: 32px;
+    overflow: hidden;
+    background: linear-gradient(90deg, #ff7a3d 0%, #ff5500 50%, #c63e00 100%);
+    color: #fff;
+    cursor: pointer;
+    position: relative;
+  }
+  .v07-marquee::before, .v07-marquee::after {
+    content: ''; position: absolute; top: 0; bottom: 0; width: 32px;
+    z-index: 2; pointer-events: none;
+  }
+  .v07-marquee::before { left: 0;  background: linear-gradient(to right, #ff7a3d, transparent); }
+  .v07-marquee::after  { right: 0; background: linear-gradient(to left, #c63e00, transparent); }
+  .v07-track {
+    display: inline-flex; align-items: center; gap: 36px;
+    animation: v07-scroll 24s linear infinite;
+    white-space: nowrap;
+    padding-left: 32px;
+    font-size: 12px; font-weight: 700; letter-spacing: 0.04em;
+  }
+  .v07-marquee:hover .v07-track { animation-play-state: paused; }
+  .v07-track > span { display: inline-flex; align-items: center; gap: 8px; }
+  .v07-track .last {
+    background: rgba(255,255,255,0.22); padding: 2px 8px; border-radius: 999px;
+    font-size: 10px; font-weight: 800; letter-spacing: 0.16em; text-transform: uppercase;
+  }
+  .v07-track .pill-cta {
+    background: #fff; color: #b03a00;
+    height: 22px; padding: 0 10px; border-radius: 999px;
+    font-size: 11px; font-weight: 800;
+    display: inline-flex; align-items: center; gap: 6px;
+  }
+  @keyframes v07-scroll {
+    0%   { transform: translateX(0); }
+    100% { transform: translateX(-50%); }
+  }
+
+  /* ─── Variant 08: Side-by-side cards ─────────────────────────────────── */
+  .v08-wrap {
+    padding: 14px 24px;
+    background: #fafafa;
+    border-bottom: 1px solid rgba(10,25,37,0.06);
+    display: flex; flex-direction: column; gap: 12px;
+  }
+  .v08-wrap .heading {
+    display: inline-flex; align-items: center; gap: 8px;
+    font-size: 13px; font-weight: 700; color: #171717;
+  }
+  .v08-wrap .heading .last {
+    background: #ff5500; color: #fff;
+    padding: 3px 10px; border-radius: 999px;
+    font-size: 9px; font-weight: 800; letter-spacing: 0.16em; text-transform: uppercase;
+  }
+  .v08-wrap .pair {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+  }
+  .v08-wrap .card {
+    background: #fff;
+    border-radius: 10px;
+    padding: 10px 12px;
+    display: flex; align-items: center; gap: 10px;
+    cursor: pointer;
+    box-shadow: 0 0 0 1px rgba(10,25,37,0.09),
+                0 1px 2px rgba(10,25,37,0.06);
+    transition: transform .15s ease, box-shadow .15s ease;
+  }
+  .v08-wrap .card:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 0 0 1px rgba(255,85,0,0.4),
+                0 4px 10px rgba(255,85,0,0.18);
+  }
+  .v08-wrap .card .icon {
+    width: 32px; height: 32px;
+    border-radius: 8px;
+    background: rgba(255,85,0,0.12);
+    color: #ff5500;
+    display: inline-flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+  }
+  .v08-wrap .card.primary .icon {
+    background: linear-gradient(135deg, #ff7a3d, #ff5500);
+    color: #fff;
+    box-shadow: 0 4px 10px rgba(255,85,0,0.32);
+  }
+  .v08-wrap .card .title { font-size: 12px; font-weight: 800; color: #171717; }
+  .v08-wrap .card .sub   { font-size: 11px; color: #525252; }
+
+  /* ─── Variant card layout (shared) ───────────────────────────────────── */
+  .variant {
+    background: #fff;
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow:
+      0 0 0 1px rgba(10,25,37,0.09),
+      0 4px 12px rgba(10,25,37,0.06);
+    display: flex; flex-direction: column;
+    position: relative;
+  }
+  .variant-head {
+    padding: 18px 20px 14px;
+    border-bottom: 1px solid rgba(10,25,37,0.09);
+    background: #fafafa;
+  }
+  .variant-stage {
+    position: relative;
+    min-height: 200px;
+    overflow: hidden;
+  }
+  .variant-controls {
+    padding: 12px 16px;
+    border-top: 1px solid rgba(10,25,37,0.06);
+    display: flex; gap: 8px; align-items: center;
+    background: #fafafa;
+    flex-wrap: wrap;
+  }
+  .legend {
+    margin-left: auto;
+    font-size: 11px; color: #a3a3a3;
+    text-transform: uppercase; letter-spacing: 0.08em; font-weight: 700;
+  }
+
+  .round-tag {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: #171717; color: #fff;
+    padding: 6px 14px; border-radius: 999px;
+    font-size: 11px; font-weight: 700;
+    letter-spacing: 0.16em; text-transform: uppercase;
+  }
+  .copy-callout {
+    background: rgba(255,85,0,0.08);
+    border: 1px solid rgba(255,85,0,0.22);
+    border-radius: 8px;
+    padding: 10px 14px;
+    font-size: 13px;
+    color: #b03a00;
+  }
+  .copy-callout strong { color: #171717; }
+</style>
+</head>
+<body>
+
+<header class="px-8 py-10 max-w-7xl mx-auto">
+  <span class="round-tag">Round 3 · 8 directions · New copy</span>
+  <h1 class="text-[28px] font-bold text-ink-primary mt-3 tracking-[-0.01em]">Top-of-dashboard "Missed offer" message</h1>
+  <p class="text-[14px] text-ink-secondary mt-2 max-w-2xl leading-[1.55]">
+    Eight ways to render the missed-offer recovery message on the dashboard top. Every variant carries the
+    same headline copy and the same primary action so we can isolate the visual + interaction model.
+  </p>
+  <div class="copy-callout mt-4 max-w-3xl">
+    <strong>Copy (verbatim, all variants):</strong> &nbsp;
+    &ldquo;Missed $60 off Pro Annual&nbsp;&middot;&nbsp;Last chance&nbsp;&middot;&nbsp;<em>Reactivate&nbsp;and&nbsp;Upgrade</em>&rdquo;
+  </div>
+  <p class="text-[12px] text-ink-tertiary mt-3 leading-[1.5]">
+    Constants: brand orange <code class="font-mono">#ff5500</code>, dashboard top-nav frame, single
+    primary CTA <strong class="text-ink-primary not-italic">Reactivate&nbsp;and&nbsp;Upgrade</strong>.
+    Pick one (e.g. <em>"branch on 04"</em>) or say <strong class="text-ink-primary">freeze it</strong>.
+  </p>
+</header>
+
+<main class="grid grid-cols-1 lg:grid-cols-2 gap-6 px-8 pb-10 max-w-7xl mx-auto">
+
+  <!-- 01 · Full-width banner ribbon -->
+  <article class="variant" data-variant-id="01">
+    <div class="variant-head">
+      <p class="text-[11px] font-bold uppercase tracking-[0.16em] text-ink-tertiary">01</p>
+      <h2 class="text-[16px] font-bold text-ink-primary mt-1">Full-width banner ribbon</h2>
+      <p class="text-[13px] text-ink-secondary mt-1.5">Orange ribbon spans the entire stage above the top-nav. Highest visibility — impossible to miss, displaces a sliver of vertical space.</p>
+    </div>
+    <div class="variant-stage">
+      <div class="v01-banner">
+        <span class="icon"><i class="ph-fill ph-rocket-launch text-[14px]"></i></span>
+        <p class="copy">
+          Missed <strong>$60 off Pro Annual</strong>
+          <span class="sep">·</span>
+          <span class="last">Last chance</span>
+        </p>
+        <button class="cta" data-cta>
+          <i class="ph-bold ph-arrow-clockwise text-[12px]"></i>
+          Reactivate and Upgrade
+        </button>
+      </div>
+      <div class="mini-nav">
+        <div class="ml-auto flex items-center gap-3">
+          <span class="icon-btn"><i class="ph ph-magnifying-glass text-[18px]"></i></span>
+          <span class="icon-btn"><i class="ph ph-question text-[18px]"></i></span>
+          <span class="icon-btn"><i class="ph ph-bell text-[18px]"></i></span>
+          <span class="avatar"></span>
+        </div>
+      </div>
+      <div class="ack-toast" data-ack>Reactivated · checkout opens</div>
+    </div>
+    <div class="variant-controls"><span class="legend">Banner · Highest visibility</span></div>
+  </article>
+
+  <!-- 02 · Compact orange pill -->
+  <article class="variant" data-variant-id="02">
+    <div class="variant-head">
+      <p class="text-[11px] font-bold uppercase tracking-[0.16em] text-ink-tertiary">02</p>
+      <h2 class="text-[16px] font-bold text-ink-primary mt-1">Compact orange pill</h2>
+      <p class="text-[13px] text-ink-secondary mt-1.5">Single horizontal pill drops into the top-nav (replacing the trial pill). Minimal real estate, soft halo pulse keeps it discoverable.</p>
+    </div>
+    <div class="variant-stage">
+      <div class="mini-nav">
+        <div class="ml-auto flex items-center gap-3">
+          <span class="v02-pill">
+            <span>🔥 Missed $60 off Pro Annual</span>
+            <span class="sep">·</span>
+            <span class="last">Last chance</span>
+            <button class="cta" data-cta>
+              <i class="ph-bold ph-arrow-clockwise text-[10px]"></i>
+              Reactivate and Upgrade
+            </button>
+          </span>
+          <span class="icon-btn"><i class="ph ph-magnifying-glass text-[18px]"></i></span>
+          <span class="icon-btn"><i class="ph ph-bell text-[18px]"></i></span>
+          <span class="avatar"></span>
+        </div>
+      </div>
+      <div class="ack-toast" data-ack>Reactivated · checkout opens</div>
+    </div>
+    <div class="variant-controls"><span class="legend">Inline pill · Compact</span></div>
+  </article>
+
+  <!-- 03 · Stacked badge block -->
+  <article class="variant" data-variant-id="03">
+    <div class="variant-head">
+      <p class="text-[11px] font-bold uppercase tracking-[0.16em] text-ink-tertiary">03</p>
+      <h2 class="text-[16px] font-bold text-ink-primary mt-1">Stacked badge block</h2>
+      <p class="text-[13px] text-ink-secondary mt-1.5">A peach-tinted strip below the top-nav with a small "LAST CHANCE" badge over a bold headline + the primary action. Adds verticality.</p>
+    </div>
+    <div class="variant-stage">
+      <div class="mini-nav">
+        <div class="ml-auto flex items-center gap-3">
+          <span class="icon-btn"><i class="ph ph-magnifying-glass text-[18px]"></i></span>
+          <span class="icon-btn"><i class="ph ph-bell text-[18px]"></i></span>
+          <span class="avatar"></span>
+        </div>
+      </div>
+      <div class="v03-block">
+        <div class="row1">
+          <span class="last-badge"><i class="ph-fill ph-lightning text-[10px]"></i>Last chance</span>
+          <p class="headline">Missed <span style="color:#b03a00;">$60 off Pro Annual</span>. Time to lock it in.</p>
+        </div>
+        <div class="actions">
+          <button class="btn-primary" data-cta><i class="ph-bold ph-arrow-clockwise text-[12px]"></i>Reactivate and Upgrade</button>
+          <button class="btn-link">Maybe later</button>
+        </div>
+      </div>
+      <div class="ack-toast" data-ack>Reactivated · checkout opens</div>
+    </div>
+    <div class="variant-controls"><span class="legend">Block · Editorial</span></div>
+  </article>
+
+  <!-- 04 · Slot-divided pill -->
+  <article class="variant" data-variant-id="04">
+    <div class="variant-head">
+      <p class="text-[11px] font-bold uppercase tracking-[0.16em] text-ink-tertiary">04</p>
+      <h2 class="text-[16px] font-bold text-ink-primary mt-1">Slot-divided pill</h2>
+      <p class="text-[13px] text-ink-secondary mt-1.5">A four-segment horizontal pill — gray "Missed", dark "$60 off Pro Annual", orange "Last chance", and a white "Reactivate and Upgrade" CTA segment.</p>
+    </div>
+    <div class="variant-stage">
+      <div class="mini-nav">
+        <div class="ml-auto flex items-center gap-3">
+          <span class="v04-pill">
+            <span class="left"><i class="ph ph-x-circle text-[12px]"></i>Missed</span>
+            <span class="mid">$60&nbsp;off Pro Annual</span>
+            <span class="last">Last chance</span>
+            <button class="cta" data-cta><i class="ph-bold ph-arrow-clockwise text-[10px]"></i>Reactivate and Upgrade</button>
+          </span>
+          <span class="icon-btn"><i class="ph ph-bell text-[18px]"></i></span>
+          <span class="avatar"></span>
+        </div>
+      </div>
+      <div class="ack-toast" data-ack>Reactivated · checkout opens</div>
+    </div>
+    <div class="variant-controls"><span class="legend">Segmented · Storytelling</span></div>
+  </article>
+
+  <!-- 05 · Hero strip with timer 0:00 -->
+  <article class="variant" data-variant-id="05">
+    <div class="variant-head">
+      <p class="text-[11px] font-bold uppercase tracking-[0.16em] text-ink-tertiary">05</p>
+      <h2 class="text-[16px] font-bold text-ink-primary mt-1">Hero strip with elapsed timer</h2>
+      <p class="text-[13px] text-ink-secondary mt-1.5">A taller hero strip below the nav with a large icon, bolded headline, an elapsed timer chip ("00:00"), and a prominent primary action. Communicates urgency through the dead timer.</p>
+    </div>
+    <div class="variant-stage" style="min-height: 220px;">
+      <div class="mini-nav">
+        <div class="ml-auto flex items-center gap-3">
+          <span class="icon-btn"><i class="ph ph-magnifying-glass text-[18px]"></i></span>
+          <span class="icon-btn"><i class="ph ph-bell text-[18px]"></i></span>
+          <span class="avatar"></span>
+        </div>
+      </div>
+      <div class="v05-hero">
+        <span class="icon"><i class="ph-fill ph-hourglass-low text-[20px]"></i></span>
+        <div class="copy">
+          <h3>Missed <strong>$60 off Pro Annual</strong> · Last chance</h3>
+          <p>Timer expired <span class="timer">00:00</span> &middot; one revival left</p>
+        </div>
+        <button class="cta" data-cta>
+          <i class="ph-fill ph-rocket-launch text-[14px]"></i>
+          Reactivate and Upgrade
+        </button>
+      </div>
+      <div class="ack-toast" data-ack>Reactivated · checkout opens</div>
+    </div>
+    <div class="variant-controls"><span class="legend">Hero · Most urgent</span></div>
+  </article>
+
+  <!-- 06 · Amber alert -->
+  <article class="variant" data-variant-id="06">
+    <div class="variant-head">
+      <p class="text-[11px] font-bold uppercase tracking-[0.16em] text-ink-tertiary">06</p>
+      <h2 class="text-[16px] font-bold text-ink-primary mt-1">Amber alert</h2>
+      <p class="text-[13px] text-ink-secondary mt-1.5">Warm-tinted alert below the nav with a left accent bar and a warning icon. The primary action lives as a text-link button to keep the strip flat.</p>
+    </div>
+    <div class="variant-stage">
+      <div class="mini-nav">
+        <div class="ml-auto flex items-center gap-3">
+          <span class="icon-btn"><i class="ph ph-magnifying-glass text-[18px]"></i></span>
+          <span class="icon-btn"><i class="ph ph-bell text-[18px]"></i></span>
+          <span class="avatar"></span>
+        </div>
+      </div>
+      <div class="v06-alert">
+        <span class="icon"><i class="ph-fill ph-warning-circle text-[18px]"></i></span>
+        <p class="copy">Missed <strong>$60 off Pro Annual</strong> · Last chance to recover this discount before it expires for good.</p>
+        <span class="actions">
+          <button class="btn-link" data-cta>Reactivate and Upgrade</button>
+        </span>
+      </div>
+      <div class="ack-toast" data-ack>Reactivated · checkout opens</div>
+    </div>
+    <div class="variant-controls"><span class="legend">Alert · Quietest</span></div>
+  </article>
+
+  <!-- 07 · Marquee with embedded CTAs -->
+  <article class="variant" data-variant-id="07">
+    <div class="variant-head">
+      <p class="text-[11px] font-bold uppercase tracking-[0.16em] text-ink-tertiary">07</p>
+      <h2 class="text-[16px] font-bold text-ink-primary mt-1">Marquee with embedded CTA</h2>
+      <p class="text-[13px] text-ink-secondary mt-1.5">A thin orange marquee scrolls above the nav with the message + a "Reactivate and Upgrade" pill repeated. Click anywhere on the strip to trigger the action.</p>
+    </div>
+    <div class="variant-stage">
+      <div class="v07-marquee" data-cta>
+        <div class="v07-track">
+          <span><span class="last">Last chance</span><span>Missed $60 off Pro Annual</span><span class="pill-cta"><i class="ph-bold ph-arrow-clockwise text-[10px]"></i>Reactivate and Upgrade</span></span>
+          <span><span class="last">Last chance</span><span>Missed $60 off Pro Annual</span><span class="pill-cta"><i class="ph-bold ph-arrow-clockwise text-[10px]"></i>Reactivate and Upgrade</span></span>
+          <span><span class="last">Last chance</span><span>Missed $60 off Pro Annual</span><span class="pill-cta"><i class="ph-bold ph-arrow-clockwise text-[10px]"></i>Reactivate and Upgrade</span></span>
+        </div>
+      </div>
+      <div class="mini-nav">
+        <div class="ml-auto flex items-center gap-3">
+          <span class="icon-btn"><i class="ph ph-magnifying-glass text-[18px]"></i></span>
+          <span class="icon-btn"><i class="ph ph-bell text-[18px]"></i></span>
+          <span class="avatar"></span>
+        </div>
+      </div>
+      <div class="ack-toast" data-ack>Reactivated · checkout opens</div>
+    </div>
+    <div class="variant-controls"><span class="legend">Marquee · Most playful</span></div>
+  </article>
+
+  <!-- 08 · Side-by-side cards -->
+  <article class="variant" data-variant-id="08">
+    <div class="variant-head">
+      <p class="text-[11px] font-bold uppercase tracking-[0.16em] text-ink-tertiary">08</p>
+      <h2 class="text-[16px] font-bold text-ink-primary mt-1">Headline + side-by-side cards</h2>
+      <p class="text-[13px] text-ink-secondary mt-1.5">A grey strip with the headline + "LAST CHANCE" badge on top, then two action cards (primary "Reactivate and Upgrade" filled, secondary "Maybe later" outline). Most card-like treatment.</p>
+    </div>
+    <div class="variant-stage" style="min-height: 220px;">
+      <div class="mini-nav">
+        <div class="ml-auto flex items-center gap-3">
+          <span class="icon-btn"><i class="ph ph-magnifying-glass text-[18px]"></i></span>
+          <span class="icon-btn"><i class="ph ph-bell text-[18px]"></i></span>
+          <span class="avatar"></span>
+        </div>
+      </div>
+      <div class="v08-wrap">
+        <div class="heading">
+          <span class="last"><i class="ph-fill ph-lightning text-[9px]"></i>Last chance</span>
+          <span>Missed <strong>$60 off Pro Annual</strong></span>
+        </div>
+        <div class="pair">
+          <button class="card primary" data-cta>
+            <span class="icon"><i class="ph-fill ph-rocket-launch text-[16px]"></i></span>
+            <span>
+              <span class="title">Reactivate and Upgrade</span>
+              <span class="sub">Bring back the $60 off · 60 min</span>
+            </span>
+          </button>
+          <button class="card">
+            <span class="icon"><i class="ph ph-clock text-[16px]"></i></span>
+            <span>
+              <span class="title">Maybe later</span>
+              <span class="sub">Dismiss for this session</span>
+            </span>
+          </button>
+        </div>
+      </div>
+      <div class="ack-toast" data-ack>Reactivated · checkout opens</div>
+    </div>
+    <div class="variant-controls"><span class="legend">Cards · Decision-friendly</span></div>
+  </article>
+
+</main>
+
+<footer class="max-w-7xl mx-auto px-8 pb-16">
+  <div class="ds-elev-2 bg-white rounded-2xl px-6 py-5">
+    <h3 class="text-[14px] font-bold text-ink-primary">Pick or freeze</h3>
+    <p class="mt-2 text-[13px] text-ink-secondary leading-[1.55]">
+      Tell me which to branch on next (e.g. <em>"branch on 03"</em>) and I'll regenerate this file with that variant pinned as 01 + 7 fresh branches off it.
+      Or say <strong class="text-ink-primary">freeze it</strong> and I'll merge the chosen treatment into <code class="font-mono text-[12px]">dashboard-flash-sale.html</code>.
+    </p>
+  </div>
+</footer>
+
+<script>
+  // Each variant has one or more `[data-cta]` elements (the primary action) +
+  // one `[data-ack]` toast that confirms the click. Wire them up.
+  document.querySelectorAll('.variant').forEach((card) => {
+    const stage = card.querySelector('.variant-stage');
+    const ack   = stage.querySelector('[data-ack]');
+    let ackTimer = null;
+
+    function flashAck() {
+      if (!ack) return;
+      ack.dataset.open = 'true';
+      if (ackTimer) clearTimeout(ackTimer);
+      ackTimer = setTimeout(() => { ack.dataset.open = 'false'; }, 1800);
+    }
+
+    stage.querySelectorAll('[data-cta]').forEach((el) => {
+      el.addEventListener('click', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        flashAck();
+      });
+    });
+  });
+</script>
+
+</body>
+</html>

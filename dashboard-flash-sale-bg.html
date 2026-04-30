@@ -1,0 +1,644 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Dashboard — Flash sale discount</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/regular/style.css" />
+<link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/bold/style.css" />
+<link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/fill/style.css" />
+<script src="https://cdn.tailwindcss.com"></script>
+
+<script>
+  tailwind.config = {
+    theme: {
+      extend: {
+        colors: {
+          ink:       { primary: '#171717', secondary: '#525252', tertiary: '#a3a3a3' },
+          surface:   { primary: '#ffffff', secondary: '#fafafa', elevated: '#ffffff' },
+          border:    { primary: 'rgba(10,25,37,0.09)', secondary: 'rgba(26,26,26,0.09)' },
+          brand:     { 50: '#fff5ee', 100: '#ffe4d3', 500: '#ff5500', 600: '#e14a00', 700: '#b03a00' },
+        },
+      },
+    },
+  };
+</script>
+
+<style>
+  html, body { background: #fafafa; color: #171717; }
+  body { font-family: 'Inter', system-ui, sans-serif; -webkit-font-smoothing: antialiased; }
+
+  /* Layered drop + inner shadow used on cards / buttons throughout the dashboard */
+  .ds-elev-2 {
+    box-shadow:
+      0 0 0 1px rgba(10,25,37,0.09),
+      0 1px 2px 0 rgba(10,25,37,0.09),
+      inset 0 0 0 1px rgba(255,255,255,0.8);
+  }
+  .ds-elev-1 {
+    box-shadow:
+      0 0 0 1px rgba(10,25,37,0.09),
+      inset 0 0 0 1px rgba(255,255,255,0.8);
+  }
+
+  /* Trial / Credits chip — phrases scroll vertically in a seamless loop.
+     The track holds three lines (phrase 1, phrase 2, phrase 1 again); the
+     animation slides it from y=0 → −20 → −40 → restart. Since the third
+     line is identical to the first, the wrap-around is invisible — the
+     text reads as a continuous circle. */
+  .trial-chip-stack {
+    position: relative;
+    height: 20px;
+    width: 140px;
+    overflow: hidden;
+  }
+  .trial-chip-track {
+    display: flex;
+    flex-direction: column;
+    animation: trial-loop 8s ease-in-out infinite;
+    will-change: transform;
+  }
+  .trial-chip-track > span {
+    flex: 0 0 20px;
+    height: 20px;
+    line-height: 20px;
+    text-align: left;
+    white-space: nowrap;
+  }
+  @keyframes trial-loop {
+    0%, 45%   { transform: translateY(0); }
+    50%, 95%  { transform: translateY(-20px); }
+    100%      { transform: translateY(-40px); }
+  }
+
+  /* Lightweight slide-thumbnail mockup used inside the "Paste an outline" tile */
+  .mini-deck { position: relative; width: 48px; height: 48px; background: #daf0fc; border-radius: 4px; overflow: hidden; flex-shrink: 0; }
+  .mini-deck .slide {
+    position: absolute; bottom: 4px; left: 50%;
+    width: 30px; height: 38px; background: #ffffff;
+    border-radius: 2px;
+    box-shadow: 0 0 0 0.5px rgba(0,0,0,0.06), 0 1.5px 4px rgba(0,0,0,0.08);
+    transform-origin: bottom center;
+  }
+  .mini-deck .slide-a { transform: translateX(-50%) rotate(0.8deg) translateX(2px); }
+  .mini-deck .slide-b { transform: translateX(-50%) rotate(-2.2deg) translateX(-3px); }
+  .mini-deck .slide .row { position: absolute; left: 5px; height: 2px; border-radius: 1px; background: rgba(0,0,0,0.12); }
+
+  /* Recent thumbnail tinted backgrounds (no external imagery needed) */
+  .thumb-mckinsey {
+    background:
+      radial-gradient(120% 80% at 70% 30%, rgba(255,255,255,0.10), transparent 55%),
+      linear-gradient(135deg, #1a3268 0%, #0a1d4d 100%);
+  }
+  .thumb-aethelgard {
+    background:
+      radial-gradient(140% 100% at 30% 70%, rgba(255,180,80,0.4), transparent 55%),
+      linear-gradient(180deg, #5a2920 0%, #2a1109 100%);
+  }
+  .thumb-anatomy {
+    background:
+      linear-gradient(180deg, #f0e9dc 0%, #d6c9b1 100%);
+  }
+  .thumb-title {
+    color: #fff;
+    font: 600 17px/1.2 Inter, sans-serif;
+    text-shadow: 0 1px 8px rgba(0,0,0,0.4);
+  }
+  .thumb-anatomy .thumb-title {
+    color: #1f1f1f;
+    text-shadow: none;
+    font: 800 17px/1.05 Inter, sans-serif;
+    letter-spacing: -0.02em;
+  }
+
+  /* Sidebar item active state */
+  .nav-item-active { background: rgba(10,25,37,0.08); }
+
+  /* Avatar gradients (no external image) */
+  .avatar-fs {
+    background:
+      radial-gradient(circle at 30% 30%, #ffd0c0, transparent 50%),
+      linear-gradient(135deg, #ff5500, #b03a00);
+  }
+  .avatar-john {
+    background:
+      radial-gradient(circle at 30% 30%, #fff0c8, transparent 55%),
+      linear-gradient(135deg, #f6b56b, #b76b1f);
+  }
+
+  /* Layout: full-viewport stage with a fixed-width sidebar and a fluid
+     content area. No mobile breakpoints — desktop-only design. */
+  .ds-sidebar { width: 260px; flex-shrink: 0; }
+  .recent-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
+  .qa-grid     { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; max-width: 960px; }
+
+  /* Pro-style discount chip — sits inline in the top nav, just left of the
+     Upgrade button. Same visual vocabulary as `.pro-bumped-pill` from the
+     pricing page (orange pill, white text, soft halo pulse), but the bob
+     runs horizontally so it nudges left ↔ right toward the CTA. */
+  .up-discount-chip {
+    position: relative;
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 5px 12px;
+    background: #ff5500;
+    color: #ffffff;
+    border-radius: 999px;
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 0.06em;
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+    z-index: 5;
+    animation:
+      up-chip-bob  1.8s cubic-bezier(.45, .05, .55, .95) infinite,
+      up-chip-glow 2.2s ease-in-out infinite;
+  }
+  /* Right-side arrow on the chip — sized so half the wedge sits *inside*
+     the orange pill (no visible gap), with the tip protruding to the right
+     at the Upgrade button. */
+  .up-discount-chip::after {
+    content: '';
+    position: absolute;
+    top: 50%; right: -3px;
+    width: 8px; height: 8px;
+    background: #ff5500;
+    transform: translateY(-50%) rotate(45deg);
+    border-radius: 1px;
+    z-index: -1;
+  }
+  .up-discount-chip i { font-size: 12px; color: #ffffff; }
+  @keyframes up-chip-bob {
+    0%, 100% { transform: translateX(0);    }
+    50%      { transform: translateX(-10px); }
+  }
+/* Shimmer sweep on the orange Upgrade CTA — a soft white highlight glides
+     diagonally across the button every ~2.6s. */
+  /* Nudge orange tag */
+  .nudge-tag {
+    display: inline-flex; align-items: center; gap: 6px;
+    background: #ff5500; color: #ffffff;
+    padding: 5px 12px;
+    border-radius: 999px;
+    font-size: 12px; font-weight: 800; letter-spacing: 0.04em;
+    white-space: nowrap;
+    box-shadow: 0 4px 12px rgba(255,85,0,0.32);
+    animation: nudge-glow 2.4s ease-in-out infinite;
+  }
+  .nudge-tag i { font-size: 13px; }
+  @keyframes nudge-glow {
+    0%, 100% { box-shadow: 0 4px 12px rgba(255,85,0,0.32), 0 0 0 0 rgba(255,85,0,0.45); }
+    70%      { box-shadow: 0 4px 12px rgba(255,85,0,0.32), 0 0 0 8px rgba(255,85,0,0); }
+  }
+
+  /* Missed-offer arrow bounce — left ↔ right, points at the Reactivate button */
+  .missed-arrow {
+    display: inline-flex;
+    animation: missed-arrow-bounce 1.2s ease-in-out infinite;
+  }
+  @keyframes missed-arrow-bounce {
+    0%, 100% { transform: translateX(0);   opacity: 0.85; }
+    50%      { transform: translateX(6px); opacity: 1;    }
+  }
+
+  /* Reactivate hover tooltip */
+  .reactivate-wrap { position: relative; display: inline-flex; }
+  .reactivate-tooltip {
+    position: absolute;
+    top: calc(100% + 10px);
+    left: 50%;
+    transform: translateX(-50%) translateY(-4px);
+    background: #171717;
+    color: #ffffff;
+    border-radius: 8px;
+    padding: 12px 14px;
+    width: 300px;
+    font-size: 12px; line-height: 1.5;
+    letter-spacing: 0;
+    box-shadow: 0 12px 28px rgba(10,25,37,0.32),
+                0 2px 6px rgba(10,25,37,0.18);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity .18s ease, transform .18s ease;
+    z-index: 30;
+    white-space: normal;
+    text-align: left;
+  }
+  .reactivate-wrap:hover .reactivate-tooltip {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+  .reactivate-tooltip::before {
+    content: '';
+    position: absolute;
+    top: -4px; left: 50%;
+    width: 8px; height: 8px;
+    background: #171717;
+    transform: translateX(-50%) rotate(45deg);
+    border-radius: 1px;
+  }
+  .reactivate-tooltip strong {
+    display: block;
+    font-size: 13px; font-weight: 800; color: #fff;
+    margin-bottom: 4px;
+  }
+  .reactivate-tooltip .muted { display: block; color: #d4d4d4; }
+
+  /* Header state swap, driven by body[data-header-state]
+     States: active (default) · expired · nudge */
+  body[data-header-state="expired"] [data-state="active"],
+  body[data-header-state="expired"] [data-state="nudge"]    { display: none !important; }
+  body[data-header-state="nudge"]   [data-state="active"],
+  body[data-header-state="nudge"]   [data-state="expired"]  { display: none !important; }
+  body:not([data-header-state="expired"]):not([data-header-state="nudge"]) [data-state="expired"],
+  body:not([data-header-state="expired"]):not([data-header-state="nudge"]) [data-state="nudge"] {
+    display: none !important;
+  }
+
+  /* Fade in the incoming state block on swap */
+  [data-state] {
+    animation-duration: .45s;
+    animation-timing-function: ease-in-out;
+    animation-fill-mode: both;
+  }
+  body[data-header-state="active"]  [data-state="active"]  { animation-name: state-fade-in; }
+  body[data-header-state="expired"] [data-state="expired"] { animation-name: state-fade-in; }
+  body[data-header-state="nudge"]   [data-state="nudge"]   { animation-name: state-fade-in; }
+  @keyframes state-fade-in {
+    0%   { opacity: 0; }
+    100% { opacity: 1; }
+  }
+
+  /* Floating debug toggle to flip between Active and Expired in the prototype */
+  .state-toggle {
+    position: fixed; bottom: 20px; right: 20px;
+    background: #fff;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.18), 0 2px 6px rgba(0,0,0,0.10);
+    border-radius: 12px;
+    padding: 8px;
+    display: flex; gap: 4px; align-items: center;
+    z-index: 100;
+  }
+  .state-toggle .label {
+    font-size: 10px; font-weight: 800; letter-spacing: 0.12em; text-transform: uppercase;
+    color: #a3a3a3; padding: 0 8px;
+  }
+  .state-toggle button {
+    border: 0; cursor: pointer;
+    padding: 6px 12px;
+    border-radius: 8px;
+    font-size: 12px; font-weight: 700;
+    background: #f5f5f5; color: #525252;
+    transition: background .15s ease, color .15s ease;
+  }
+  .state-toggle button:hover { background: #e5e5e5; color: #171717; }
+  .state-toggle button.is-active { background: #ff5500; color: #fff; }
+
+  .shimmer-cta { position: relative; overflow: hidden; }
+  .shimmer-cta::after {
+    content: '';
+    position: absolute;
+    top: 0; bottom: 0;
+    left: -75%;
+    width: 50%;
+    background: linear-gradient(
+      100deg,
+      rgba(255,255,255,0)    0%,
+      rgba(255,255,255,0.45) 50%,
+      rgba(255,255,255,0)    100%
+    );
+    transform: skewX(-20deg);
+    pointer-events: none;
+    animation: shimmer-sweep 2.6s ease-in-out infinite;
+  }
+  @keyframes shimmer-sweep {
+    0%   { left: -75%; }
+    55%  { left: 130%; }
+    100% { left: 130%; }
+  }
+
+  @keyframes up-chip-glow {
+    0%, 100% { box-shadow: 0 6px 16px rgba(0,0,0,0.18),
+                           0 0 0 0   rgba(255, 85, 0, 0.55); }
+    70%      { box-shadow: 0 6px 16px rgba(0,0,0,0.18),
+                           0 0 0 9px rgba(255, 85, 0, 0); }
+    100%     { box-shadow: 0 6px 16px rgba(0,0,0,0.18),
+                           0 0 0 0   rgba(255, 85, 0, 0); }
+  }
+</style>
+</head>
+<body>
+
+<!-- ─── Stage (fills the full viewport) ──────────────────────────────────── -->
+<div class="bg-white" style="width:100%;">
+
+  <div class="flex w-full" style="min-height:100vh;">
+
+    <!-- ─── SIDEBAR ────────────────────────────────────────────────────── -->
+    <aside class="ds-sidebar flex flex-col justify-between bg-[#fafafa] border-r border-border-secondary">
+
+      <div class="flex flex-col">
+        <!-- Workspace switcher: avatar + name + inline Upgrade link + caret -->
+        <div class="border-b border-border-secondary px-3 py-2">
+          <div class="flex items-center gap-2 rounded-md px-1 py-0.5">
+            <span class="avatar-fs inline-flex items-center justify-center rounded-[5px] border-[1.5px] border-white text-white text-[14px] font-bold shrink-0" style="width:34px; height:34px;">N</span>
+            <span class="flex-1 min-w-0 flex items-center gap-2">
+              <span class="text-[14px] font-medium text-ink-primary truncate">Nvidia Works…</span>
+              <a href="#" class="text-[14px] font-semibold text-brand-500 hover:text-brand-600 shrink-0">Upgrade</a>
+            </span>
+            <button class="size-7 inline-flex items-center justify-center rounded hover:bg-black/[0.04] shrink-0" aria-label="Switch workspace">
+              <i class="ph ph-caret-down text-[16px] text-ink-secondary"></i>
+            </button>
+          </div>
+        </div>
+
+        <!-- Primary nav -->
+        <nav class="px-3 py-2 flex flex-col gap-0.5">
+          <a class="flex items-center gap-2 px-2 h-9 rounded nav-item-active">
+            <i class="ph ph-house text-[18px] text-ink-primary"></i>
+            <span class="text-[14px] font-medium text-ink-primary">Home</span>
+          </a>
+          <a class="flex items-center gap-2 px-2 h-9 rounded hover:bg-black/[0.04]">
+            <i class="ph ph-file text-[18px] text-ink-secondary"></i>
+            <span class="text-[14px] text-ink-secondary">Created by me</span>
+          </a>
+        </nav>
+
+        <div class="border-t border-border-secondary mx-3"></div>
+
+        <!-- Projects -->
+        <nav class="px-3 py-2 flex flex-col gap-0.5">
+          <p class="text-[13px] text-ink-tertiary px-2 py-1.5">Projects</p>
+          <a class="flex items-center gap-2 px-2 h-9 rounded hover:bg-black/[0.04]">
+            <i class="ph ph-plus text-[18px] text-ink-secondary"></i>
+            <span class="flex-1 text-[14px] text-ink-secondary">Create project</span>
+            <span class="inline-flex items-center justify-center rounded-full px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-[0.3px]" style="background: rgba(255,85,0,0.15); color: #ff5500;">PRO</span>
+          </a>
+        </nav>
+
+        <div class="border-t border-border-secondary mx-3"></div>
+
+        <!-- Resources -->
+        <nav class="px-3 py-2 flex flex-col gap-0.5">
+          <a class="flex items-center gap-2 px-2 h-9 rounded hover:bg-black/[0.04]">
+            <i class="ph ph-books text-[18px] text-ink-secondary"></i>
+            <span class="text-[14px] text-ink-secondary">Hire an expert</span>
+          </a>
+          <a class="flex items-center gap-2 px-2 h-9 rounded hover:bg-black/[0.04]">
+            <i class="ph ph-layout text-[18px] text-ink-secondary"></i>
+            <span class="text-[14px] text-ink-secondary">Templates</span>
+          </a>
+        </nav>
+      </div>
+
+      <!-- Footer -->
+      <div class="border-t border-border-secondary px-3 py-2 flex flex-col gap-0.5">
+        <a class="flex items-center gap-2 px-2 h-9 rounded hover:bg-black/[0.04]">
+          <i class="ph ph-gear text-[18px] text-ink-secondary"></i>
+          <span class="text-[14px] text-ink-secondary">Workspace settings</span>
+        </a>
+        <a class="flex items-center gap-2 px-2 h-9 rounded hover:bg-black/[0.04]">
+          <i class="ph ph-users text-[18px] text-ink-secondary"></i>
+          <span class="flex-1 text-[14px] text-ink-secondary">Invite new members</span>
+          <span class="inline-flex items-center justify-center rounded-full px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-[0.3px]" style="background: rgba(255,85,0,0.15); color: #ff5500;">PRO</span>
+        </a>
+      </div>
+    </aside>
+
+    <!-- ─── CONTENT ───────────────────────────────────────────────────────── -->
+    <main class="flex-1 flex flex-col bg-white border-l border-border-secondary min-w-0">
+
+      <!-- Top nav -->
+      <div class="flex items-center justify-end gap-3 h-14 border-b border-border-secondary px-6">
+
+        <!-- ACTIVE STATE: $60 off pill + Trial/Credits + Upgrade button -->
+        <div data-state="active" class="ds-state flex items-center gap-3">
+          <span class="up-discount-chip" id="up-discount-chip" aria-live="polite">
+            <span>$60 off</span>
+            <i class="ph-fill ph-clock"></i>
+            <span>Ends in <span class="timer" id="up-discount-timer">59:51</span></span>
+          </span>
+
+          <div class="trial-chip-wrap bg-white rounded-md flex items-center pl-2.5 pr-1 py-1" style="border: 1px solid rgba(255, 85, 0, 0.12);">
+            <div class="trial-chip-stack">
+              <div class="trial-chip-track">
+                <span class="text-[14px] font-medium text-ink-primary">🔥 Trial: 4 days left</span>
+                <span class="text-[14px] font-medium text-ink-primary">✨ Credits: 60 left</span>
+                <span class="text-[14px] font-medium text-ink-primary">🔥 Trial: 4 days left</span>
+              </div>
+            </div>
+            <button class="shimmer-cta ml-3 inline-flex items-center gap-1.5 h-7 px-3.5 rounded text-white text-[14px] font-medium" style="background:#ff5500;">
+              <i class="ph-fill ph-rocket-launch text-[16px]"></i>
+              Upgrade
+            </button>
+          </div>
+        </div>
+
+        <!-- EXPIRED STATE: missed-offer message + full-size Reactivate and Upgrade button -->
+        <div data-state="expired" class="ds-state flex items-center gap-3">
+          <span class="text-[14px] font-medium text-ink-primary inline-flex items-center gap-2">
+            <span style="font-size:16px;">⚡️</span>
+            <span>Missed <strong class="font-semibold">$60 off Pro Annual</strong></span>
+            <i class="ph-bold ph-arrow-right text-[16px] text-brand-500 missed-arrow" aria-hidden="true"></i>
+          </span>
+          <span class="reactivate-wrap">
+            <button id="reactivate-cta" class="shimmer-cta inline-flex items-center gap-2 h-9 px-5 rounded text-white text-[14px] font-bold" style="background:#ff5500;">
+              <i class="ph-bold ph-arrow-clockwise text-[16px]"></i>
+              Reactivate and Upgrade
+            </button>
+            <span class="reactivate-tooltip" role="tooltip">
+              <strong>One reactivation left</strong>
+              <span class="muted">Tap to bring back $60 off Pro Annual. Last time we can offer it.</span>
+            </span>
+          </span>
+        </div>
+
+        <!-- NUDGE STATE: orange "Help us improve and get $60" tag + bouncing
+             arrow + shimmer survey CTA -->
+        <div data-state="nudge" class="ds-state flex items-center gap-3">
+          <span class="up-discount-chip">
+            <span style="font-size:14px;">🎁</span>
+            <span>Help us improve and get $60</span>
+          </span>
+          <span class="reactivate-wrap">
+            <button id="nudge-cta" class="shimmer-cta inline-flex items-center gap-2 h-9 px-5 rounded text-white text-[14px] font-bold" style="background:#ff5500;">
+              <i class="ph-fill ph-chat-circle-text text-[16px]"></i>
+              Take survey and upgrade
+            </button>
+            <span class="reactivate-tooltip" role="tooltip">
+              <strong>Two quick questions</strong>
+              <span class="muted">Share your feedback and we&rsquo;ll unlock $60 off Pro Annual right away.</span>
+            </span>
+          </span>
+        </div>
+
+        <!-- Utility icons -->
+        <div class="flex items-center">
+          <button class="size-9 inline-flex items-center justify-center rounded-md hover:bg-black/[0.04]">
+            <i class="ph ph-magnifying-glass text-[18px] text-ink-secondary"></i>
+          </button>
+          <button class="size-9 inline-flex items-center justify-center rounded-md hover:bg-black/[0.04]">
+            <i class="ph ph-question text-[18px] text-ink-secondary"></i>
+          </button>
+          <button class="size-9 inline-flex items-center justify-center rounded-md hover:bg-black/[0.04]">
+            <i class="ph ph-bell text-[18px] text-ink-secondary"></i>
+          </button>
+        </div>
+
+        <!-- Profile avatar -->
+        <span class="avatar-john inline-flex rounded-full border-[1.5px] border-white shrink-0" style="width:28px; height:28px;"></span>
+      </div>
+
+      <!-- ─── HEADER (greeting + 3 quick action cards) ─────────────────────── -->
+      <section class="px-6 pt-16 pb-14 flex flex-col gap-10 border-b border-border-secondary">
+        <div class="leading-[1.3] tracking-[-0.01em]">
+          <p class="ds-greeting text-[24px] font-normal text-ink-tertiary">Great work on your last deck, John.</p>
+          <p class="ds-greeting text-[24px] font-normal text-ink-primary">What will you create next?</p>
+        </div>
+
+        <div class="qa-grid">
+
+          <!-- Paste an outline -->
+          <button class="ds-elev-2 bg-white rounded-md flex items-center gap-2.5 pl-1.5 pr-2.5 py-1.5 text-left hover:translate-y-[-1px] transition-transform">
+            <img src="assets/dashboard/qa-outline.jpg" alt="" class="shrink-0 rounded-md object-cover" style="width:36px; height:36px;" />
+            <span class="flex-1 min-w-0 px-2 py-1 flex flex-col gap-0.5">
+              <span class="text-[13px] font-medium text-ink-primary leading-[1.4]">Paste an outline</span>
+              <span class="text-[12px] text-ink-secondary leading-[1.4]">Turn your structure into slides</span>
+            </span>
+            <i class="ph ph-caret-right text-[12px] text-ink-tertiary shrink-0"></i>
+          </button>
+
+          <!-- Upload a file or share a link -->
+          <button class="ds-elev-2 bg-white rounded-md flex items-center gap-2.5 pl-1.5 pr-2.5 py-1.5 text-left hover:translate-y-[-1px] transition-transform">
+            <img src="assets/dashboard/qa-upload.jpg" alt="" class="shrink-0 rounded-md object-cover" style="width:36px; height:36px;" />
+            <span class="flex-1 min-w-0 px-2 py-1 flex flex-col gap-0.5">
+              <span class="text-[13px] font-medium text-ink-primary leading-[1.4]">Upload a file or share a link</span>
+              <span class="text-[12px] text-ink-secondary leading-[1.4]">Make slides from various sources</span>
+            </span>
+            <i class="ph ph-caret-right text-[12px] text-ink-tertiary shrink-0"></i>
+          </button>
+
+          <!-- Start with a prompt -->
+          <button class="ds-elev-2 bg-white rounded-md flex items-center gap-2.5 pl-1.5 pr-2.5 py-1.5 text-left hover:translate-y-[-1px] transition-transform">
+            <img src="assets/dashboard/qa-prompt.jpg" alt="" class="shrink-0 rounded-md object-cover" style="width:36px; height:36px;" />
+            <span class="flex-1 min-w-0 px-2 py-1 flex flex-col gap-0.5">
+              <span class="text-[13px] font-medium text-ink-primary leading-[1.4]">Start with a prompt</span>
+              <span class="text-[12px] text-ink-secondary leading-[1.4]">Just describe what you need</span>
+            </span>
+            <i class="ph ph-caret-right text-[12px] text-ink-tertiary shrink-0"></i>
+          </button>
+        </div>
+      </section>
+
+      <!-- ─── RECENT GRID ─────────────────────────────────────────────────── -->
+      <section class="px-6 py-6 flex flex-col gap-4">
+        <div class="flex items-center justify-between">
+          <p class="text-[20px] font-medium text-ink-primary leading-none">Recent</p>
+        </div>
+
+        <div class="recent-grid">
+          <!-- Card 1 -->
+          <article class="ds-elev-2 bg-white rounded-md overflow-hidden flex flex-col">
+            <img src="assets/dashboard/recent-mckinsey.png" alt="" class="block w-full object-cover" style="aspect-ratio: 16 / 9; height: auto;" />
+            <div class="px-3 pt-2 pb-3 flex flex-col gap-1">
+              <p class="text-[14px] font-medium text-ink-primary leading-[1.43] truncate">McKinsey acquires S4G Consulting to help busin…</p>
+              <p class="text-[12px] text-ink-secondary">In Drafts • Created by You</p>
+            </div>
+          </article>
+
+          <!-- Card 2 (with starred badge) -->
+          <article class="ds-elev-2 bg-white rounded-md overflow-hidden flex flex-col relative">
+            <div class="relative w-full" style="aspect-ratio: 16 / 9;">
+              <img src="assets/dashboard/recent-aethelgard.png" alt="" class="block w-full h-full object-cover" />
+              <span class="absolute top-1.5 right-1.5 inline-flex items-center justify-center bg-[#fafafa] rounded ds-elev-1 px-2 py-1">
+                <i class="ph-fill ph-star text-[14px] text-[#f5b300]"></i>
+              </span>
+            </div>
+            <div class="px-3 pt-2 pb-3 flex flex-col gap-1">
+              <p class="text-[14px] font-medium text-ink-primary leading-[1.43]">Aethelgard Living - The New Standard of Legacy</p>
+              <p class="text-[12px] text-ink-secondary">In Drafts • Created by You</p>
+            </div>
+          </article>
+
+          <!-- Card 3 -->
+          <article class="ds-elev-2 bg-white rounded-md overflow-hidden flex flex-col">
+            <img src="assets/dashboard/recent-anatomy.png" alt="" class="block w-full object-cover" style="aspect-ratio: 16 / 9; height: auto;" />
+            <div class="px-3 pt-2 pb-3 flex flex-col gap-1">
+              <p class="text-[14px] font-medium text-ink-primary leading-[1.43]">The Anatomy of the Pitch</p>
+              <p class="text-[12px] text-ink-secondary">In Drafts • Created by You</p>
+            </div>
+          </article>
+        </div>
+      </section>
+
+    </main>
+  </div>
+</div>
+
+<script>
+  // Pro-style discount countdown — 60 minutes, persists across reloads.
+  (function () {
+    const KEY = 'upDiscountEndsAt';
+    const DURATION_MS = 60 * 60 * 1000;
+    const timerEl = document.getElementById('up-discount-timer');
+    if (!timerEl) return;
+
+    let endsAt = parseInt(localStorage.getItem(KEY) || '0', 10);
+    const now = Date.now();
+    if (!endsAt || endsAt <= now) {
+      endsAt = now + DURATION_MS;
+      localStorage.setItem(KEY, String(endsAt));
+    }
+
+    const pad = (n) => String(n).padStart(2, '0');
+    function tick() {
+      const ms = Math.max(0, endsAt - Date.now());
+      const m = Math.floor(ms / 60000);
+      const s = Math.floor((ms % 60000) / 1000);
+      timerEl.textContent = `${pad(m)}:${pad(s)}`;
+      if (ms <= 0) {
+        endsAt = Date.now() + DURATION_MS;
+        localStorage.setItem(KEY, String(endsAt));
+      }
+    }
+    tick();
+    setInterval(tick, 1000);
+  })();
+</script>
+
+<!-- BG-only build: state toggle removed. Header pinned to "active". -->
+<script>
+  document.body.dataset.headerState = 'active';
+</script>
+<style>
+  /* BG-only build: kill all chip/CTA animations so backdrop stays static */
+  .up-discount-chip,
+  .shimmer-cta,
+  .missed-arrow,
+  [data-state] {
+    animation: none !important;
+  }
+  .shimmer-cta::after { display: none !important; }
+  /* Hide the $60 off discount chip in the active-state header */
+  body[data-header-state="active"] [data-state="active"] .up-discount-chip,
+  body[data-header-state="active"] [data-state="active"] #up-discount-chip {
+    display: none !important;
+  }
+</style>
+
+<!-- Agentation: visual feedback toolbar (bottom-right). React + agentation
+     are loaded as ES modules from esm.sh because this page has no bundler. -->
+<div id="agentation-root"></div>
+<script type="module">
+  import React from 'https://esm.sh/react@18';
+  import { createRoot } from 'https://esm.sh/react-dom@18/client';
+  import { Agentation } from 'https://esm.sh/agentation@3?deps=react@18,react-dom@18';
+  createRoot(document.getElementById('agentation-root'))
+    .render(React.createElement(Agentation));
+</script>
+
+</body>
+</html>

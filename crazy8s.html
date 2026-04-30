@@ -1,721 +1,527 @@
 <!doctype html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>crazy8s · Missed offer top message — Round 3</title>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Crazy8s · Round 1 · Testimonial picker (full modal)</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/regular/style.css" />
+  <link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/fill/style.css" />
+  <link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/bold/style.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Hedvig+Letters+Serif:opsz@12..24&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    body { font-family: "Inter", sans-serif; background: #f5f5f7; }
+    .serif { font-family: "Hedvig Letters Serif", Georgia, serif; }
 
-<link rel="preconnect" href="https://fonts.googleapis.com" />
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet" />
-<link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/regular/style.css" />
-<link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/bold/style.css" />
-<link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/fill/style.css" />
-<script src="https://cdn.tailwindcss.com"></script>
+    /* Modal shell */
+    .fb-modal {
+      width: 100%;
+      max-width: 720px;
+      background: #fff;
+      border-radius: 16px;
+      box-shadow: 0 30px 60px -12px rgba(0,0,0,0.25), 0 18px 36px -18px rgba(0,0,0,0.30);
+      overflow: hidden;
+      position: relative;
+      display: grid;
+      grid-template-columns: 220px 1fr;
+    }
+    .fb-close {
+      position: absolute; top: 12px; right: 12px;
+      width: 28px; height: 28px;
+      border-radius: 999px;
+      background: rgba(255,255,255,.9);
+      display: inline-flex; align-items: center; justify-content: center;
+      color: #525252;
+      z-index: 10;
+    }
+    .fb-panel-left {
+      position: relative;
+      padding: 28px 24px;
+      background: linear-gradient(180deg, #ffe9d9 0%, #ffd6b3 100%);
+      overflow: hidden;
+    }
+    .fb-conf { position: absolute; pointer-events: none; }
+    .fb-gift { font-size: 40px; line-height: 1; display: block; margin-bottom: 24px; }
+    .fb-tag {
+      display: inline-block;
+      background: #fff; color: #ff5500;
+      font-family: ui-monospace, "SF Mono", Menlo, monospace;
+      font-size: 9px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase;
+      padding: 6px 10px; border-radius: 4px;
+      box-shadow: 0 1px 2px rgba(0,0,0,0.06);
+      margin-bottom: 16px;
+    }
+    .fb-amount { font-size: 56px; font-weight: 800; color: #ff5500; line-height: 1; letter-spacing: -.02em; }
+    .fb-amount .dollar { font-size: 24px; font-weight: 700; vertical-align: top; margin-right: 2px; }
+    .fb-amount-sub { font-size: 22px; font-weight: 700; color: #1a1a1a; margin-top: 6px; }
+    .fb-panel-cta { display: inline-flex; align-items: center; gap: 6px; margin-top: 14px; font-size: 12px; color: #525252; }
+    .fb-right { padding: 28px 28px 24px; min-height: 360px; display: flex; flex-direction: column; }
 
-<script>
-  tailwind.config = {
-    theme: {
-      extend: {
-        colors: {
-          ink:    { primary: '#171717', secondary: '#525252', tertiary: '#a3a3a3' },
-          brand:  { 50: '#fff5ee', 100: '#ffe4d3', 500: '#ff5500', 600: '#e14a00', 700: '#b03a00' },
-        },
-      },
-    },
-  };
-</script>
+    /* Shared CTA */
+    .btn-claim { background: #1d4ed8; color: #fff; font-weight: 700; font-size: 15px; height: 46px; border-radius: 6px; width: 100%; transition: filter .15s; margin-top: auto; }
+    .btn-claim:hover:not([disabled]) { filter: brightness(1.08); }
+    .btn-claim[disabled] { background: #e5e7eb; color: #9ca3af; cursor: not-allowed; }
 
-<style>
-  html, body { background: #f5f5f5; color: #171717; }
-  body { font-family: 'Inter', system-ui, sans-serif; -webkit-font-smoothing: antialiased; }
-
-  .ds-elev-2 {
-    box-shadow:
-      0 0 0 1px rgba(10,25,37,0.09),
-      0 1px 2px 0 rgba(10,25,37,0.09),
-      inset 0 0 0 1px rgba(255,255,255,0.8);
-  }
-
-  /* ─── Shared top-nav primitives ──────────────────────────────────────── */
-  .mini-nav {
-    display: flex; align-items: center; gap: 12px;
-    height: 56px; padding: 0 24px;
-    background: #fff;
-    border-bottom: 1px solid rgba(10,25,37,0.09);
-    position: relative;
-  }
-  .mini-nav .icon-btn {
-    width: 36px; height: 36px;
-    display: inline-flex; align-items: center; justify-content: center;
-    border-radius: 8px;
-    color: #525252;
-    position: relative;
-  }
-  .mini-nav .avatar {
-    width: 28px; height: 28px; border-radius: 999px;
-    background:
-      radial-gradient(circle at 30% 30%, #fff0c8, transparent 55%),
-      linear-gradient(135deg, #f6b56b, #b76b1f);
-  }
-  .trial-pill {
-    background: #fff;
-    border: 1px solid rgba(255, 85, 0, 0.12);
-    border-radius: 6px;
-    display: flex; align-items: center;
-    padding: 4px 4px 4px 10px;
-  }
-  .trial-pill > .copy {
-    font-size: 14px; font-weight: 500; color: #171717; line-height: 20px;
-    margin-right: 12px; white-space: nowrap;
-  }
-  .trial-pill > .upgrade {
-    display: inline-flex; align-items: center; gap: 6px;
-    height: 28px; padding: 0 14px; border-radius: 4px;
-    background: #ff5500; color: #fff;
-    font-size: 14px; font-weight: 500;
-    border: 0; cursor: pointer;
-    position: relative;
-  }
-  .trial-pill > .upgrade i { font-size: 16px; }
-
-  /* ─── Acknowledgment toast (every variant uses this on click) ────────── */
-  .ack-toast {
-    position: absolute;
-    bottom: 14px; left: 50%; transform: translate(-50%, 12px);
-    background: #171717; color: #fff;
-    padding: 8px 14px;
-    border-radius: 999px;
-    font-size: 12px; font-weight: 600;
-    opacity: 0; pointer-events: none;
-    transition: transform .22s ease, opacity .22s ease;
-    z-index: 30;
-    box-shadow: 0 8px 18px rgba(10,25,37,0.25);
-  }
-  .ack-toast[data-open="true"] { opacity: 1; transform: translate(-50%, 0); }
-
-  /* ─── Variant 01: Full-width banner ribbon ───────────────────────────── */
-  .v01-banner {
-    background: linear-gradient(135deg, #ff7a3d 0%, #ff5500 50%, #c63e00 100%);
-    color: #fff;
-    padding: 10px 24px;
-    display: flex; align-items: center; gap: 14px;
-    position: relative;
-    overflow: hidden;
-  }
-  .v01-banner::before {
-    content: '';
-    position: absolute; inset: 0;
-    background:
-      radial-gradient(circle at 8% 50%, rgba(255,255,255,0.18), transparent 35%),
-      radial-gradient(circle at 92% 50%, rgba(255,255,255,0.10), transparent 30%);
-    pointer-events: none;
-  }
-  .v01-banner > * { position: relative; z-index: 1; }
-  .v01-banner .icon { width: 26px; height: 26px; border-radius: 999px; background: rgba(255,255,255,0.18); display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0; }
-  .v01-banner .copy { flex: 1; min-width: 0; font-size: 13px; font-weight: 600; }
-  .v01-banner .copy strong { font-weight: 800; }
-  .v01-banner .copy .sep { opacity: 0.7; padding: 0 6px; font-weight: 500; }
-  .v01-banner .copy .last { letter-spacing: 0.06em; text-transform: uppercase; font-size: 11px; font-weight: 800; }
-  .v01-banner .cta {
-    background: #fff; color: #b03a00;
-    height: 30px; padding: 0 14px; border-radius: 6px;
-    font-size: 12px; font-weight: 800; border: 0; cursor: pointer;
-    display: inline-flex; align-items: center; gap: 6px;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.18);
-  }
-  .v01-banner .cta:hover { background: #fff5ee; }
-
-  /* ─── Variant 02: Compact orange pill (inline in the nav) ────────────── */
-  .v02-pill {
-    display: inline-flex; align-items: center; gap: 8px;
-    background: #ff5500; color: #fff;
-    border-radius: 999px;
-    padding: 4px 4px 4px 12px;
-    font-size: 12px; font-weight: 700; letter-spacing: 0.02em;
-    box-shadow: 0 4px 12px rgba(255,85,0,0.32);
-    animation: v02-glow 2.4s ease-in-out infinite;
-  }
-  .v02-pill .last {
-    text-transform: uppercase; letter-spacing: 0.14em; font-size: 10px; font-weight: 800;
-    background: rgba(255,255,255,0.22); padding: 2px 6px; border-radius: 999px;
-  }
-  .v02-pill .sep { opacity: 0.7; }
-  .v02-pill .cta {
-    background: #fff; color: #b03a00;
-    height: 24px; padding: 0 12px; border-radius: 999px;
-    font-size: 11px; font-weight: 800; border: 0; cursor: pointer;
-    display: inline-flex; align-items: center; gap: 4px;
-  }
-  .v02-pill .cta:hover { background: #fff5ee; }
-  @keyframes v02-glow {
-    0%, 100% { box-shadow: 0 4px 12px rgba(255,85,0,0.32), 0 0 0 0 rgba(255,85,0,0.45); }
-    70%      { box-shadow: 0 4px 12px rgba(255,85,0,0.32), 0 0 0 8px rgba(255,85,0,0); }
-  }
-
-  /* ─── Variant 03: Stacked badge block ─────────────────────────────────── */
-  .v03-block {
-    padding: 16px 24px;
-    background: linear-gradient(135deg, #fff5ee 0%, #ffe4d3 100%);
-    border-bottom: 1px solid rgba(255,85,0,0.18);
-    display: flex; flex-direction: column; gap: 10px;
-  }
-  .v03-block .row1 {
-    display: flex; align-items: center; gap: 10px;
-  }
-  .v03-block .last-badge {
-    display: inline-flex; align-items: center; gap: 6px;
-    background: #ff5500; color: #fff;
-    padding: 3px 10px; border-radius: 999px;
-    font-size: 10px; font-weight: 800; letter-spacing: 0.16em; text-transform: uppercase;
-  }
-  .v03-block .headline { font-size: 15px; font-weight: 800; color: #171717; letter-spacing: -0.005em; }
-  .v03-block .actions { display: flex; gap: 8px; }
-  .v03-block .btn-primary {
-    background: #ff5500; color: #fff;
-    height: 30px; padding: 0 14px; border-radius: 6px;
-    font-size: 12px; font-weight: 700; border: 0; cursor: pointer;
-    display: inline-flex; align-items: center; gap: 6px;
-  }
-  .v03-block .btn-primary:hover { background: #e14a00; }
-  .v03-block .btn-link {
-    background: transparent; color: #b03a00;
-    border: 0; cursor: pointer;
-    font-size: 12px; font-weight: 700;
-    text-decoration: underline; text-underline-offset: 3px;
-  }
-
-  /* ─── Variant 04: Slot-divided pill ──────────────────────────────────── */
-  .v04-pill {
-    display: inline-flex; align-items: stretch;
-    border-radius: 999px;
-    overflow: hidden;
-    box-shadow: 0 1px 2px rgba(10,25,37,0.10),
-                0 0 0 1px rgba(10,25,37,0.10);
-    font-size: 11px; font-weight: 800; letter-spacing: 0.06em;
-    line-height: 1;
-  }
-  .v04-pill > * { padding: 7px 12px; display: inline-flex; align-items: center; gap: 6px; }
-  .v04-pill .left  { background: #f5f5f5; color: #525252; }
-  .v04-pill .mid   { background: #171717; color: #fff; }
-  .v04-pill .last  { background: #ff5500; color: #fff; }
-  .v04-pill .cta {
-    background: #fff; color: #b03a00;
-    border-left: 1px solid rgba(255,255,255,0.4);
-    cursor: pointer; border-radius: 0;
-    box-shadow: inset 0 0 0 1px rgba(0,0,0,0.04);
-  }
-  .v04-pill .cta:hover { background: #fff5ee; }
-
-  /* ─── Variant 05: Hero strip ─────────────────────────────────────────── */
-  .v05-hero {
-    padding: 18px 24px;
-    background: #ffffff;
-    border-bottom: 1px solid rgba(10,25,37,0.09);
-    display: flex; align-items: center; gap: 18px;
-  }
-  .v05-hero .icon {
-    width: 44px; height: 44px;
-    border-radius: 12px;
-    background: linear-gradient(135deg, #ff7a3d, #ff5500);
-    color: #fff;
-    display: inline-flex; align-items: center; justify-content: center;
-    flex-shrink: 0;
-    box-shadow: 0 8px 18px rgba(255,85,0,0.32);
-  }
-  .v05-hero .copy { flex: 1; min-width: 0; }
-  .v05-hero h3 {
-    font-size: 17px; font-weight: 800; color: #171717;
-    letter-spacing: -0.01em; line-height: 1.25;
-  }
-  .v05-hero h3 strong { color: #b03a00; }
-  .v05-hero p {
-    font-size: 12px; color: #525252;
-    margin-top: 2px;
-    display: inline-flex; align-items: center; gap: 6px;
-  }
-  .v05-hero p .timer {
-    font-variant-numeric: tabular-nums;
-    background: rgba(255,85,0,0.12); color: #b03a00;
-    padding: 1px 6px; border-radius: 4px;
-    font-weight: 800; font-size: 11px; letter-spacing: 0.04em;
-  }
-  .v05-hero .cta {
-    background: #ff5500; color: #fff;
-    height: 38px; padding: 0 18px; border-radius: 6px;
-    font-size: 13px; font-weight: 800; border: 0; cursor: pointer;
-    display: inline-flex; align-items: center; gap: 8px;
-    box-shadow: 0 6px 16px rgba(255,85,0,0.32);
-  }
-  .v05-hero .cta:hover { background: #e14a00; }
-
-  /* ─── Variant 06: Amber alert ────────────────────────────────────────── */
-  .v06-alert {
-    padding: 12px 24px;
-    background: linear-gradient(180deg, #fff5ee 0%, #ffeede 100%);
-    border-bottom: 1px solid rgba(255,85,0,0.20);
-    border-left: 3px solid #ff5500;
-    display: flex; align-items: center; gap: 12px;
-    color: #b03a00;
-  }
-  .v06-alert .icon { width: 22px; height: 22px; flex-shrink: 0; color: #ff5500; display: inline-flex; align-items: center; justify-content: center; }
-  .v06-alert .copy { flex: 1; min-width: 0; font-size: 13px; font-weight: 600; color: #b03a00; }
-  .v06-alert .copy strong { color: #171717; font-weight: 800; }
-  .v06-alert .actions { display: flex; gap: 4px; align-items: center; }
-  .v06-alert .btn-link {
-    background: transparent; color: #b03a00; border: 0; cursor: pointer;
-    font-size: 12px; font-weight: 800;
-    text-decoration: underline; text-underline-offset: 3px;
-    padding: 4px 6px;
-  }
-  .v06-alert .btn-link:hover { color: #ff5500; }
-
-  /* ─── Variant 07: Marquee with embedded CTAs ─────────────────────────── */
-  .v07-marquee {
-    display: flex; align-items: center;
-    height: 32px;
-    overflow: hidden;
-    background: linear-gradient(90deg, #ff7a3d 0%, #ff5500 50%, #c63e00 100%);
-    color: #fff;
-    cursor: pointer;
-    position: relative;
-  }
-  .v07-marquee::before, .v07-marquee::after {
-    content: ''; position: absolute; top: 0; bottom: 0; width: 32px;
-    z-index: 2; pointer-events: none;
-  }
-  .v07-marquee::before { left: 0;  background: linear-gradient(to right, #ff7a3d, transparent); }
-  .v07-marquee::after  { right: 0; background: linear-gradient(to left, #c63e00, transparent); }
-  .v07-track {
-    display: inline-flex; align-items: center; gap: 36px;
-    animation: v07-scroll 24s linear infinite;
-    white-space: nowrap;
-    padding-left: 32px;
-    font-size: 12px; font-weight: 700; letter-spacing: 0.04em;
-  }
-  .v07-marquee:hover .v07-track { animation-play-state: paused; }
-  .v07-track > span { display: inline-flex; align-items: center; gap: 8px; }
-  .v07-track .last {
-    background: rgba(255,255,255,0.22); padding: 2px 8px; border-radius: 999px;
-    font-size: 10px; font-weight: 800; letter-spacing: 0.16em; text-transform: uppercase;
-  }
-  .v07-track .pill-cta {
-    background: #fff; color: #b03a00;
-    height: 22px; padding: 0 10px; border-radius: 999px;
-    font-size: 11px; font-weight: 800;
-    display: inline-flex; align-items: center; gap: 6px;
-  }
-  @keyframes v07-scroll {
-    0%   { transform: translateX(0); }
-    100% { transform: translateX(-50%); }
-  }
-
-  /* ─── Variant 08: Side-by-side cards ─────────────────────────────────── */
-  .v08-wrap {
-    padding: 14px 24px;
-    background: #fafafa;
-    border-bottom: 1px solid rgba(10,25,37,0.06);
-    display: flex; flex-direction: column; gap: 12px;
-  }
-  .v08-wrap .heading {
-    display: inline-flex; align-items: center; gap: 8px;
-    font-size: 13px; font-weight: 700; color: #171717;
-  }
-  .v08-wrap .heading .last {
-    background: #ff5500; color: #fff;
-    padding: 3px 10px; border-radius: 999px;
-    font-size: 9px; font-weight: 800; letter-spacing: 0.16em; text-transform: uppercase;
-  }
-  .v08-wrap .pair {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 8px;
-  }
-  .v08-wrap .card {
-    background: #fff;
-    border-radius: 10px;
-    padding: 10px 12px;
-    display: flex; align-items: center; gap: 10px;
-    cursor: pointer;
-    box-shadow: 0 0 0 1px rgba(10,25,37,0.09),
-                0 1px 2px rgba(10,25,37,0.06);
-    transition: transform .15s ease, box-shadow .15s ease;
-  }
-  .v08-wrap .card:hover {
-    transform: translateY(-1px);
-    box-shadow: 0 0 0 1px rgba(255,85,0,0.4),
-                0 4px 10px rgba(255,85,0,0.18);
-  }
-  .v08-wrap .card .icon {
-    width: 32px; height: 32px;
-    border-radius: 8px;
-    background: rgba(255,85,0,0.12);
-    color: #ff5500;
-    display: inline-flex; align-items: center; justify-content: center;
-    flex-shrink: 0;
-  }
-  .v08-wrap .card.primary .icon {
-    background: linear-gradient(135deg, #ff7a3d, #ff5500);
-    color: #fff;
-    box-shadow: 0 4px 10px rgba(255,85,0,0.32);
-  }
-  .v08-wrap .card .title { font-size: 12px; font-weight: 800; color: #171717; }
-  .v08-wrap .card .sub   { font-size: 11px; color: #525252; }
-
-  /* ─── Variant card layout (shared) ───────────────────────────────────── */
-  .variant {
-    background: #fff;
-    border-radius: 16px;
-    overflow: hidden;
-    box-shadow:
-      0 0 0 1px rgba(10,25,37,0.09),
-      0 4px 12px rgba(10,25,37,0.06);
-    display: flex; flex-direction: column;
-    position: relative;
-  }
-  .variant-head {
-    padding: 18px 20px 14px;
-    border-bottom: 1px solid rgba(10,25,37,0.09);
-    background: #fafafa;
-  }
-  .variant-stage {
-    position: relative;
-    min-height: 200px;
-    overflow: hidden;
-  }
-  .variant-controls {
-    padding: 12px 16px;
-    border-top: 1px solid rgba(10,25,37,0.06);
-    display: flex; gap: 8px; align-items: center;
-    background: #fafafa;
-    flex-wrap: wrap;
-  }
-  .legend {
-    margin-left: auto;
-    font-size: 11px; color: #a3a3a3;
-    text-transform: uppercase; letter-spacing: 0.08em; font-weight: 700;
-  }
-
-  .round-tag {
-    display: inline-flex; align-items: center; gap: 8px;
-    background: #171717; color: #fff;
-    padding: 6px 14px; border-radius: 999px;
-    font-size: 11px; font-weight: 700;
-    letter-spacing: 0.16em; text-transform: uppercase;
-  }
-  .copy-callout {
-    background: rgba(255,85,0,0.08);
-    border: 1px solid rgba(255,85,0,0.22);
-    border-radius: 8px;
-    padding: 10px 14px;
-    font-size: 13px;
-    color: #b03a00;
-  }
-  .copy-callout strong { color: #171717; }
-</style>
-</head>
-<body>
-
-<header class="px-8 py-10 max-w-7xl mx-auto">
-  <span class="round-tag">Round 3 · 8 directions · New copy</span>
-  <h1 class="text-[28px] font-bold text-ink-primary mt-3 tracking-[-0.01em]">Top-of-dashboard "Missed offer" message</h1>
-  <p class="text-[14px] text-ink-secondary mt-2 max-w-2xl leading-[1.55]">
-    Eight ways to render the missed-offer recovery message on the dashboard top. Every variant carries the
-    same headline copy and the same primary action so we can isolate the visual + interaction model.
-  </p>
-  <div class="copy-callout mt-4 max-w-3xl">
-    <strong>Copy (verbatim, all variants):</strong> &nbsp;
-    &ldquo;Missed $60 off Pro Annual&nbsp;&middot;&nbsp;Last chance&nbsp;&middot;&nbsp;<em>Reactivate&nbsp;and&nbsp;Upgrade</em>&rdquo;
-  </div>
-  <p class="text-[12px] text-ink-tertiary mt-3 leading-[1.5]">
-    Constants: brand orange <code class="font-mono">#ff5500</code>, dashboard top-nav frame, single
-    primary CTA <strong class="text-ink-primary not-italic">Reactivate&nbsp;and&nbsp;Upgrade</strong>.
-    Pick one (e.g. <em>"branch on 04"</em>) or say <strong class="text-ink-primary">freeze it</strong>.
-  </p>
-</header>
-
-<main class="grid grid-cols-1 lg:grid-cols-2 gap-6 px-8 pb-10 max-w-7xl mx-auto">
-
-  <!-- 01 · Full-width banner ribbon -->
-  <article class="variant" data-variant-id="01">
-    <div class="variant-head">
-      <p class="text-[11px] font-bold uppercase tracking-[0.16em] text-ink-tertiary">01</p>
-      <h2 class="text-[16px] font-bold text-ink-primary mt-1">Full-width banner ribbon</h2>
-      <p class="text-[13px] text-ink-secondary mt-1.5">Orange ribbon spans the entire stage above the top-nav. Highest visibility — impossible to miss, displaces a sliver of vertical space.</p>
-    </div>
-    <div class="variant-stage">
-      <div class="v01-banner">
-        <span class="icon"><i class="ph-fill ph-rocket-launch text-[14px]"></i></span>
-        <p class="copy">
-          Missed <strong>$60 off Pro Annual</strong>
-          <span class="sep">·</span>
-          <span class="last">Last chance</span>
-        </p>
-        <button class="cta" data-cta>
-          <i class="ph-bold ph-arrow-clockwise text-[12px]"></i>
-          Reactivate and Upgrade
-        </button>
-      </div>
-      <div class="mini-nav">
-        <div class="ml-auto flex items-center gap-3">
-          <span class="icon-btn"><i class="ph ph-magnifying-glass text-[18px]"></i></span>
-          <span class="icon-btn"><i class="ph ph-question text-[18px]"></i></span>
-          <span class="icon-btn"><i class="ph ph-bell text-[18px]"></i></span>
-          <span class="avatar"></span>
-        </div>
-      </div>
-      <div class="ack-toast" data-ack>Reactivated · checkout opens</div>
-    </div>
-    <div class="variant-controls"><span class="legend">Banner · Highest visibility</span></div>
-  </article>
-
-  <!-- 02 · Compact orange pill -->
-  <article class="variant" data-variant-id="02">
-    <div class="variant-head">
-      <p class="text-[11px] font-bold uppercase tracking-[0.16em] text-ink-tertiary">02</p>
-      <h2 class="text-[16px] font-bold text-ink-primary mt-1">Compact orange pill</h2>
-      <p class="text-[13px] text-ink-secondary mt-1.5">Single horizontal pill drops into the top-nav (replacing the trial pill). Minimal real estate, soft halo pulse keeps it discoverable.</p>
-    </div>
-    <div class="variant-stage">
-      <div class="mini-nav">
-        <div class="ml-auto flex items-center gap-3">
-          <span class="v02-pill">
-            <span>🔥 Missed $60 off Pro Annual</span>
-            <span class="sep">·</span>
-            <span class="last">Last chance</span>
-            <button class="cta" data-cta>
-              <i class="ph-bold ph-arrow-clockwise text-[10px]"></i>
-              Reactivate and Upgrade
-            </button>
-          </span>
-          <span class="icon-btn"><i class="ph ph-magnifying-glass text-[18px]"></i></span>
-          <span class="icon-btn"><i class="ph ph-bell text-[18px]"></i></span>
-          <span class="avatar"></span>
-        </div>
-      </div>
-      <div class="ack-toast" data-ack>Reactivated · checkout opens</div>
-    </div>
-    <div class="variant-controls"><span class="legend">Inline pill · Compact</span></div>
-  </article>
-
-  <!-- 03 · Stacked badge block -->
-  <article class="variant" data-variant-id="03">
-    <div class="variant-head">
-      <p class="text-[11px] font-bold uppercase tracking-[0.16em] text-ink-tertiary">03</p>
-      <h2 class="text-[16px] font-bold text-ink-primary mt-1">Stacked badge block</h2>
-      <p class="text-[13px] text-ink-secondary mt-1.5">A peach-tinted strip below the top-nav with a small "LAST CHANCE" badge over a bold headline + the primary action. Adds verticality.</p>
-    </div>
-    <div class="variant-stage">
-      <div class="mini-nav">
-        <div class="ml-auto flex items-center gap-3">
-          <span class="icon-btn"><i class="ph ph-magnifying-glass text-[18px]"></i></span>
-          <span class="icon-btn"><i class="ph ph-bell text-[18px]"></i></span>
-          <span class="avatar"></span>
-        </div>
-      </div>
-      <div class="v03-block">
-        <div class="row1">
-          <span class="last-badge"><i class="ph-fill ph-lightning text-[10px]"></i>Last chance</span>
-          <p class="headline">Missed <span style="color:#b03a00;">$60 off Pro Annual</span>. Time to lock it in.</p>
-        </div>
-        <div class="actions">
-          <button class="btn-primary" data-cta><i class="ph-bold ph-arrow-clockwise text-[12px]"></i>Reactivate and Upgrade</button>
-          <button class="btn-link">Maybe later</button>
-        </div>
-      </div>
-      <div class="ack-toast" data-ack>Reactivated · checkout opens</div>
-    </div>
-    <div class="variant-controls"><span class="legend">Block · Editorial</span></div>
-  </article>
-
-  <!-- 04 · Slot-divided pill -->
-  <article class="variant" data-variant-id="04">
-    <div class="variant-head">
-      <p class="text-[11px] font-bold uppercase tracking-[0.16em] text-ink-tertiary">04</p>
-      <h2 class="text-[16px] font-bold text-ink-primary mt-1">Slot-divided pill</h2>
-      <p class="text-[13px] text-ink-secondary mt-1.5">A four-segment horizontal pill — gray "Missed", dark "$60 off Pro Annual", orange "Last chance", and a white "Reactivate and Upgrade" CTA segment.</p>
-    </div>
-    <div class="variant-stage">
-      <div class="mini-nav">
-        <div class="ml-auto flex items-center gap-3">
-          <span class="v04-pill">
-            <span class="left"><i class="ph ph-x-circle text-[12px]"></i>Missed</span>
-            <span class="mid">$60&nbsp;off Pro Annual</span>
-            <span class="last">Last chance</span>
-            <button class="cta" data-cta><i class="ph-bold ph-arrow-clockwise text-[10px]"></i>Reactivate and Upgrade</button>
-          </span>
-          <span class="icon-btn"><i class="ph ph-bell text-[18px]"></i></span>
-          <span class="avatar"></span>
-        </div>
-      </div>
-      <div class="ack-toast" data-ack>Reactivated · checkout opens</div>
-    </div>
-    <div class="variant-controls"><span class="legend">Segmented · Storytelling</span></div>
-  </article>
-
-  <!-- 05 · Hero strip with timer 0:00 -->
-  <article class="variant" data-variant-id="05">
-    <div class="variant-head">
-      <p class="text-[11px] font-bold uppercase tracking-[0.16em] text-ink-tertiary">05</p>
-      <h2 class="text-[16px] font-bold text-ink-primary mt-1">Hero strip with elapsed timer</h2>
-      <p class="text-[13px] text-ink-secondary mt-1.5">A taller hero strip below the nav with a large icon, bolded headline, an elapsed timer chip ("00:00"), and a prominent primary action. Communicates urgency through the dead timer.</p>
-    </div>
-    <div class="variant-stage" style="min-height: 220px;">
-      <div class="mini-nav">
-        <div class="ml-auto flex items-center gap-3">
-          <span class="icon-btn"><i class="ph ph-magnifying-glass text-[18px]"></i></span>
-          <span class="icon-btn"><i class="ph ph-bell text-[18px]"></i></span>
-          <span class="avatar"></span>
-        </div>
-      </div>
-      <div class="v05-hero">
-        <span class="icon"><i class="ph-fill ph-hourglass-low text-[20px]"></i></span>
-        <div class="copy">
-          <h3>Missed <strong>$60 off Pro Annual</strong> · Last chance</h3>
-          <p>Timer expired <span class="timer">00:00</span> &middot; one revival left</p>
-        </div>
-        <button class="cta" data-cta>
-          <i class="ph-fill ph-rocket-launch text-[14px]"></i>
-          Reactivate and Upgrade
-        </button>
-      </div>
-      <div class="ack-toast" data-ack>Reactivated · checkout opens</div>
-    </div>
-    <div class="variant-controls"><span class="legend">Hero · Most urgent</span></div>
-  </article>
-
-  <!-- 06 · Amber alert -->
-  <article class="variant" data-variant-id="06">
-    <div class="variant-head">
-      <p class="text-[11px] font-bold uppercase tracking-[0.16em] text-ink-tertiary">06</p>
-      <h2 class="text-[16px] font-bold text-ink-primary mt-1">Amber alert</h2>
-      <p class="text-[13px] text-ink-secondary mt-1.5">Warm-tinted alert below the nav with a left accent bar and a warning icon. The primary action lives as a text-link button to keep the strip flat.</p>
-    </div>
-    <div class="variant-stage">
-      <div class="mini-nav">
-        <div class="ml-auto flex items-center gap-3">
-          <span class="icon-btn"><i class="ph ph-magnifying-glass text-[18px]"></i></span>
-          <span class="icon-btn"><i class="ph ph-bell text-[18px]"></i></span>
-          <span class="avatar"></span>
-        </div>
-      </div>
-      <div class="v06-alert">
-        <span class="icon"><i class="ph-fill ph-warning-circle text-[18px]"></i></span>
-        <p class="copy">Missed <strong>$60 off Pro Annual</strong> · Last chance to recover this discount before it expires for good.</p>
-        <span class="actions">
-          <button class="btn-link" data-cta>Reactivate and Upgrade</button>
-        </span>
-      </div>
-      <div class="ack-toast" data-ack>Reactivated · checkout opens</div>
-    </div>
-    <div class="variant-controls"><span class="legend">Alert · Quietest</span></div>
-  </article>
-
-  <!-- 07 · Marquee with embedded CTAs -->
-  <article class="variant" data-variant-id="07">
-    <div class="variant-head">
-      <p class="text-[11px] font-bold uppercase tracking-[0.16em] text-ink-tertiary">07</p>
-      <h2 class="text-[16px] font-bold text-ink-primary mt-1">Marquee with embedded CTA</h2>
-      <p class="text-[13px] text-ink-secondary mt-1.5">A thin orange marquee scrolls above the nav with the message + a "Reactivate and Upgrade" pill repeated. Click anywhere on the strip to trigger the action.</p>
-    </div>
-    <div class="variant-stage">
-      <div class="v07-marquee" data-cta>
-        <div class="v07-track">
-          <span><span class="last">Last chance</span><span>Missed $60 off Pro Annual</span><span class="pill-cta"><i class="ph-bold ph-arrow-clockwise text-[10px]"></i>Reactivate and Upgrade</span></span>
-          <span><span class="last">Last chance</span><span>Missed $60 off Pro Annual</span><span class="pill-cta"><i class="ph-bold ph-arrow-clockwise text-[10px]"></i>Reactivate and Upgrade</span></span>
-          <span><span class="last">Last chance</span><span>Missed $60 off Pro Annual</span><span class="pill-cta"><i class="ph-bold ph-arrow-clockwise text-[10px]"></i>Reactivate and Upgrade</span></span>
-        </div>
-      </div>
-      <div class="mini-nav">
-        <div class="ml-auto flex items-center gap-3">
-          <span class="icon-btn"><i class="ph ph-magnifying-glass text-[18px]"></i></span>
-          <span class="icon-btn"><i class="ph ph-bell text-[18px]"></i></span>
-          <span class="avatar"></span>
-        </div>
-      </div>
-      <div class="ack-toast" data-ack>Reactivated · checkout opens</div>
-    </div>
-    <div class="variant-controls"><span class="legend">Marquee · Most playful</span></div>
-  </article>
-
-  <!-- 08 · Side-by-side cards -->
-  <article class="variant" data-variant-id="08">
-    <div class="variant-head">
-      <p class="text-[11px] font-bold uppercase tracking-[0.16em] text-ink-tertiary">08</p>
-      <h2 class="text-[16px] font-bold text-ink-primary mt-1">Headline + side-by-side cards</h2>
-      <p class="text-[13px] text-ink-secondary mt-1.5">A grey strip with the headline + "LAST CHANCE" badge on top, then two action cards (primary "Reactivate and Upgrade" filled, secondary "Maybe later" outline). Most card-like treatment.</p>
-    </div>
-    <div class="variant-stage" style="min-height: 220px;">
-      <div class="mini-nav">
-        <div class="ml-auto flex items-center gap-3">
-          <span class="icon-btn"><i class="ph ph-magnifying-glass text-[18px]"></i></span>
-          <span class="icon-btn"><i class="ph ph-bell text-[18px]"></i></span>
-          <span class="avatar"></span>
-        </div>
-      </div>
-      <div class="v08-wrap">
-        <div class="heading">
-          <span class="last"><i class="ph-fill ph-lightning text-[9px]"></i>Last chance</span>
-          <span>Missed <strong>$60 off Pro Annual</strong></span>
-        </div>
-        <div class="pair">
-          <button class="card primary" data-cta>
-            <span class="icon"><i class="ph-fill ph-rocket-launch text-[16px]"></i></span>
-            <span>
-              <span class="title">Reactivate and Upgrade</span>
-              <span class="sub">Bring back the $60 off · 60 min</span>
-            </span>
-          </button>
-          <button class="card">
-            <span class="icon"><i class="ph ph-clock text-[16px]"></i></span>
-            <span>
-              <span class="title">Maybe later</span>
-              <span class="sub">Dismiss for this session</span>
-            </span>
-          </button>
-        </div>
-      </div>
-      <div class="ack-toast" data-ack>Reactivated · checkout opens</div>
-    </div>
-    <div class="variant-controls"><span class="legend">Cards · Decision-friendly</span></div>
-  </article>
-
-</main>
-
-<footer class="max-w-7xl mx-auto px-8 pb-16">
-  <div class="ds-elev-2 bg-white rounded-2xl px-6 py-5">
-    <h3 class="text-[14px] font-bold text-ink-primary">Pick or freeze</h3>
-    <p class="mt-2 text-[13px] text-ink-secondary leading-[1.55]">
-      Tell me which to branch on next (e.g. <em>"branch on 03"</em>) and I'll regenerate this file with that variant pinned as 01 + 7 fresh branches off it.
-      Or say <strong class="text-ink-primary">freeze it</strong> and I'll merge the chosen treatment into <code class="font-mono text-[12px]">dashboard-flash-sale.html</code>.
-    </p>
-  </div>
-</footer>
-
-<script>
-  // Each variant has one or more `[data-cta]` elements (the primary action) +
-  // one `[data-ack]` toast that confirms the click. Wire them up.
-  document.querySelectorAll('.variant').forEach((card) => {
-    const stage = card.querySelector('.variant-stage');
-    const ack   = stage.querySelector('[data-ack]');
-    let ackTimer = null;
-
-    function flashAck() {
-      if (!ack) return;
-      ack.dataset.open = 'true';
-      if (ackTimer) clearTimeout(ackTimer);
-      ackTimer = setTimeout(() => { ack.dataset.open = 'false'; }, 1800);
+    /* Gallery */
+    .gallery-shell { max-width: 1500px; margin: 0 auto; padding: 48px 24px 96px; }
+    .variant-tag { font-family: ui-monospace, "SF Mono", Menlo, monospace; font-size: 11px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: #6b7280; }
+    .variant-title { font-size: 18px; font-weight: 700; color: #111827; }
+    .variant-note { font-size: 12px; color: #6b7280; margin-top: 4px; }
+    .stage {
+      background: linear-gradient(135deg, #1f2937 0%, #0f172a 100%);
+      border-radius: 14px;
+      padding: 36px 24px;
+      display: flex; align-items: center; justify-content: center;
+      min-height: 480px;
+      box-shadow: 0 8px 24px rgba(0,0,0,.06);
     }
 
-    stage.querySelectorAll('[data-cta]').forEach((el) => {
-      el.addEventListener('click', (e) => {
-        e.preventDefault();
-        e.stopPropagation();
-        flashAck();
+    .selectable { transition: transform .15s, border-color .15s, background .15s; }
+    .selectable:active { transform: scale(.96); }
+  </style>
+</head>
+<body>
+  <div class="gallery-shell">
+    <header class="mb-10">
+      <div class="serif text-[40px] leading-tight text-gray-900">Crazy8s · Round 1</div>
+      <p class="text-gray-600 mt-2 max-w-2xl">8 layouts/content directions for "Pick a feeling — we'll write the testimonial." Each tile shows the full modal: orange $60-off panel + right column. Button style preserved (blue Submit &amp; Claim Discount).</p>
+      <div class="mt-4 inline-flex items-center gap-3 text-[12px] bg-white border border-gray-200 rounded-lg px-3 py-2 text-gray-700">
+        <span class="font-bold uppercase tracking-wider text-gray-500">Cumulative spec</span>
+        <span>· Vary: layout + content · Preserve: blue CTA · Full modal shell shown</span>
+      </div>
+    </header>
+
+    <div class="grid gap-12 lg:grid-cols-2">
+
+      <!-- ============ 01 · Emoji ribbon ============ -->
+      <section>
+        <div class="mb-3">
+          <span class="variant-tag">01 · Emoji ribbon</span>
+          <div class="variant-title mt-1">One-tap feedback → instant testimonial</div>
+          <div class="variant-note">Frame as feedback, not a question. Tap a reaction, your feedback shapes into a quote.</div>
+        </div>
+        <div class="stage">
+          <div class="fb-modal" id="v1">
+            <button class="fb-close"><i class="ph ph-x"></i></button>
+            <div class="fb-panel-left">
+              <span class="fb-conf" style="top:14px;right:24px;width:10px;height:16px;background:#ff5500;transform:rotate(22deg);"></span>
+              <span class="fb-conf" style="top:48px;right:64px;width:6px;height:6px;border-radius:999px;background:#4285f4;"></span>
+              <span class="fb-conf" style="top:80px;right:14px;width:7px;height:11px;background:#ff732d;transform:rotate(12deg);"></span>
+              <span class="fb-conf" style="bottom:60px;right:18px;width:8px;height:8px;border-radius:999px;background:#16a34a;"></span>
+              <span class="fb-conf" style="bottom:18px;right:30px;width:10px;height:16px;background:#fbbc04;transform:rotate(-30deg);"></span>
+              <span class="fb-gift">🎁</span>
+              <span class="fb-tag">Drop feedback, get</span>
+              <div class="fb-amount"><span class="dollar">$</span>60</div>
+              <div class="fb-amount-sub">off Pro Annual</div>
+              <div class="fb-panel-cta">One-tap feedback <i class="ph-bold ph-arrow-right"></i></div>
+            </div>
+            <div class="fb-right">
+              <div class="flex items-start justify-between gap-3 mb-1">
+                <h3 class="text-[15px] font-bold text-gray-900">Your feedback in one tap</h3>
+                <img src="assets/export-ppt/priya.png" class="w-9 h-9 rounded-full object-cover bg-gray-900 flex-shrink-0" />
+              </div>
+              <p class="text-[12px] text-gray-500 mb-3">Tap the reaction that fits — we'll shape it into a quote we may feature.</p>
+              <div class="border border-indigo-200 rounded-xl p-3 bg-white">
+                <div class="flex gap-1.5 mb-3 flex-wrap" data-row>
+                  <button data-label="Happy" data-q="My honest feedback: built a Q3 board update in 5 minutes flat — exactly the polish I needed." class="selectable w-9 h-9 rounded-full border border-gray-200 bg-gray-50 flex items-center justify-center text-[18px]" title="Happy">😀</button>
+                  <button data-label="Fast" data-q="Speed feedback: shipped before my second coffee. Game-changer for exec reviews." class="selectable w-9 h-9 rounded-full border border-gray-200 bg-gray-50 flex items-center justify-center text-[18px]" title="Fast">⚡</button>
+                  <button data-label="Thorough" data-q="Detail feedback: offsite notes turned into a 30-slide narrative I'd happily present to the CEO." class="selectable w-9 h-9 rounded-full border border-gray-200 bg-gray-50 flex items-center justify-center text-[18px]" title="Thorough">📝</button>
+                  <button data-label="Wow" data-q="Wow-factor feedback: AI nailed our brand voice on the first pass — board thought we hired an agency." class="selectable w-9 h-9 rounded-full border border-gray-200 bg-gray-50 flex items-center justify-center text-[18px]" title="Wow">🤩</button>
+                  <button data-label="Love it" data-q="Sticky feedback: every exec deck I ship now lands harder than the last." class="selectable w-9 h-9 rounded-full border border-gray-200 bg-gray-50 flex items-center justify-center text-[18px]" title="Love it">😍</button>
+                  <button data-label="Surprised" data-q="Surprise feedback: PPT landed in our investor's inbox sharper than our deck designer's work." class="selectable w-9 h-9 rounded-full border border-gray-200 bg-gray-50 flex items-center justify-center text-[18px]" title="Surprised">😯</button>
+                  <button data-label="Grateful" data-q="Relief feedback: finally — exec storytelling that doesn't eat my weekend." class="selectable w-9 h-9 rounded-full border border-gray-200 bg-gray-50 flex items-center justify-center text-[18px]" title="Grateful">🙌</button>
+                  <button data-label="Crafted" data-q="Craft feedback: the narrative arc from rough notes reads like I wrote it — only better." class="selectable w-9 h-9 rounded-full border border-gray-200 bg-gray-50 flex items-center justify-center text-[18px]" title="Crafted">🖋️</button>
+                </div>
+                <div data-meta class="text-[10px] uppercase tracking-wider font-bold text-gray-400 mb-1 hidden">Your feedback</div>
+                <div data-quote class="text-[13px] text-gray-900 leading-relaxed min-h-[52px]"><span class="text-gray-400 italic">Tap a reaction — your feedback drafts here.</span></div>
+              </div>
+              <p class="text-[11px] text-gray-400 mt-3">We may publish your feedback as a testimonial on our site or in marketing.</p>
+              <button class="btn-claim mt-4">Send Feedback &amp; Claim Discount</button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============ 02 · Vibe slider ============ -->
+      <section>
+        <div class="mb-3"><span class="variant-tag">02 · Vibe slider</span><div class="variant-title mt-1">Drag the dial — calm to mind-blown</div><div class="variant-note">Continuous spectrum, quote intensifies as you push right.</div></div>
+        <div class="stage">
+          <div class="fb-modal" id="v2">
+            <button class="fb-close"><i class="ph ph-x"></i></button>
+            <div class="fb-panel-left">
+              <span class="fb-conf" style="top:14px;right:24px;width:10px;height:16px;background:#ff5500;transform:rotate(22deg);"></span>
+              <span class="fb-conf" style="top:48px;right:64px;width:6px;height:6px;border-radius:999px;background:#4285f4;"></span>
+              <span class="fb-conf" style="bottom:60px;right:18px;width:8px;height:8px;border-radius:999px;background:#16a34a;"></span>
+              <span class="fb-conf" style="bottom:18px;right:30px;width:10px;height:16px;background:#fbbc04;transform:rotate(-30deg);"></span>
+              <span class="fb-gift">🎁</span>
+              <span class="fb-tag">Help us improve and get</span>
+              <div class="fb-amount"><span class="dollar">$</span>60</div>
+              <div class="fb-amount-sub">off Pro Annual</div>
+              <div class="fb-panel-cta">Slide your vibe <i class="ph-bold ph-arrow-right"></i></div>
+            </div>
+            <div class="fb-right">
+              <h3 class="text-[15px] font-bold text-gray-900 mb-1">How did it feel?</h3>
+              <p class="text-[12px] text-gray-500 mb-4">Slide to your vibe — we'll write a testimonial that matches.</p>
+              <div class="px-1">
+                <div class="flex justify-between text-[24px] mb-2">
+                  <span>😐</span><span>🙂</span><span>😀</span><span>🤩</span><span>🤯</span>
+                </div>
+                <input id="v2-slider" type="range" min="0" max="4" value="2" class="w-full accent-blue-700" />
+                <div class="flex justify-between text-[9px] uppercase font-bold tracking-wider text-gray-400 mt-1">
+                  <span>Meh</span><span>Solid</span><span>Great</span><span>Wow</span><span>Mind-blown</span>
+                </div>
+              </div>
+              <div id="v2-quote" class="mt-4 p-3 bg-blue-50 border-l-4 border-blue-700 text-[13px] text-gray-900 leading-relaxed serif italic">"Genuinely good. My deck designer asked what I used."</div>
+              <p class="text-[11px] text-gray-400 mt-3">We may share your testimonial on our website or in marketing.</p>
+              <button class="btn-claim mt-3">Submit &amp; Claim Discount</button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============ 03 · Mood matrix ============ -->
+      <section>
+        <div class="mb-3"><span class="variant-tag">03 · Mood matrix</span><div class="variant-title mt-1">Plot energy × polish</div><div class="variant-note">2D plane: speed × quality. 9 cells, click one. Designerly.</div></div>
+        <div class="stage">
+          <div class="fb-modal" id="v3">
+            <button class="fb-close"><i class="ph ph-x"></i></button>
+            <div class="fb-panel-left">
+              <span class="fb-conf" style="top:14px;right:24px;width:10px;height:16px;background:#ff5500;transform:rotate(22deg);"></span>
+              <span class="fb-conf" style="top:48px;right:64px;width:6px;height:6px;border-radius:999px;background:#4285f4;"></span>
+              <span class="fb-conf" style="bottom:18px;right:30px;width:10px;height:16px;background:#fbbc04;transform:rotate(-30deg);"></span>
+              <span class="fb-gift">🎁</span>
+              <span class="fb-tag">Help us improve and get</span>
+              <div class="fb-amount"><span class="dollar">$</span>60</div>
+              <div class="fb-amount-sub">off Pro Annual</div>
+              <div class="fb-panel-cta">Plot your experience <i class="ph-bold ph-arrow-right"></i></div>
+            </div>
+            <div class="fb-right">
+              <h3 class="text-[15px] font-bold text-gray-900 mb-1">Where did this land for you?</h3>
+              <p class="text-[12px] text-gray-500 mb-3">Pick the spot that fits.</p>
+              <div class="relative aspect-[4/3] border border-gray-200 rounded-xl bg-gradient-to-br from-gray-50 to-blue-50 p-3">
+                <div class="absolute left-0 top-1/2 -translate-y-1/2 -rotate-90 text-[9px] uppercase tracking-widest font-bold text-gray-400">Polish ↑</div>
+                <div class="absolute bottom-0 left-1/2 -translate-x-1/2 text-[9px] uppercase tracking-widest font-bold text-gray-400">Speed →</div>
+                <div class="grid grid-cols-3 grid-rows-3 gap-1.5 h-full">
+                  <button data-q="Polished but methodical — every slide earned its place." class="selectable rounded-full bg-white shadow-sm hover:bg-blue-100 text-[16px]">📝</button>
+                  <button data-q="Refined and brisk — boardroom-ready in an afternoon." class="selectable rounded-full bg-white shadow-sm hover:bg-blue-100 text-[16px]">🖋️</button>
+                  <button data-q="Polished AND fast — blew past my deck designer." class="selectable rounded-full bg-white shadow-sm hover:bg-blue-100 text-[16px]">🤩</button>
+                  <button data-q="Solid quality at a steady pace." class="selectable rounded-full bg-white shadow-sm hover:bg-blue-100 text-[16px]">🙂</button>
+                  <button data-q="Balanced — quality and speed both delivered." class="selectable rounded-full bg-white shadow-sm hover:bg-blue-100 text-[16px]">😀</button>
+                  <button data-q="Quick AND polished — finally a tool that does both." class="selectable rounded-full bg-white shadow-sm hover:bg-blue-100 text-[16px]">😍</button>
+                  <button data-q="Got it done. Nothing flashy." class="selectable rounded-full bg-white shadow-sm hover:bg-blue-100 text-[16px]">😐</button>
+                  <button data-q="Fast, but I'd polish before sending up the chain." class="selectable rounded-full bg-white shadow-sm hover:bg-blue-100 text-[16px]">⚡</button>
+                  <button data-q="Lightning quick — game-changer for exec reviews." class="selectable rounded-full bg-white shadow-sm hover:bg-blue-100 text-[16px]">🚀</button>
+                </div>
+              </div>
+              <div data-quote class="mt-3 text-[13px] text-gray-900 italic min-h-[36px]"><span class="text-gray-400 not-italic">Pick a square to draft your testimonial.</span></div>
+              <button class="btn-claim mt-3">Submit &amp; Claim Discount</button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============ 04 · Magazine pull-quote ============ -->
+      <section>
+        <div class="mb-3"><span class="variant-tag">04 · Magazine pull-quote</span><div class="variant-title mt-1">Big serif quote leads, picker is footer</div><div class="variant-note">Editorial framing. Quote is the hero; emoji selector lives small underneath.</div></div>
+        <div class="stage">
+          <div class="fb-modal" id="v4">
+            <button class="fb-close"><i class="ph ph-x"></i></button>
+            <div class="fb-panel-left">
+              <span class="fb-conf" style="top:14px;right:24px;width:10px;height:16px;background:#ff5500;transform:rotate(22deg);"></span>
+              <span class="fb-conf" style="top:80px;right:14px;width:7px;height:11px;background:#ff732d;transform:rotate(12deg);"></span>
+              <span class="fb-conf" style="bottom:18px;right:30px;width:10px;height:16px;background:#fbbc04;transform:rotate(-30deg);"></span>
+              <span class="fb-gift">🎁</span>
+              <span class="fb-tag">Help us improve and get</span>
+              <div class="fb-amount"><span class="dollar">$</span>60</div>
+              <div class="fb-amount-sub">off Pro Annual</div>
+              <div class="fb-panel-cta">Pick the feeling <i class="ph-bold ph-arrow-right"></i></div>
+            </div>
+            <div class="fb-right">
+              <div class="flex items-center gap-2.5 mb-3">
+                <img src="assets/export-ppt/priya.png" class="w-9 h-9 rounded-full object-cover bg-gray-900" />
+                <div>
+                  <div class="text-[12px] font-bold text-gray-900">Marcus Chen</div>
+                  <div class="text-[10px] text-gray-500">VP Strategy · Fortune 500</div>
+                </div>
+              </div>
+              <div class="relative">
+                <span class="serif absolute -top-3 -left-2 text-[60px] leading-none text-gray-200">"</span>
+                <p data-quote class="serif italic text-[18px] leading-snug text-gray-900 pl-5 min-h-[100px]">Mind blown. The AI nailed our brand voice on the first pass — board members thought we'd hired an agency.</p>
+              </div>
+              <div class="border-t border-gray-200 mt-4 pt-3">
+                <div class="text-[10px] uppercase tracking-wider font-bold text-gray-500 mb-2">Pick the feeling that fits</div>
+                <div class="flex gap-1 flex-wrap" data-row>
+                  <button data-q="In just 5 minutes — turned my Q3 board update into a polished deck." class="selectable w-7 h-7 rounded text-[14px] hover:bg-gray-100">😀</button>
+                  <button data-q="Shipped before my second coffee. Game-changer for exec reviews." class="selectable w-7 h-7 rounded text-[14px] hover:bg-gray-100">⚡</button>
+                  <button data-q="Notes from an offsite turned into a 30-slide narrative." class="selectable w-7 h-7 rounded text-[14px] hover:bg-gray-100">📝</button>
+                  <button data-q="Mind blown. The AI nailed our brand voice on the first pass — board members thought we'd hired an agency." class="selectable w-7 h-7 rounded text-[14px] bg-gray-900 text-white">🤩</button>
+                  <button data-q="I'm in love. Every exec deck I ship lands harder than the last." class="selectable w-7 h-7 rounded text-[14px] hover:bg-gray-100">😍</button>
+                  <button data-q="Did not expect this. Sharper than our deck designer's work." class="selectable w-7 h-7 rounded text-[14px] hover:bg-gray-100">😯</button>
+                  <button data-q="Finally — exec storytelling that doesn't eat my weekend." class="selectable w-7 h-7 rounded text-[14px] hover:bg-gray-100">🙌</button>
+                  <button data-q="The narrative arc — reads like I wrote it." class="selectable w-7 h-7 rounded text-[14px] hover:bg-gray-100">🖋️</button>
+                </div>
+              </div>
+              <p class="text-[10px] text-gray-400 mt-3">May appear on our website or in marketing.</p>
+              <button class="btn-claim mt-3">Submit &amp; Claim Discount</button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============ 05 · Tweet card ============ -->
+      <section>
+        <div class="mb-3"><span class="variant-tag">05 · Tweet card</span><div class="variant-title mt-1">Social-post framing, emoji as reactions</div><div class="variant-note">Familiar. Emoji bar reads like reactions with vote counts.</div></div>
+        <div class="stage">
+          <div class="fb-modal" id="v5">
+            <button class="fb-close"><i class="ph ph-x"></i></button>
+            <div class="fb-panel-left">
+              <span class="fb-conf" style="top:14px;right:24px;width:10px;height:16px;background:#ff5500;transform:rotate(22deg);"></span>
+              <span class="fb-conf" style="bottom:60px;right:18px;width:8px;height:8px;border-radius:999px;background:#16a34a;"></span>
+              <span class="fb-conf" style="bottom:18px;right:30px;width:10px;height:16px;background:#fbbc04;transform:rotate(-30deg);"></span>
+              <span class="fb-gift">🎁</span>
+              <span class="fb-tag">Help us improve and get</span>
+              <div class="fb-amount"><span class="dollar">$</span>60</div>
+              <div class="fb-amount-sub">off Pro Annual</div>
+              <div class="fb-panel-cta">React to confirm <i class="ph-bold ph-arrow-right"></i></div>
+            </div>
+            <div class="fb-right">
+              <div class="border border-gray-200 rounded-2xl p-3 bg-white">
+                <div class="flex items-center gap-2 mb-2">
+                  <img src="assets/export-ppt/priya.png" class="w-9 h-9 rounded-full object-cover bg-gray-900" />
+                  <div class="leading-tight">
+                    <div class="text-[13px] font-bold text-gray-900">Marcus Chen</div>
+                    <div class="text-[11px] text-gray-500">@marcus.chen · VP Strategy</div>
+                  </div>
+                </div>
+                <p data-quote class="text-[13px] text-gray-900 leading-relaxed">In just 5 minutes — turned my Q3 board update into a polished deck. The export held up beautifully on the projector.</p>
+                <div class="flex items-center gap-1.5 mt-3 pt-2 border-t border-gray-100 flex-wrap" data-row>
+                  <button data-q="In just 5 minutes — turned my Q3 board update into a polished deck. The export held up beautifully on the projector." class="selectable px-2 py-0.5 rounded-full bg-blue-50 text-[13px] inline-flex items-center gap-1 ring-1 ring-blue-200">😀<span class="text-[10px] font-bold text-blue-700">12k</span></button>
+                  <button data-q="Shipped before my second coffee. Game-changer for exec reviews." class="selectable px-2 py-0.5 rounded-full hover:bg-gray-50 text-[13px] inline-flex items-center gap-1">⚡<span class="text-[10px] text-gray-500">8k</span></button>
+                  <button data-q="Mind blown. The AI nailed our brand voice on the first pass." class="selectable px-2 py-0.5 rounded-full hover:bg-gray-50 text-[13px] inline-flex items-center gap-1">🤩<span class="text-[10px] text-gray-500">5k</span></button>
+                  <button data-q="I'm in love. Every exec deck I ship lands harder." class="selectable px-2 py-0.5 rounded-full hover:bg-gray-50 text-[13px] inline-flex items-center gap-1">😍<span class="text-[10px] text-gray-500">3k</span></button>
+                  <button data-q="Finally — exec storytelling that doesn't eat my weekend." class="selectable px-2 py-0.5 rounded-full hover:bg-gray-50 text-[13px] inline-flex items-center gap-1">🙌<span class="text-[10px] text-gray-500">2k</span></button>
+                </div>
+              </div>
+              <p class="text-[10px] text-gray-400 mt-3">We may share your testimonial on our website or in marketing.</p>
+              <button class="btn-claim mt-3">Submit &amp; Claim Discount</button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============ 06 · Stars + best-part ============ -->
+      <section>
+        <div class="mb-3"><span class="variant-tag">06 · Stars + best-part</span><div class="variant-title mt-1">Rate, then tag — quote composes</div><div class="variant-note">Two-step: stars set tone, tag picks subject. System stitches a sentence.</div></div>
+        <div class="stage">
+          <div class="fb-modal" id="v6">
+            <button class="fb-close"><i class="ph ph-x"></i></button>
+            <div class="fb-panel-left">
+              <span class="fb-conf" style="top:14px;right:24px;width:10px;height:16px;background:#ff5500;transform:rotate(22deg);"></span>
+              <span class="fb-conf" style="top:48px;right:64px;width:6px;height:6px;border-radius:999px;background:#4285f4;"></span>
+              <span class="fb-conf" style="bottom:18px;right:30px;width:10px;height:16px;background:#fbbc04;transform:rotate(-30deg);"></span>
+              <span class="fb-gift">🎁</span>
+              <span class="fb-tag">Help us improve and get</span>
+              <div class="fb-amount"><span class="dollar">$</span>60</div>
+              <div class="fb-amount-sub">off Pro Annual</div>
+              <div class="fb-panel-cta">Rate &amp; tag <i class="ph-bold ph-arrow-right"></i></div>
+            </div>
+            <div class="fb-right">
+              <h3 class="text-[15px] font-bold text-gray-900 mb-2">Rate the experience</h3>
+              <div class="flex gap-1 text-[28px] text-amber-400 mb-4" id="v6-stars">
+                <button data-r="1" class="selectable">★</button><button data-r="2" class="selectable">★</button><button data-r="3" class="selectable">★</button><button data-r="4" class="selectable">★</button><button data-r="5" class="selectable">★</button>
+              </div>
+              <div class="text-[12px] font-bold text-gray-900 mb-2">Best part?</div>
+              <div class="flex gap-1.5 flex-wrap mb-4" id="v6-tags">
+                <button data-t="speed" class="selectable px-2.5 py-1 rounded-full text-[12px] border border-gray-300">⚡ Speed</button>
+                <button data-t="quality" class="selectable px-2.5 py-1 rounded-full text-[12px] border border-gray-300">🖋️ Quality</button>
+                <button data-t="brand" class="selectable px-2.5 py-1 rounded-full text-[12px] border border-gray-300">🤩 On-brand</button>
+                <button data-t="ease" class="selectable px-2.5 py-1 rounded-full text-[12px] border border-gray-300">🙌 Effortless</button>
+                <button data-t="impact" class="selectable px-2.5 py-1 rounded-full text-[12px] border border-gray-300">📈 Impact</button>
+              </div>
+              <div id="v6-preview" class="p-3 rounded-lg bg-gray-50 border border-gray-200 text-[12px] text-gray-700 italic min-h-[52px]">Pick stars + a tag — your testimonial drafts below.</div>
+              <p class="text-[10px] text-gray-400 mt-2">We may share your testimonial on our website or in marketing.</p>
+              <button class="btn-claim mt-3">Submit &amp; Claim Discount</button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============ 07 · Speech bubble ============ -->
+      <section>
+        <div class="mb-3"><span class="variant-tag">07 · Speech bubble</span><div class="variant-title mt-1">Picked emoji floats, quote bubbles out</div><div class="variant-note">Cartoon-friendly. Big emoji avatar, speech bubble unfurls.</div></div>
+        <div class="stage">
+          <div class="fb-modal" id="v7">
+            <button class="fb-close"><i class="ph ph-x"></i></button>
+            <div class="fb-panel-left">
+              <span class="fb-conf" style="top:14px;right:24px;width:10px;height:16px;background:#ff5500;transform:rotate(22deg);"></span>
+              <span class="fb-conf" style="top:80px;right:14px;width:7px;height:11px;background:#ff732d;transform:rotate(12deg);"></span>
+              <span class="fb-conf" style="bottom:60px;right:18px;width:8px;height:8px;border-radius:999px;background:#16a34a;"></span>
+              <span class="fb-gift">🎁</span>
+              <span class="fb-tag">Help us improve and get</span>
+              <div class="fb-amount"><span class="dollar">$</span>60</div>
+              <div class="fb-amount-sub">off Pro Annual</div>
+              <div class="fb-panel-cta">Tap a feeling <i class="ph-bold ph-arrow-right"></i></div>
+            </div>
+            <div class="fb-right">
+              <h3 class="text-[15px] font-bold text-gray-900 mb-3">Tap how you felt</h3>
+              <div class="flex gap-1.5 mb-5 flex-wrap" data-row>
+                <button data-q="Shipped before my second coffee. Game-changer for exec reviews." data-e="⚡" class="selectable w-10 h-10 rounded-full bg-yellow-100 hover:bg-yellow-200 text-[20px]">⚡</button>
+                <button data-q="Mind blown. The AI nailed our brand voice on the first pass." data-e="🤩" class="selectable w-10 h-10 rounded-full bg-pink-100 hover:bg-pink-200 text-[20px]">🤩</button>
+                <button data-q="I'm in love. Every exec deck lands harder than the last." data-e="😍" class="selectable w-10 h-10 rounded-full bg-rose-100 hover:bg-rose-200 text-[20px]">😍</button>
+                <button data-q="Finally — exec storytelling that doesn't eat my weekend." data-e="🙌" class="selectable w-10 h-10 rounded-full bg-green-100 hover:bg-green-200 text-[20px]">🙌</button>
+                <button data-q="Did not expect this. Sharper than our deck designer's work." data-e="😯" class="selectable w-10 h-10 rounded-full bg-blue-100 hover:bg-blue-200 text-[20px]">😯</button>
+                <button data-q="The narrative arc — reads like I wrote it." data-e="🖋️" class="selectable w-10 h-10 rounded-full bg-purple-100 hover:bg-purple-200 text-[20px]">🖋️</button>
+              </div>
+              <div class="flex items-start gap-3">
+                <div id="v7-emoji" class="w-16 h-16 rounded-full bg-gray-100 flex items-center justify-center text-[36px] flex-shrink-0">🙂</div>
+                <div class="relative flex-1">
+                  <div class="absolute -left-2 top-3 w-0 h-0 border-t-8 border-b-8 border-r-8 border-transparent border-r-blue-50"></div>
+                  <div id="v7-quote" class="bg-blue-50 rounded-xl px-3 py-2 text-[13px] text-gray-900 italic min-h-[52px]">Pick an emoji — I'll speak for you.</div>
+                </div>
+              </div>
+              <p class="text-[10px] text-gray-400 mt-3">May appear on our website or in marketing.</p>
+              <button class="btn-claim mt-3">Submit &amp; Claim Discount</button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============ 08 · Mad-libs composer ============ -->
+      <section>
+        <div class="mb-3"><span class="variant-tag">08 · Mad-libs composer</span><div class="variant-title mt-1">Fill the blanks — co-authored</div><div class="variant-note">Three inline drop-downs build the sentence. Most user agency.</div></div>
+        <div class="stage">
+          <div class="fb-modal" id="v8">
+            <button class="fb-close"><i class="ph ph-x"></i></button>
+            <div class="fb-panel-left">
+              <span class="fb-conf" style="top:14px;right:24px;width:10px;height:16px;background:#ff5500;transform:rotate(22deg);"></span>
+              <span class="fb-conf" style="top:48px;right:64px;width:6px;height:6px;border-radius:999px;background:#4285f4;"></span>
+              <span class="fb-conf" style="bottom:60px;right:18px;width:8px;height:8px;border-radius:999px;background:#16a34a;"></span>
+              <span class="fb-gift">🎁</span>
+              <span class="fb-tag">Help us improve and get</span>
+              <div class="fb-amount"><span class="dollar">$</span>60</div>
+              <div class="fb-amount-sub">off Pro Annual</div>
+              <div class="fb-panel-cta">Co-write the line <i class="ph-bold ph-arrow-right"></i></div>
+            </div>
+            <div class="fb-right">
+              <h3 class="text-[15px] font-bold text-gray-900 mb-1">Co-write your testimonial</h3>
+              <p class="text-[12px] text-gray-500 mb-4">Pick three pieces — we'll do the rest.</p>
+              <div class="text-[16px] leading-[1.7] text-gray-900 mb-4 serif">
+                "In just <select class="bg-blue-50 border-b-2 border-blue-700 px-1.5 py-0.5 font-bold text-blue-700 rounded text-[14px]">
+                  <option>5 minutes</option><option>an afternoon</option><option>one evening</option>
+                </select>, I built a <select class="bg-blue-50 border-b-2 border-blue-700 px-1.5 py-0.5 font-bold text-blue-700 rounded text-[14px]">
+                  <option>board update</option><option>investor deck</option><option>strategy review</option><option>QBR</option>
+                </select> that landed <select class="bg-blue-50 border-b-2 border-blue-700 px-1.5 py-0.5 font-bold text-blue-700 rounded text-[14px]">
+                  <option>pixel-perfect</option><option>better than agency work</option><option>without a single tweak</option>
+                </select>."
+              </div>
+              <div class="flex items-center gap-2 mb-2 text-[11px] text-gray-500">
+                <i class="ph ph-pencil-line text-[14px]"></i>
+                <span>Sounds like you. Edit any chip above.</span>
+              </div>
+              <p class="text-[10px] text-gray-400">We may share your testimonial on our website or in marketing.</p>
+              <button class="btn-claim mt-4">Submit &amp; Claim Discount</button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+    </div>
+  </div>
+
+  <script>
+    // V1, V4, V5, V7 — emoji-row click sets quote
+    document.querySelectorAll('#v1, #v4, #v5, #v7').forEach((root) => {
+      const row = root.querySelector('[data-row]');
+      const target = root.querySelector('[data-quote]') || root.querySelector('#v7-quote');
+      if (!row || !target) return;
+      row.querySelectorAll('button[data-q]').forEach((b) => {
+        b.addEventListener('click', () => {
+          target.textContent = b.dataset.q;
+          row.querySelectorAll('button').forEach((x) => x.classList.remove('ring-2','ring-blue-700'));
+          b.classList.add('ring-2','ring-blue-700');
+          if (root.id === 'v1') {
+            const meta = root.querySelector('[data-meta]');
+            if (meta) {
+              meta.classList.remove('hidden');
+              meta.textContent = 'Your feedback · ' + (b.dataset.label || '');
+            }
+          }
+          if (root.id === 'v7') {
+            const big = root.querySelector('#v7-emoji');
+            if (big && b.dataset.e) big.textContent = b.dataset.e;
+          }
+        });
       });
     });
-  });
-</script>
 
+    // V2 — slider
+    (() => {
+      const slider = document.getElementById('v2-slider');
+      const out = document.getElementById('v2-quote');
+      const quotes = [
+        '"It got the job done — exec deck shipped without drama."',
+        '"Solid. Beat my usual workflow by an hour or so."',
+        '"Genuinely good. My deck designer asked what I used."',
+        '"Wow — investor inbox-ready on the first pass."',
+        '"Mind-blown. Board members thought we hired an agency."',
+      ];
+      slider.addEventListener('input', () => { out.textContent = quotes[slider.value]; });
+    })();
+
+    // V3 — mood matrix
+    (() => {
+      const root = document.getElementById('v3');
+      root.querySelectorAll('button[data-q]').forEach((b) => {
+        b.addEventListener('click', () => {
+          root.querySelector('[data-quote]').innerHTML = '<span>"' + b.dataset.q + '"</span>';
+          root.querySelectorAll('button').forEach((x) => x.classList.remove('ring-2','ring-blue-700'));
+          b.classList.add('ring-2','ring-blue-700');
+        });
+      });
+    })();
+
+    // V6 — stars + tags
+    (() => {
+      let stars = 0, tag = null;
+      const map = {
+        speed: 'turned around exec decks before my second coffee.',
+        quality: 'shipped pixel-perfect work without a designer touch.',
+        brand: 'matched our brand voice on the first pass.',
+        ease: 'finally cleared the deck-making block from my Sunday.',
+        impact: 'landed our last board update sharper than ever.',
+      };
+      const adj = ['Useful', 'Solid', 'Great', 'Excellent', 'Outstanding'];
+      const preview = document.getElementById('v6-preview');
+      const render = () => {
+        if (!stars || !tag) return;
+        preview.classList.remove('italic');
+        preview.classList.add('text-gray-900');
+        preview.textContent = '"' + adj[stars-1] + ' tool — ' + map[tag] + '"';
+      };
+      document.querySelectorAll('#v6-stars button').forEach((b) => {
+        b.addEventListener('click', () => {
+          stars = parseInt(b.dataset.r, 10);
+          document.querySelectorAll('#v6-stars button').forEach((s, i) => s.classList.toggle('opacity-30', i >= stars));
+          render();
+        });
+      });
+      document.querySelectorAll('#v6-tags button').forEach((b) => {
+        b.addEventListener('click', () => {
+          tag = b.dataset.t;
+          document.querySelectorAll('#v6-tags button').forEach((x) => x.classList.remove('bg-blue-50','border-blue-700','text-blue-700'));
+          b.classList.add('bg-blue-50','border-blue-700','text-blue-700');
+          render();
+        });
+      });
+    })();
+  </script>
+
+  <div id="agentation-root"></div>
+  <script type="module">
+    import React from 'https://esm.sh/react@18';
+    import { createRoot } from 'https://esm.sh/react-dom@18/client';
+    import { Agentation } from 'https://esm.sh/agentation@3?deps=react@18,react-dom@18';
+    createRoot(document.getElementById('agentation-root')).render(React.createElement(Agentation));
+  </script>
 </body>
 </html>
