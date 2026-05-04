@@ -303,7 +303,7 @@
     }
     .t-nudge-header {
       position: relative;
-      height: 140px;
+      height: 180px;
       flex-shrink: 0;
       overflow: hidden;
       background: linear-gradient(164.93deg, #ffdcbf 0%, #fff3e6 71.43%);
@@ -329,7 +329,8 @@
       0%, 100% { transform: translateY(0); }
       50%      { transform: translateY(-6px); }
     }
-    .t-nudge-copy { display: flex; flex-direction: column; gap: 10px; }
+    .t-nudge-copy { display: flex; flex-direction: column; gap: 12px; }
+    .t-nudge-copy .t-price-line { margin-top: 0; gap: 12px; }
     .t-badge {
       display: inline-flex; align-items: center;
       align-self: flex-start;
@@ -346,45 +347,50 @@
     }
     .t-price-line .t-amt {
       font-size: 36px; font-weight: 800;
-      line-height: 1;
+      line-height: 40px; height: 40px;
       color: #ff5500;
-      display: inline-flex; align-items: center;
-      min-width: 92px; min-height: 36px;
+      display: inline-flex; align-items: stretch;
     }
     .t-price-line .t-amt-real {
-      display: inline-block; opacity: 1;
-      background: linear-gradient(180deg, #ff732d 0%, #ff5500 100%);
-      -webkit-background-clip: text; background-clip: text; color: transparent;
+      display: inline-flex; align-items: stretch;
+      color: #ff5500;
     }
     .t-price-line .t-amt .t-sym {
-      font-size: 0.55em; font-weight: 700;
-      vertical-align: 0.35em; margin-right: 1px;
+      font-size: 22px; font-weight: 700;
+      line-height: 40px; padding-top: 2px; margin-right: 1px;
+      display: inline-block; color: #ff5500;
     }
-    .t-amt-skeleton {
+    /* V8 — Slow drift dial. Multi-rotation digit columns with edge mask + blur reveal. */
+    .t-digits { display: inline-flex; gap: 4px; height: 40px; }
+    .t-digit {
       display: inline-block;
-      width: 92px; height: 36px;
-      border-radius: 6px;
-      background: linear-gradient(90deg, #ffe1cc 0%, #fff3e6 50%, #ffe1cc 100%);
-      background-size: 200% 100%;
-      animation: t-skeleton-shimmer 1.1s ease-in-out infinite;
+      position: relative;
+      width: 26px; height: 40px;
+      overflow: hidden;
+      -webkit-mask-image: linear-gradient(to bottom, transparent 0%, #000 30%, #000 70%, transparent 100%);
+              mask-image: linear-gradient(to bottom, transparent 0%, #000 30%, #000 70%, transparent 100%);
     }
-    @keyframes t-skeleton-shimmer {
-      0%   { background-position: 200% 0; }
-      100% { background-position: -200% 0; }
+    .t-digit-track {
+      display: block;
+      transform: translateY(0);
+      transition: transform 4s cubic-bezier(0.16, 1, 0.3, 1), filter 3.6s ease-out;
     }
-    .t-amt[data-price-loading="true"] .t-amt-real { display: none; }
-    .t-amt[data-price-loading="false"] .t-amt-skeleton { display: none; }
-    .t-amt[data-price-loading="false"] .t-amt-real {
-      animation: t-price-pop 0.5s cubic-bezier(0.34, 1.45, 0.64, 1);
+    .t-digit:nth-child(2) .t-digit-track {
+      transition: transform 4.2s cubic-bezier(0.16, 1, 0.3, 1), filter 3.8s ease-out;
     }
-    @keyframes t-price-pop {
-      0%   { opacity: 0; transform: scale(0.85); }
-      55%  { opacity: 1; transform: scale(1.06); }
-      100% { opacity: 1; transform: scale(1); }
+    .t-digit-track > span {
+      display: block;
+      height: 40px; line-height: 40px;
+      text-align: center;
+      font-weight: 800;
+      color: #ff5500;
     }
+    /* Initial "00" is blurred during hold; blur clears as spin begins */
+    .t-amt[data-price-loading="true"]  .t-digit-track { filter: blur(6px); }
+    .t-amt[data-price-loading="false"] .t-digit-track { filter: blur(0); }
     .t-price-line .t-lbl {
       font-size: 22px; font-weight: 500; color: #171717;
-      margin-top: 4px; line-height: 1.15;
+      margin-top: 0; line-height: 1.15;
     }
     .t-conf {
       position: absolute; pointer-events: none; z-index: 1;
@@ -687,7 +693,7 @@
       price: 59,
       hideStrikeout: true,
       discountLabel: null,
-      buyLabel: "Get a single PPT",
+      buyLabel: "Export a single PPT",
       compareDiscount: "Single export",
     };
     const ONE_TIME_BUMPED = {
@@ -739,7 +745,7 @@
       price: 119,
       hideStrikeout: true,
       discountLabel: null,
-      buyLabel: "Get a single PPT",
+      buyLabel: "Export a single PPT",
       compareDiscount: "Single export",
     };
     const UNLIMITED_TIER1_BASE = {
@@ -751,7 +757,7 @@
       studentPriceMonthly: 20,
       hideStrikeout: true,
       discountLabel: null,
-      buyLabel: "Buy Now",
+      buyLabel: "Export unlimited PPT with Pro",
       compareDiscount: "Pro Annual",
       billed: "billed annually",
     };
@@ -1125,7 +1131,7 @@
     ].filter((f) => f.text);
     const buildUnlimitedFeatures = (unlimited) => [
       { icon: "ph-fill ph-seal-percent",  text: unlimited.discountLabel, accent: true },
-      { icon: "ph ph-file-ppt",           text: "Unlimited exports" },
+      { icon: "ph ph-file-ppt",           text: "Export unlimited decks" },
       { icon: "ph ph-pencil-simple",      text: "Pixel-perfect, fully editable export" },
       { icon: "ph ph-coin",               text: "5,000 Credits" },
       { icon: "ph ph-star-four",          text: "Advanced AI models and agents" },
@@ -1446,17 +1452,57 @@
         }
       }, [open]);
 
-      // 2s skeleton → reveal $60 with subtle scale-pop (no counting)
+      // V8 Slow Drift dial — hold blurred 1.2s, then dreamy multi-rotation slide
       useEffect(() => {
         if (!open) return;
-        const timer = setTimeout(() => {
-          document.querySelectorAll('.t-amt[data-price-loading="true"]').forEach((el) => {
-            el.dataset.priceLoading = 'false';
+        const DIGIT_H = 40;
+        const cycleCounts = [5, 6]; // tens then ones
+        const digits = Array.from(document.querySelectorAll('.t-digit[data-target]'));
+        if (!digits.length) return;
+
+        // Build tracks (cycles + 1 final stretch of 0..9)
+        digits.forEach((digit, i) => {
+          const track = digit.querySelector('.t-digit-track');
+          if (!track) return;
+          track.innerHTML = '';
+          const totalCycles = cycleCounts[i] + 1;
+          for (let c = 0; c < totalCycles; c++) {
+            for (let n = 0; n <= 9; n++) {
+              const span = document.createElement('span');
+              span.textContent = String(n);
+              track.appendChild(span);
+            }
+          }
+          track.dataset.cycles = String(cycleCounts[i]);
+          track.style.transition = 'none';
+          track.style.transform = 'translateY(0)';
+        });
+
+        // Set loading state for blur
+        const amtEls = document.querySelectorAll('.t-amt');
+        amtEls.forEach((el) => { el.dataset.priceLoading = 'true'; });
+
+        // Force reflow then restore CSS transitions
+        void document.body.offsetWidth;
+        digits.forEach((digit) => {
+          const track = digit.querySelector('.t-digit-track');
+          if (track) track.style.transition = '';
+        });
+
+        // After 1.2s hold, clear blur + slide to target
+        const holdId = setTimeout(() => {
+          amtEls.forEach((el) => { el.dataset.priceLoading = 'false'; });
+          digits.forEach((digit) => {
+            const track = digit.querySelector('.t-digit-track');
+            if (!track) return;
+            const target = parseInt(digit.dataset.target || '0', 10);
+            const cycles = parseInt(track.dataset.cycles || '0', 10);
+            const offset = (cycles * 10 + target) * DIGIT_H;
+            track.style.transform = `translateY(-${offset}px)`;
           });
-        }, 2000);
-        // Reset for next open
-        document.querySelectorAll('.t-amt').forEach((el) => { el.dataset.priceLoading = 'true'; });
-        return () => clearTimeout(timer);
+        }, 1200);
+
+        return () => clearTimeout(holdId);
       }, [open]);
 
       const submitDisabled = !quote.trim();
@@ -1519,18 +1565,20 @@
                   <span className="t-gift-emoji">🎁</span>
                   <div className="t-nudge-copy">
                     <span className="t-badge" id="fb-title">
-                      {step === "form" ? "Share feedback, get" : "Feedback received"}
+                      {step === "form" ? "Share Feedback and Get" : "Thank you"}
                     </span>
                     <div className="t-price-line">
                       <span className="t-amt" data-price-loading="true">
-                        <span className="t-amt-skeleton" aria-hidden="true"></span>
                         <span className="t-amt-real">
-                          {isEdu
-                            ? <><span className="t-amt-num">50</span><span style={{ fontSize: "0.7em", marginLeft: 1 }}>%</span></>
-                            : <><span className="t-sym">$</span><span className="t-amt-num">60</span></>}
+                          {!isEdu && <span className="t-sym">$</span>}
+                          <span className="t-digits">
+                            <span className="t-digit" data-target={isEdu ? "5" : "6"}><span className="t-digit-track"></span></span>
+                            <span className="t-digit" data-target="0"><span className="t-digit-track"></span></span>
+                          </span>
+                          {isEdu && <span style={{ fontSize: "22px", lineHeight: "40px", paddingTop: "2px", marginLeft: 2, color: "#ff5500", display: "inline-block" }}>%</span>}
                         </span>
                       </span>
-                      <span className="t-lbl">{isEdu ? "off Pro Annual" : "off Pro Annual"}</span>
+                      <span className="t-lbl">{step === "success" ? "off Pro Annual Unlocked" : "off Pro Annual"}</span>
                     </div>
                   </div>
                 </div>
@@ -1583,9 +1631,8 @@
                 )}
                 {step === "success" && (
                   <div style={{ position: "relative" }}>
-                    <h2 className="t-success-title">Thank you</h2>
                     <p className="t-success-body">
-                      We heard you. As a token of appreciation, we've unlocked <strong>{offerLabel}</strong> for the next <strong>one hour</strong>.
+                      We heard you. As a token of appreciation, we've unlocked <strong>{offerLabel}</strong> for the next <strong>hour</strong>.
                     </p>
                     <div className="fb-actions fb-cta-wrap" style={{ marginTop: 36 }}>
                       <span className="fb-cta-badge" aria-hidden="true">
@@ -1729,8 +1776,8 @@
           >
             <span className="text-[10px] font-bold uppercase tracking-[0.12em] text-gray-400 px-2">Audience</span>
             {[
-              { key: "tier1",     label: "offer not seen" },
-              { key: "tier1seen", label: "offer seen"     },
+              { key: "tier1",     label: "Offer not seen" },
+              { key: "tier1seen", label: "Offer seen"     },
               { key: "edu",       label: "EDU"            },
             ].map((opt) => {
               const isTier1 = opt.key === "tier1" || opt.key === "tier1seen";

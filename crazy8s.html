@@ -1,0 +1,377 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Crazy8s · Round 2 · Blur + slide variations</title>
+  <link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/regular/style.css" />
+  <link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/fill/style.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <style>
+    * { box-sizing: border-box; }
+    html, body { margin: 0; padding: 0; }
+    body {
+      font-family: "Inter", system-ui, sans-serif;
+      background: #0f172a;
+      color: #fff;
+      min-height: 100vh;
+      padding: 48px 32px 96px;
+    }
+
+    h1 { margin: 0 0 8px; font-size: 28px; font-weight: 700; letter-spacing: -0.01em; }
+    .subtitle { color: #94a3b8; font-size: 14px; margin-bottom: 8px; }
+    .spec-block {
+      display: inline-flex; gap: 12px; align-items: center;
+      background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 8px; padding: 10px 14px;
+      font-size: 12px; color: #cbd5e1; margin: 12px 0 36px;
+    }
+    .spec-block strong { color: #fff; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; font-size: 10px; }
+
+    .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(420px, 1fr)); gap: 24px; max-width: 1700px; margin: 0 auto; }
+
+    .variant {
+      background: linear-gradient(164.93deg, #ffdcbf 0%, #fff3e6 71.43%);
+      border-radius: 16px;
+      padding: 28px 24px 24px;
+      position: relative;
+      overflow: hidden;
+      min-height: 220px;
+      box-shadow: 0 14px 40px rgba(0,0,0,0.25);
+    }
+    .variant-meta {
+      position: absolute; top: 12px; right: 14px;
+      font-size: 10px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase;
+      color: #c64200; background: rgba(255,255,255,0.85); border-radius: 4px;
+      padding: 4px 8px;
+    }
+    .row { display: flex; align-items: flex-end; gap: 30px; }
+    .gift { font-size: 56px; line-height: 1; filter: drop-shadow(0 6px 14px rgba(0,0,0,0.10)); animation: gift-bounce 1.8s ease-in-out infinite; }
+    @keyframes gift-bounce { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-5px); } }
+
+    .copy { display: flex; flex-direction: column; gap: 14px; }
+    .badge {
+      display: inline-flex; align-items: center; align-self: flex-start;
+      background: rgba(255,85,0,0.22); color: #c64200;
+      font-size: 9px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase;
+      padding: 4px 9px; border-radius: 4px;
+    }
+    .price { display: flex; flex-direction: column; align-items: flex-start; line-height: 1; letter-spacing: -0.02em; gap: 6px; }
+    .amt {
+      font-size: 36px; font-weight: 800; line-height: 40px; height: 40px;
+      color: #ff5500;
+      display: inline-flex; align-items: stretch;
+    }
+    .sym { font-size: 22px; font-weight: 700; line-height: 40px; padding-top: 2px; margin-right: 1px; display: inline-block; color: #ff5500; }
+    .lbl { font-size: 20px; font-weight: 500; color: #171717; line-height: 1.15; }
+
+    .replay {
+      position: absolute; bottom: 12px; right: 14px;
+      background: rgba(0,0,0,0.7); color: #fff; border: 0;
+      padding: 6px 12px; border-radius: 999px;
+      font: inherit; font-size: 11px; font-weight: 700; cursor: pointer;
+    }
+    .replay:hover { background: #000; }
+
+    /* === Digit columns === */
+    .digits { display: inline-flex; gap: 4px; height: 40px; }
+    .digit {
+      display: inline-block;
+      position: relative;
+      width: 26px;
+      height: 40px;
+      overflow: hidden;
+    }
+    .digit-track {
+      display: block;
+      transform: translateY(0);
+    }
+    .digit-track > span {
+      display: block;
+      height: 40px; line-height: 40px;
+      text-align: center;
+      font-weight: 800;
+      color: #ff5500;
+    }
+
+    /* Smooth ease-out used across — extra long for buttery feel */
+    /* ============ V1 · Soft fog (anchor) — 3.4s/3.7s silky ============ */
+    [data-v="1"] .digit {
+      -webkit-mask-image: linear-gradient(to bottom, transparent 0%, #000 28%, #000 72%, transparent 100%);
+              mask-image: linear-gradient(to bottom, transparent 0%, #000 28%, #000 72%, transparent 100%);
+    }
+    [data-v="1"] .digit-track { transition: transform 3.4s cubic-bezier(0.16, 1, 0.3, 1), filter 3s ease-out; }
+    [data-v="1"] .digit:nth-child(2) .digit-track { transition: transform 3.7s cubic-bezier(0.16, 1, 0.3, 1), filter 3.3s ease-out; }
+    [data-v="1"][data-loading="true"]  .digit-track { filter: blur(8px); }
+    [data-v="1"][data-loading="false"] .digit-track { filter: blur(0); }
+
+    /* ============ V2 · Heavy fog snap — bumped to 2.4s/2.6s ============ */
+    [data-v="2"] .digit {
+      -webkit-mask-image: linear-gradient(to bottom, transparent 0%, #000 32%, #000 68%, transparent 100%);
+              mask-image: linear-gradient(to bottom, transparent 0%, #000 32%, #000 68%, transparent 100%);
+    }
+    [data-v="2"] .digit-track { transition: transform 2.4s cubic-bezier(0.22, 1.18, 0.36, 1), filter 2.4s ease-out; }
+    [data-v="2"] .digit:nth-child(2) .digit-track { transition: transform 2.6s cubic-bezier(0.22, 1.18, 0.36, 1), filter 2.6s ease-out; }
+    [data-v="2"][data-loading="true"]  .digit-track { filter: blur(14px); }
+    [data-v="2"][data-loading="false"] .digit-track { filter: blur(0); }
+
+    /* ============ V3 · Light shimmer — 3s/3.3s ============ */
+    [data-v="3"] .digit {
+      -webkit-mask-image: linear-gradient(to bottom, transparent 0%, #000 22%, #000 78%, transparent 100%);
+              mask-image: linear-gradient(to bottom, transparent 0%, #000 22%, #000 78%, transparent 100%);
+    }
+    [data-v="3"] .digit-track { transition: transform 3s cubic-bezier(0.16, 1, 0.3, 1), filter 0.6s ease-out; }
+    [data-v="3"] .digit:nth-child(2) .digit-track { transition: transform 3.3s cubic-bezier(0.16, 1, 0.3, 1), filter 0.6s ease-out; }
+    [data-v="3"][data-loading="true"]  .digit-track { filter: blur(4px); }
+    [data-v="3"][data-loading="false"] .digit-track { filter: blur(0); }
+
+    /* ============ V4 · Fog drift — 3.4s/3.7s ============ */
+    [data-v="4"] .digit {
+      -webkit-mask-image: linear-gradient(to bottom, transparent 0%, #000 28%, #000 72%, transparent 100%);
+              mask-image: linear-gradient(to bottom, transparent 0%, #000 28%, #000 72%, transparent 100%);
+    }
+    [data-v="4"] .digit-track { transition: transform 3.4s cubic-bezier(0.16, 1, 0.3, 1); }
+    [data-v="4"] .digit:nth-child(2) .digit-track { transition: transform 3.7s cubic-bezier(0.16, 1, 0.3, 1); }
+    [data-v="4"][data-loading="true"]  .digit-track { animation: v4-fog 3.4s ease-out forwards; }
+    @keyframes v4-fog {
+      0%   { filter: blur(10px); }
+      40%  { filter: blur(6px); }
+      75%  { filter: blur(2px); }
+      100% { filter: blur(0); }
+    }
+
+    /* ============ V5 · Crystallize — 3.2s/3.5s ============ */
+    [data-v="5"] .digit {
+      -webkit-mask-image: linear-gradient(to bottom, transparent 0%, #000 25%, #000 75%, transparent 100%);
+              mask-image: linear-gradient(to bottom, transparent 0%, #000 25%, #000 75%, transparent 100%);
+    }
+    [data-v="5"] .digit-track { transition: transform 3.2s cubic-bezier(0.16, 1, 0.3, 1), filter 3.2s ease-out, opacity 1s ease-out; transform-origin: center center; }
+    [data-v="5"] .digit:nth-child(2) .digit-track { transition: transform 3.5s cubic-bezier(0.16, 1, 0.3, 1), filter 3.5s ease-out, opacity 1s ease-out; }
+    [data-v="5"][data-loading="true"]  .digit-track { filter: blur(12px); opacity: 0.5; }
+    [data-v="5"][data-loading="false"] .digit-track { filter: blur(0); opacity: 1; }
+
+    /* ============ V6 · Glow halo — 3.4s/3.7s ============ */
+    [data-v="6"] .digit {
+      -webkit-mask-image: linear-gradient(to bottom, transparent 0%, #000 28%, #000 72%, transparent 100%);
+              mask-image: linear-gradient(to bottom, transparent 0%, #000 28%, #000 72%, transparent 100%);
+    }
+    [data-v="6"] .digit-track { transition: transform 3.4s cubic-bezier(0.16, 1, 0.3, 1), filter 1.6s ease-out, text-shadow 1.6s ease-out; }
+    [data-v="6"] .digit:nth-child(2) .digit-track { transition: transform 3.7s cubic-bezier(0.16, 1, 0.3, 1), filter 1.6s ease-out, text-shadow 1.6s ease-out; }
+    [data-v="6"][data-loading="true"]  .digit-track > span { filter: blur(3px); text-shadow: 0 0 18px rgba(255,85,0,0.85), 0 0 32px rgba(255,85,0,0.4); }
+    [data-v="6"][data-loading="false"] .digit-track > span { filter: blur(0); text-shadow: 0 0 0 rgba(255,85,0,0); }
+
+    /* ============ V7 · Flicker reveal — 3s/3.3s ============ */
+    [data-v="7"] .digit {
+      -webkit-mask-image: linear-gradient(to bottom, transparent 0%, #000 28%, #000 72%, transparent 100%);
+              mask-image: linear-gradient(to bottom, transparent 0%, #000 28%, #000 72%, transparent 100%);
+    }
+    [data-v="7"] .digit-track { transition: transform 3s cubic-bezier(0.16, 1, 0.3, 1); }
+    [data-v="7"] .digit:nth-child(2) .digit-track { transition: transform 3.3s cubic-bezier(0.16, 1, 0.3, 1); }
+    [data-v="7"][data-loading="true"]  .digit-track { animation: v7-flicker 3s ease-out forwards; }
+    @keyframes v7-flicker {
+      0%   { filter: blur(10px); opacity: 0.4; }
+      20%  { filter: blur(2px);  opacity: 0.9; }
+      35%  { filter: blur(8px);  opacity: 0.5; }
+      55%  { filter: blur(3px);  opacity: 0.95; }
+      75%  { filter: blur(5px);  opacity: 0.8; }
+      100% { filter: blur(0);    opacity: 1; }
+    }
+
+    /* ============ V8 · Slow drift (dreamy) — 4s/4.2s ============ */
+    [data-v="8"] .digit {
+      -webkit-mask-image: linear-gradient(to bottom, transparent 0%, #000 30%, #000 70%, transparent 100%);
+              mask-image: linear-gradient(to bottom, transparent 0%, #000 30%, #000 70%, transparent 100%);
+    }
+    [data-v="8"] .digit-track { transition: transform 4s cubic-bezier(0.16, 1, 0.3, 1), filter 3.6s ease-out; }
+    [data-v="8"] .digit:nth-child(2) .digit-track { transition: transform 4.2s cubic-bezier(0.16, 1, 0.3, 1), filter 3.8s ease-out; }
+    [data-v="8"][data-loading="true"]  .digit-track { filter: blur(6px); }
+    [data-v="8"][data-loading="false"] .digit-track { filter: blur(0); }
+  </style>
+</head>
+<body>
+
+  <h1>Crazy8s · Round 2 · Blur + slide</h1>
+  <p class="subtitle">8 takes on the V5 (blur + slide) reveal. Tile or "↺ Replay" re-runs.</p>
+  <div class="spec-block">
+    <strong>Cumulative spec</strong>
+    <span>Vary: blur intensity, timing, and reveal mechanic · Preserve: 2-stage (hold blurred → spin clear) · Edge fade mask · Both digits independent · Total ≤ 3.5s</span>
+  </div>
+
+  <div class="grid">
+    <div class="variant" data-v="1" data-loading="true">
+      <span class="variant-meta">01 · Soft fog (anchor)</span>
+      <div class="row"><span class="gift">🎁</span><div class="copy">
+        <span class="badge">Share Feedback and Get</span>
+        <div class="price">
+          <span class="amt"><span class="sym">$</span><span class="digits"><span class="digit"><span class="digit-track"></span></span><span class="digit"><span class="digit-track"></span></span></span></span>
+          <span class="lbl">off Pro Annual</span>
+        </div>
+      </div></div>
+      <button class="replay">↺ Replay</button>
+    </div>
+
+    <div class="variant" data-v="2" data-loading="true">
+      <span class="variant-meta">02 · Heavy fog snap</span>
+      <div class="row"><span class="gift">🎁</span><div class="copy">
+        <span class="badge">Share Feedback and Get</span>
+        <div class="price">
+          <span class="amt"><span class="sym">$</span><span class="digits"><span class="digit"><span class="digit-track"></span></span><span class="digit"><span class="digit-track"></span></span></span></span>
+          <span class="lbl">off Pro Annual</span>
+        </div>
+      </div></div>
+      <button class="replay">↺ Replay</button>
+    </div>
+
+    <div class="variant" data-v="3" data-loading="true">
+      <span class="variant-meta">03 · Light shimmer</span>
+      <div class="row"><span class="gift">🎁</span><div class="copy">
+        <span class="badge">Share Feedback and Get</span>
+        <div class="price">
+          <span class="amt"><span class="sym">$</span><span class="digits"><span class="digit"><span class="digit-track"></span></span><span class="digit"><span class="digit-track"></span></span></span></span>
+          <span class="lbl">off Pro Annual</span>
+        </div>
+      </div></div>
+      <button class="replay">↺ Replay</button>
+    </div>
+
+    <div class="variant" data-v="4" data-loading="true">
+      <span class="variant-meta">04 · Fog drift</span>
+      <div class="row"><span class="gift">🎁</span><div class="copy">
+        <span class="badge">Share Feedback and Get</span>
+        <div class="price">
+          <span class="amt"><span class="sym">$</span><span class="digits"><span class="digit"><span class="digit-track"></span></span><span class="digit"><span class="digit-track"></span></span></span></span>
+          <span class="lbl">off Pro Annual</span>
+        </div>
+      </div></div>
+      <button class="replay">↺ Replay</button>
+    </div>
+
+    <div class="variant" data-v="5" data-loading="true">
+      <span class="variant-meta">05 · Crystallize</span>
+      <div class="row"><span class="gift">🎁</span><div class="copy">
+        <span class="badge">Share Feedback and Get</span>
+        <div class="price">
+          <span class="amt"><span class="sym">$</span><span class="digits"><span class="digit"><span class="digit-track"></span></span><span class="digit"><span class="digit-track"></span></span></span></span>
+          <span class="lbl">off Pro Annual</span>
+        </div>
+      </div></div>
+      <button class="replay">↺ Replay</button>
+    </div>
+
+    <div class="variant" data-v="6" data-loading="true">
+      <span class="variant-meta">06 · Glow halo</span>
+      <div class="row"><span class="gift">🎁</span><div class="copy">
+        <span class="badge">Share Feedback and Get</span>
+        <div class="price">
+          <span class="amt"><span class="sym">$</span><span class="digits"><span class="digit"><span class="digit-track"></span></span><span class="digit"><span class="digit-track"></span></span></span></span>
+          <span class="lbl">off Pro Annual</span>
+        </div>
+      </div></div>
+      <button class="replay">↺ Replay</button>
+    </div>
+
+    <div class="variant" data-v="7" data-loading="true">
+      <span class="variant-meta">07 · Flicker reveal</span>
+      <div class="row"><span class="gift">🎁</span><div class="copy">
+        <span class="badge">Share Feedback and Get</span>
+        <div class="price">
+          <span class="amt"><span class="sym">$</span><span class="digits"><span class="digit"><span class="digit-track"></span></span><span class="digit"><span class="digit-track"></span></span></span></span>
+          <span class="lbl">off Pro Annual</span>
+        </div>
+      </div></div>
+      <button class="replay">↺ Replay</button>
+    </div>
+
+    <div class="variant" data-v="8" data-loading="true">
+      <span class="variant-meta">08 · Slow drift (dreamy)</span>
+      <div class="row"><span class="gift">🎁</span><div class="copy">
+        <span class="badge">Share Feedback and Get</span>
+        <div class="price">
+          <span class="amt"><span class="sym">$</span><span class="digits"><span class="digit"><span class="digit-track"></span></span><span class="digit"><span class="digit-track"></span></span></span></span>
+          <span class="lbl">off Pro Annual</span>
+        </div>
+      </div></div>
+      <button class="replay">↺ Replay</button>
+    </div>
+
+  </div>
+
+  <script>
+    const DIGIT_H = 40;
+
+    function buildTrack(track, cycles = 0) {
+      track.innerHTML = '';
+      const totalCycles = cycles + 1;
+      for (let c = 0; c < totalCycles; c++) {
+        for (let i = 0; i <= 9; i++) {
+          const span = document.createElement('span');
+          span.textContent = String(i);
+          track.appendChild(span);
+        }
+      }
+      track.dataset.cycles = String(cycles);
+      track.style.transform = 'translateY(0)';
+    }
+
+    function slideTo(track, targetDigit) {
+      const cycles = parseInt(track.dataset.cycles || '0', 10);
+      const offset = (cycles * 10 + targetDigit) * DIGIT_H;
+      track.style.transform = `translateY(-${offset}px)`;
+    }
+
+    // Per-variant config: cycle counts per digit + hold delay before spin
+    const CONFIG = {
+      '1': { cycles: [4, 5], hold: 1000 },
+      '2': { cycles: [2, 3], hold: 1400 },
+      '3': { cycles: [3, 4], hold: 800 },
+      '4': { cycles: [4, 5], hold: 1000 },
+      '5': { cycles: [3, 4], hold: 900 },
+      '6': { cycles: [4, 5], hold: 900 },
+      '7': { cycles: [2, 3], hold: 0 },
+      '8': { cycles: [5, 6], hold: 1200 },
+    };
+    const TARGETS = ['6', '0'];
+
+    function runVariant(variant) {
+      const v = variant.dataset.v;
+      const cfg = CONFIG[v] || { cycles: [2, 3], hold: 800 };
+      const tracks = variant.querySelectorAll('.digit-track');
+
+      if (variant._timer) { clearTimeout(variant._timer); variant._timer = null; }
+
+      variant.dataset.loading = 'true';
+
+      tracks.forEach((track, i) => {
+        buildTrack(track, cfg.cycles[i]);
+        track.style.transition = 'none';
+        track.style.transform = 'translateY(0)';
+      });
+
+      // Force reflow so subsequent transition kicks in
+      void variant.offsetWidth;
+      tracks.forEach((track) => { track.style.transition = ''; });
+
+      // After hold, clear loading + slide
+      variant._timer = setTimeout(() => {
+        variant.dataset.loading = 'false';
+        tracks.forEach((track, i) => slideTo(track, parseInt(TARGETS[i], 10)));
+      }, cfg.hold);
+    }
+
+    document.querySelectorAll('.variant').forEach((variant) => {
+      runVariant(variant);
+      const btn = variant.querySelector('.replay');
+      if (btn) btn.addEventListener('click', (e) => { e.stopPropagation(); runVariant(variant); });
+      variant.addEventListener('click', () => runVariant(variant));
+    });
+  </script>
+
+  <div id="agentation-root"></div>
+  <script type="module">
+    import React from 'https://esm.sh/react@18';
+    import { createRoot } from 'https://esm.sh/react-dom@18/client';
+    import { Agentation } from 'https://esm.sh/agentation@3?deps=react@18,react-dom@18';
+    createRoot(document.getElementById('agentation-root')).render(React.createElement(Agentation));
+  </script>
+</body>
+</html>
