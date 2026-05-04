@@ -1540,7 +1540,7 @@
               <div className="t-body">
                 {step === "form" && (
                   <div>
-                    <h3 className="t-heading" style={{ marginBottom: 12 }}>Pick a feeling - we'll write the testimonial</h3>
+                    <h3 className="t-heading" style={{ marginBottom: 12, fontSize: 16, fontWeight: 600 }}>Your feedback</h3>
 
                     <div className={"t-input-card" + (feeling || quote.trim() ? " picked" : "")}>
                       <div
@@ -1570,15 +1570,15 @@
                       </div>
                     </div>
 
-                    <p className="t-disclaimer">We may share your testimonial on our website or in marketing.</p>
-
-                    <button ref={submitBtnRef} className="fb-btn-primary" style={{ width: "100%", marginTop: 4 }} disabled={submitDisabled} onClick={handleSubmit}>
+                    <button ref={submitBtnRef} className="fb-btn-primary" style={{ width: "100%", marginTop: 16 }} disabled={submitDisabled} onClick={handleSubmit}>
                       <span className="fb-lock" aria-hidden="true">
                         <i className="ph-fill ph-lock"></i>
                         <i className="ph-fill ph-lock-open"></i>
                       </span>
                       Submit feedback and unlock discount
                     </button>
+
+                    <p className="t-disclaimer" style={{ textAlign: "center", marginTop: 12 }}>We may share your testimonial for marketing.</p>
                   </div>
                 )}
                 {step === "success" && (
