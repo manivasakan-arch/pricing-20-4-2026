@@ -70,6 +70,19 @@
       padding: 0 28px;
       flex-shrink: 0;
     }
+    /* Logo strip pinned to viewport bottom on mobile — content scrolls behind it */
+    @media (max-width: 767px) {
+      .logo-strip-mobile-sticky {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        z-index: 40;
+        box-shadow: 0 -6px 18px rgba(0,0,0,0.08);
+      }
+      /* Reserve space at modal bottom so last card features don't hide behind logo strip */
+      .offer-modal-shell { padding-bottom: 80px; }
+    }
     .logo-img {
       height: 40px;
       width: auto;
@@ -1076,7 +1089,7 @@
         <button
           type="button"
           onClick={handleClose}
-          className="absolute top-0 -right-14 w-9 h-9 rounded-full bg-white shadow-md hover:shadow-lg flex items-center justify-center text-gray-700 text-xl leading-none"
+          className="absolute top-2 right-2 md:top-0 md:-right-14 w-9 h-9 rounded-full bg-white shadow-md hover:shadow-lg flex items-center justify-center text-gray-700 text-xl leading-none z-10"
           aria-label="Close"
         >×</button>
       );
@@ -1171,13 +1184,13 @@
 
     function CardsImagePlan() {
       const { oneTime, unlimited, discountTier, timerLabel, extraOneTime, extraUnlimited, audience: aud } = usePricing();
-      const cls = "relative rounded-lg border border-gray-200 bg-white p-6 flex flex-col";
-      const proCls = "relative rounded-lg border-2 border-[#b8c1cc] p-6 flex flex-col shadow-lg";
+      const cls = "relative rounded-lg border border-gray-200 bg-white p-6 flex flex-col order-2";
+      const proCls = "relative rounded-lg border-2 border-[#b8c1cc] p-6 flex flex-col shadow-lg order-1 md:order-2";
       const proBgStyle = { backgroundImage: "linear-gradient(125.62deg, #ffffff 2.19%, #ffffff 41.38%, #eef2f6 98.14%)" };
       const showNudge = discountTier === "bumped";
       const proNudgeLabel = aud === "edu" ? "50% off" : `$${extraUnlimited} off`;
       return (
-        <div className="grid grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div className={cls}>
             <div className="illus-base illus-basic" aria-hidden="true" />
             <div className="flex items-center justify-between gap-3 mt-5 min-h-[68px]">
@@ -1229,11 +1242,11 @@
       const { testimonial, audience: aud } = usePricing();
       const activeLogos = aud === "edu" ? LOGOS_EDU : LOGOS;
       return (
-        <div className="relative w-full max-w-[1200px] mx-auto">
+        <div className="offer-modal-shell relative w-full max-w-[1200px] mx-auto">
           <CloseButton />
           <div className="bg-white rounded-lg shadow-2xl overflow-hidden">
-            <div className="grid grid-cols-[35fr_65fr]">
-              <div className="p-10 bg-gray-50 border-r border-gray-100 flex flex-col relative overflow-hidden">
+            <div className="grid grid-cols-1 md:grid-cols-[35fr_65fr]">
+              <div className="p-6 md:p-10 bg-gray-50 md:border-r border-t md:border-t-0 border-gray-100 flex flex-col relative overflow-hidden order-2 md:order-1">
                 <span aria-hidden="true" className="absolute -top-3 left-2 text-[280px] leading-none text-gray-100 opacity-60 select-none pointer-events-none" style={{ fontFamily: '"Hedvig Letters Serif", Georgia, serif' }}>“</span>
                 <div className="relative z-10 pt-[23px]">
                   <Quote size="text-[24px]" tone="text-gray-400" weight="font-extralight" />
@@ -1255,14 +1268,14 @@
                   </div>
                 </div>
               </div>
-              <div className="p-10 flex flex-col">
+              <div className="p-6 md:p-10 flex flex-col order-1 md:order-2">
                 <Eyebrow />
-                <div className="mb-8"><Heading /></div>
+                <div className="mb-6 md:mb-8"><Heading /></div>
                 <Cards />
               </div>
             </div>
-            <div className="px-10 py-4 border-t border-gray-100">
-              <div className="uni-ticker-mask overflow-hidden -mx-10">
+            <div className="logo-strip-mobile-sticky px-6 md:px-10 py-4 border-t border-gray-100 bg-white">
+              <div className="uni-ticker-mask overflow-hidden -mx-6 md:-mx-10">
                 <div className="uni-ticker-track">
                   {[...activeLogos, ...activeLogos].map((logo, i) => (
                     <img key={i} className="logo-img" src={logo.src} alt={logo.alt} />
@@ -1757,7 +1770,7 @@
           />
           {/* Variation A modal centered above */}
           <div
-            className="relative min-h-screen py-16 px-6 flex flex-col items-center justify-center"
+            className="relative min-h-screen py-6 px-3 md:py-16 md:px-6 flex flex-col items-center justify-center"
             style={{ zIndex: 2 }}
           >
             <Layout08BShell Cards={CardsImagePlan} />
