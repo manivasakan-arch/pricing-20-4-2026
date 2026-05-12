@@ -320,6 +320,94 @@
     100% { left: 130%; }
   }
 
+  /* =================================================================
+     Reactivation toast (Figma 6603:5977 — dark, center-bottom)
+     -----------------------------------------------------------------
+     Configurable via custom properties:
+       --toast-duration | --toast-bg | --toast-track-bg | --toast-fill-bg
+     See v2.html for full markup + dev notes.
+     ================================================================= */
+  .reactivate-toast {
+    --toast-duration: 6s;
+    --toast-bg: #0A1925;
+    --toast-track-bg: rgba(255,255,255,0.10);
+    --toast-fill-bg: rgba(255,255,255,0.55);
+
+    position: fixed;
+    bottom: 24px; left: 50%;
+    background: var(--toast-bg);
+    color: #fff;
+    border-radius: 4px;
+    padding: 12px;
+    width: auto;
+    max-width: calc(100vw - 32px);
+    display: inline-flex; align-items: center; gap: 12px;
+    white-space: nowrap;
+    transform: translate(-50%, 32px);
+    opacity: 0;
+    pointer-events: none;
+    transition: transform .35s cubic-bezier(0.16, 1, 0.3, 1), opacity .25s ease;
+    box-shadow: 0 12px 32px rgba(10,25,37,0.32);
+    z-index: 200;
+  }
+  .reactivate-toast[data-open="true"] {
+    transform: translate(-50%, 0);
+    opacity: 1;
+    pointer-events: auto;
+  }
+  .reactivate-toast .icon {
+    width: 20px; height: 20px;
+    flex-shrink: 0;
+    color: #16a34a;
+    display: inline-flex; align-items: center; justify-content: center;
+  }
+  .reactivate-toast .icon i { font-size: 20px; }
+  .reactivate-toast .body { flex: 1; min-width: 0; }
+  .reactivate-toast h4 {
+    font-size: 14px; font-weight: 500;
+    color: #fff; line-height: 1.43; margin: 0;
+  }
+  .reactivate-toast .close-x {
+    width: 16px; height: 16px;
+    color: rgba(255,255,255,0.7); background: transparent; border: 0; cursor: pointer;
+    display: inline-flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+    padding: 0;
+  }
+  .reactivate-toast .close-x:hover { color: #fff; }
+  .reactivate-toast .close-x i { font-size: 16px; }
+
+  /* Bottom progress bar — drains via scaleX, paused on hover */
+  .reactivate-toast .progress {
+    position: absolute;
+    left: 0; right: 0; bottom: 0;
+    height: 3px;
+    background: var(--toast-track-bg);
+    overflow: hidden;
+    border-bottom-left-radius: 4px;
+    border-bottom-right-radius: 4px;
+  }
+  .reactivate-toast .progress::after {
+    content: '';
+    position: absolute;
+    left: 0; top: 0; bottom: 0;
+    width: 100%;
+    background: var(--toast-fill-bg);
+    transform-origin: left center;
+    transform: scaleX(1);
+    will-change: transform;
+  }
+  .reactivate-toast[data-open="true"] .progress::after {
+    animation: toast-drain var(--toast-duration) linear forwards;
+  }
+  .reactivate-toast:hover .progress::after {
+    animation-play-state: paused;
+  }
+  @keyframes toast-drain {
+    from { transform: scaleX(1); }
+    to   { transform: scaleX(0); }
+  }
+
   @keyframes up-chip-glow {
     0%, 100% { box-shadow: 0 6px 16px rgba(0,0,0,0.18),
                            0 0 0 0   rgba(255, 85, 0, 0.55); }
@@ -615,6 +703,18 @@
   })();
 </script>
 
+<!-- Reactivation toast (non-blocking, slides from top-right) -->
+<div class="reactivate-toast" id="reactivate-toast" data-open="false" role="status" aria-live="polite">
+  <span class="icon"><i class="ph-fill ph-check-circle"></i></span>
+  <div class="body">
+    <h4>Reactivated discount for you, just this once</h4>
+  </div>
+  <button class="close-x" id="reactivate-toast-close" aria-label="Dismiss">
+    <i class="ph ph-x"></i>
+  </button>
+  <div class="progress" aria-hidden="true"></div>
+</div>
+
 <!-- State toggle (debug only — flip the header between active and expired) -->
 <div class="state-toggle" role="group" aria-label="Header state">
   <span class="label">State</span>
@@ -632,10 +732,35 @@
     buttons.forEach(b => b.addEventListener('click', () => setState(b.dataset.toggle)));
     setState('active'); // default
 
+    // Toast wiring — non-blocking exception confirmation
+    const toast = document.getElementById('reactivate-toast');
+    const toastCloseBtn = document.getElementById('reactivate-toast-close');
+    let toastTimer = null;
+    function showToast() {
+      if (!toast) return;
+      toast.dataset.open = 'true';
+      if (toastTimer) clearTimeout(toastTimer);
+      toastTimer = setTimeout(() => { toast.dataset.open = 'false'; }, 6000);
+    }
+    function hideToast() {
+      if (!toast) return;
+      toast.dataset.open = 'false';
+      if (toastTimer) { clearTimeout(toastTimer); toastTimer = null; }
+    }
+    if (toastCloseBtn) toastCloseBtn.addEventListener('click', hideToast);
+
     // Clicking the "Reactivate and Upgrade" CTA flips the header back to
-    // the active state (simulates the discount being revived).
+    // the active state (timer pill returns) + slides the one-time-exception toast in.
     const cta = document.getElementById('reactivate-cta');
-    if (cta) cta.addEventListener('click', () => setState('active'));
+    if (cta) cta.addEventListener('click', () => {
+      // Flip header to active (timer pill returns) then route to v2 pricing
+      // with bumped+toast query params so v2 enters the bumped state and
+      // surfaces the one-time exception toast.
+      setState('active');
+      setTimeout(() => {
+        window.location.href = 'v2.html?bumped=1&toast=reactivated';
+      }, 350);
+    });
     const nudgeCta = document.getElementById('nudge-cta');
     if (nudgeCta) nudgeCta.addEventListener('click', () => setState('active'));
     const claimBtn = document.getElementById('claim-discount-btn');

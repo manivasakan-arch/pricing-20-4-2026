@@ -545,6 +545,419 @@
   .seat-chip-input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
   .seat-chip-input { -moz-appearance: textfield; }
 
+  /* =================================================================
+     Reactivation toast (Figma 6603:5977 — dark, center-bottom)
+     -----------------------------------------------------------------
+     Configurable via custom properties on the root element:
+       --toast-duration  : how long the toast stays visible (default 6s)
+       --toast-track-bg  : color of the bottom progress track
+       --toast-fill-bg   : color of the bottom progress fill
+       --toast-bg        : toast surface color
+     -----------------------------------------------------------------
+     Markup pattern:
+       <div class="reactivate-toast" data-open="false">
+         <span class="icon">…</span>
+         <div class="body"><h4>Message</h4></div>
+         <button class="close-x">…</button>
+         <div class="progress" aria-hidden="true"></div>
+       </div>
+     -----------------------------------------------------------------
+     Open the toast by toggling [data-open="true"]; the drain
+     animation runs once and the dev script auto-dismisses at the
+     same duration via setTimeout. Hovering pauses the drain.
+     ================================================================= */
+  .reactivate-toast {
+    --toast-duration: 6s;
+    --toast-bg: #0A1925;
+    --toast-track-bg: rgba(255,255,255,0.10);
+    --toast-fill-bg: rgba(255,255,255,0.55);
+
+    position: fixed;
+    bottom: 24px; left: 50%;
+    background: var(--toast-bg);
+    color: #fff;
+    border-radius: 4px;
+    padding: 12px;
+    width: auto;
+    max-width: calc(100vw - 32px);
+    display: inline-flex; align-items: center; gap: 12px;
+    white-space: nowrap;
+    transform: translate(-50%, 32px);
+    opacity: 0;
+    pointer-events: none;
+    transition: transform .35s cubic-bezier(0.16, 1, 0.3, 1), opacity .25s ease;
+    box-shadow: 0 12px 32px rgba(10,25,37,0.32);
+    z-index: 200;
+  }
+  .reactivate-toast[data-open="true"] {
+    transform: translate(-50%, 0);
+    opacity: 1;
+    pointer-events: auto;
+  }
+  .reactivate-toast .icon {
+    width: 20px; height: 20px;
+    flex-shrink: 0;
+    color: #16a34a;
+    display: inline-flex; align-items: center; justify-content: center;
+  }
+  .reactivate-toast .icon i { font-size: 20px; }
+  .reactivate-toast .body { flex: 1; min-width: 0; }
+  .reactivate-toast h4 {
+    font-size: 14px; font-weight: 500;
+    color: #fff; line-height: 1.43; margin: 0;
+  }
+  .reactivate-toast .close-x {
+    width: 16px; height: 16px;
+    color: rgba(255,255,255,0.7); background: transparent; border: 0; cursor: pointer;
+    display: inline-flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+    padding: 0;
+  }
+  .reactivate-toast .close-x:hover { color: #fff; }
+  .reactivate-toast .close-x i { font-size: 16px; }
+
+  /* -----------------------------------------------------------------
+     Bottom progress bar — drains 100% → 0% over --toast-duration.
+     Implementation notes for devs:
+       • Track sits absolutely at the bottom of the toast box.
+       • Fill is the ::after pseudo, scaled on the X axis from
+         scaleX(1) → scaleX(0) so GPU-composited (no layout thrash).
+       • Animation is triggered by [data-open="true"] state. The
+         dev controlling the toast should also clearTimeout the
+         auto-dismiss timer if the user manually closes early
+         (see paired JS for reference).
+       • Hovering the toast pauses the drain via animation-play-state.
+     ----------------------------------------------------------------- */
+  .reactivate-toast .progress {
+    position: absolute;
+    left: 0; right: 0; bottom: 0;
+    height: 3px;
+    background: var(--toast-track-bg);
+    overflow: hidden;
+    border-bottom-left-radius: 4px;
+    border-bottom-right-radius: 4px;
+  }
+  .reactivate-toast .progress::after {
+    content: '';
+    position: absolute;
+    left: 0; top: 0; bottom: 0;
+    width: 100%;
+    background: var(--toast-fill-bg);
+    transform-origin: left center;
+    transform: scaleX(1);
+    will-change: transform;
+  }
+  .reactivate-toast[data-open="true"] .progress::after {
+    animation: toast-drain var(--toast-duration) linear forwards;
+  }
+  .reactivate-toast:hover .progress::after {
+    animation-play-state: paused;
+  }
+  @keyframes toast-drain {
+    from { transform: scaleX(1); }
+    to   { transform: scaleX(0); }
+  }
+
+  /* === Close-intent: export-ppt-pricing testimonial picker (ported) === */
+  .t-modal-backdrop {
+    position: fixed; inset: 0;
+    background: rgba(10,25,37,0.45);
+    display: none; align-items: center; justify-content: center;
+    z-index: 200;
+    padding: 24px;
+  }
+  .t-modal-backdrop[data-open="true"] { display: flex; }
+
+  .t-offer-nudge {
+    position: relative;
+    width: 520px; max-width: calc(100vw - 48px);
+    background: #fff;
+    border-radius: 12px;
+    overflow: hidden;
+    display: flex; flex-direction: column;
+    box-shadow: 0 30px 60px -12px rgba(0,0,0,0.35), 0 18px 36px -18px rgba(0,0,0,0.40);
+    animation: t-nudge-pop 0.45s cubic-bezier(0.34, 1.35, 0.64, 1);
+  }
+  @keyframes t-nudge-pop {
+    0%   { transform: scale(0.92); opacity: 0; }
+    100% { transform: scale(1);    opacity: 1; }
+  }
+  .t-close-btn {
+    position: absolute; top: 0; right: -56px;
+    width: 36px; height: 36px;
+    background: #fff;
+    border: 0; border-radius: 999px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.12);
+    display: inline-flex; align-items: center; justify-content: center;
+    cursor: pointer;
+    color: #525252;
+    z-index: 5;
+  }
+  @media (max-width: 600px) {
+    .t-close-btn { top: 8px; right: 8px; }
+  }
+  .t-nudge-header {
+    position: relative;
+    height: 180px;
+    flex-shrink: 0;
+    overflow: hidden;
+    background: linear-gradient(164.93deg, #ffdcbf 0%, #fff3e6 71.43%);
+  }
+  .t-nudge-header-row {
+    position: absolute;
+    top: 50%; left: 30px;
+    transform: translateY(-50%);
+    display: flex; align-items: flex-end; gap: 30px;
+    z-index: 2;
+  }
+  .t-gift-emoji {
+    font-size: 56px; line-height: 1; display: inline-block;
+    animation: t-gift-bounce 1.8s ease-in-out infinite;
+    filter: drop-shadow(0 6px 14px rgba(0,0,0,0.10));
+  }
+  @keyframes t-gift-bounce {
+    0%, 100% { transform: translateY(0); }
+    50%      { transform: translateY(-5px); }
+  }
+  .t-nudge-copy { display: flex; flex-direction: column; gap: 12px; }
+  .t-badge {
+    display: inline-flex; align-items: center;
+    align-self: flex-start;
+    background: rgba(255, 85, 0, 0.22);
+    color: #c64200;
+    font-size: 10px; font-weight: 700;
+    letter-spacing: 0.1em; text-transform: uppercase;
+    padding: 5px 10px;
+    border-radius: 4px;
+  }
+  .t-price-line {
+    display: flex; flex-direction: column; align-items: flex-start;
+    line-height: 1; letter-spacing: -0.02em; margin-top: 0; gap: 12px;
+  }
+  .t-amt {
+    font-size: 36px; font-weight: 800;
+    line-height: 40px; height: 40px;
+    color: #ff5500;
+    display: inline-flex; align-items: stretch;
+  }
+  .t-amt-real { display: inline-flex; align-items: stretch; color: #ff5500; }
+  .t-amt .t-sym {
+    font-size: 22px; font-weight: 700; line-height: 40px;
+    padding-top: 2px; margin-right: 1px;
+    display: inline-block; color: #ff5500;
+  }
+  .t-digits { display: inline-flex; gap: 4px; height: 40px; }
+  .t-digit {
+    display: inline-block;
+    position: relative;
+    width: 26px; height: 40px;
+    overflow: hidden;
+    -webkit-mask-image: linear-gradient(to bottom, transparent 0%, #000 30%, #000 70%, transparent 100%);
+            mask-image: linear-gradient(to bottom, transparent 0%, #000 30%, #000 70%, transparent 100%);
+  }
+  .t-digit-track {
+    display: block;
+    transform: translateY(0);
+    transition: transform 4s cubic-bezier(0.16, 1, 0.3, 1), filter 3.6s ease-out;
+  }
+  .t-digit:nth-child(2) .t-digit-track {
+    transition: transform 4.2s cubic-bezier(0.16, 1, 0.3, 1), filter 3.8s ease-out;
+  }
+  .t-digit-track > span {
+    display: block;
+    height: 40px; line-height: 40px;
+    text-align: center; font-weight: 800;
+    color: #ff5500;
+  }
+  .t-amt[data-price-loading="true"]  .t-digit-track { filter: blur(6px); }
+  .t-amt[data-price-loading="false"] .t-digit-track { filter: blur(0); }
+  .t-lbl {
+    font-size: 22px; font-weight: 500; color: #171717;
+    margin-top: 0; line-height: 1.15;
+  }
+
+  .t-conf {
+    position: absolute; pointer-events: none; z-index: 1;
+    animation: t-conf-drift 4.6s ease-in-out infinite;
+  }
+  @keyframes t-conf-drift {
+    0%, 100% { transform: translate(0,0) rotate(var(--r, 0deg)); }
+    50%      { transform: translate(var(--tx, 0), var(--ty, -8px)) rotate(calc(var(--r, 0deg) + 12deg)); }
+  }
+
+  .t-body {
+    padding: 24px 32px 28px;
+    display: flex; flex-direction: column; gap: 12px;
+  }
+  .t-heading { font-size: 16px; font-weight: 600; color: #171717; margin: 0 0 12px; }
+  .t-success-title {
+    font-family: 'Instrument Serif', serif;
+    font-style: italic;
+    font-size: 42px; line-height: 1;
+    color: #171717;
+    letter-spacing: -0.015em;
+    margin: 0;
+  }
+  .t-success-body {
+    font-size: 14px; color: #525252; line-height: 1.6; margin-top: 12px;
+  }
+  .t-success-body strong { color: #171717; font-weight: 600; }
+
+  /* Input card */
+  .t-input-card {
+    position: relative;
+    width: 100%;
+    height: 175px;
+    border: 1px solid rgba(26,26,26,0.15);
+    border-radius: 4px;
+    overflow: hidden;
+    padding: 19px;
+    background: #fafafa;
+    transition: border-color .2s, background .2s;
+  }
+  .t-input-card:focus-within { border-color: #0A1925; background: #fff; }
+  .t-input-card .t-quote {
+    font-size: 13px; color: #161616; line-height: 1.5; margin: 0;
+    min-height: 60px; max-height: 80px; overflow-y: auto;
+    outline: none; cursor: text;
+    transition: max-height .35s ease;
+    padding-right: 4px;
+  }
+  .t-input-card.picked .t-quote { max-height: 130px; min-height: 130px; }
+  .t-input-card .t-quote:empty::before {
+    content: attr(data-placeholder);
+    color: #9ca3af; font-style: italic; pointer-events: none;
+  }
+
+  /* Emoji marquee */
+  .t-emoji-row {
+    position: absolute; left: 0; right: 0; bottom: 0;
+    height: 70px; overflow: hidden; pointer-events: none;
+    opacity: 1;
+    transition: opacity .35s ease, transform .35s ease;
+  }
+  .t-input-card.picked .t-emoji-row { opacity: 0; transform: translateY(8px); pointer-events: none; }
+  .t-emoji-row::before, .t-emoji-row::after {
+    content: ''; position: absolute; top: 0; bottom: 0; width: 32px;
+    pointer-events: none; z-index: 3;
+  }
+  .t-emoji-row::before { left: 0;  background: linear-gradient(90deg, #fafafa 0%, rgba(250,250,250,0.92) 50%, rgba(250,250,250,0) 100%); }
+  .t-emoji-row::after  { right: 0; background: linear-gradient(270deg, #fafafa 0%, rgba(250,250,250,0.92) 50%, rgba(250,250,250,0) 100%); }
+  .t-emoji-track {
+    display: flex; gap: 10px; align-items: center;
+    width: max-content; height: 100%; padding: 0 4px;
+    animation: t-emoji-marquee 60s linear infinite;
+    will-change: transform;
+    transform: translate3d(0,0,0);
+    backface-visibility: hidden;
+    pointer-events: auto;
+  }
+  .t-emoji-row:hover .t-emoji-track { animation-play-state: paused; }
+  @keyframes t-emoji-marquee {
+    from { transform: translate3d(0, 0, 0); }
+    to   { transform: translate3d(-50%, 0, 0); }
+  }
+  .t-emoji-chip {
+    display: inline-flex; align-items: center; justify-content: center;
+    gap: 6px; padding: 6px 12px;
+    border: 1px solid rgba(26,26,26,0.15);
+    border-radius: 4px; background: #fff;
+    cursor: pointer; font: inherit;
+    font-size: 13px; font-weight: 500; color: #525252;
+    transition: border-color .15s, background .15s, color .15s;
+    flex-shrink: 0;
+  }
+  .t-emoji-chip:hover:not(.active) { border-color: #171717; color: #171717; }
+  .t-emoji-chip .em { font-size: 16px; line-height: 1; display: inline-flex; align-items: center; justify-content: center; }
+  .t-emoji-chip .lbl { font-size: 13px; font-weight: 500; color: inherit; white-space: nowrap; }
+  .t-emoji-chip.active { border-color: #0A1925; background: #f2f5f9; color: #0A1925; }
+
+  .t-disclaimer { font-size: 12px; color: #8d8d8d; margin: 0; line-height: 1.4; }
+
+  /* Submit CTA (lock-pop + shine) */
+  .t-cta {
+    width: 100%;
+    height: 48px;
+    border-radius: 4px;
+    background: linear-gradient(180deg, #1c3550 0%, #0A1925 100%);
+    color: #fff;
+    font-size: 15px; font-weight: 700;
+    cursor: pointer;
+    display: inline-flex; align-items: center; justify-content: center; gap: 10px;
+    border: 0;
+    position: relative; overflow: hidden;
+    transition: filter .15s;
+  }
+  .t-cta:hover:not([disabled]) { filter: brightness(1.08); }
+  .t-cta[disabled] { background: #e5e5e5; color: #a3a3a3; cursor: not-allowed; }
+  .t-cta-lock {
+    position: relative;
+    width: 22px; height: 22px;
+    display: inline-flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+  }
+  .t-cta-lock i { position: absolute; font-size: 22px; line-height: 1; transition: opacity .25s ease; }
+  .t-cta-lock .ph-lock { opacity: 1; }
+  .t-cta-lock .ph-lock-open { opacity: 0; }
+  .t-cta:not([disabled]) .t-cta-lock .ph-lock { opacity: 0; }
+  .t-cta:not([disabled]) .t-cta-lock .ph-lock-open { opacity: 1; animation: t-lock-pop 0.55s cubic-bezier(0.34, 1.35, 0.64, 1); }
+  @keyframes t-lock-pop {
+    0%   { transform: rotate(-18deg) scale(0.6); opacity: 0; }
+    60%  { transform: rotate(8deg)   scale(1.15); opacity: 1; }
+    100% { transform: rotate(0deg)   scale(1);    opacity: 1; }
+  }
+  .t-cta.just-unlocked::before {
+    content: ''; position: absolute; inset: 0;
+    border-radius: inherit;
+    background: linear-gradient(100deg, transparent 30%, rgba(255,255,255,0.55) 50%, transparent 70%);
+    background-size: 200% 100%;
+    animation: t-cta-shine 0.75s linear;
+    pointer-events: none;
+  }
+  @keyframes t-cta-shine {
+    0%   { background-position: 150% 0; }
+    100% { background-position: -50% 0; }
+  }
+
+  .t-cta-wrap { position: relative; }
+  .t-cta-badge {
+    position: absolute;
+    bottom: calc(100% + 4px);
+    left: 50%;
+    display: inline-flex; align-items: center; gap: 5px;
+    padding: 5px 12px;
+    background: #ff5500; color: #fff;
+    border-radius: 999px;
+    font-size: 11px; font-weight: 800; letter-spacing: 0.02em;
+    box-shadow: 0 4px 14px rgba(0,0,0,0.18);
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+    transform: translate(-50%, 0);
+    animation: t-cta-badge-pulse 1.8s ease-in-out infinite, t-cta-badge-ripple 2.2s ease-in-out infinite;
+    z-index: 1;
+  }
+  .t-cta-badge::after {
+    content: ''; position: absolute;
+    bottom: -4px; left: 50%;
+    width: 8px; height: 8px; background: #ff5500;
+    transform: translateX(-50%) rotate(45deg);
+    border-radius: 1px;
+  }
+  .t-cta-badge i { font-size: 12px; color: #fff; }
+  @keyframes t-cta-badge-pulse {
+    0%, 100% { transform: translate(-50%, 0); }
+    50%      { transform: translate(-50%, -4px); }
+  }
+  @keyframes t-cta-badge-ripple {
+    0%, 100% { box-shadow: 0 4px 14px rgba(0,0,0,0.18), 0 0 0 0 rgba(255, 85, 0, 0.55); }
+    70%      { box-shadow: 0 4px 14px rgba(0,0,0,0.18), 0 0 0 12px rgba(255, 85, 0, 0); }
+    100%     { box-shadow: 0 4px 14px rgba(0,0,0,0.18), 0 0 0 0 rgba(255, 85, 0, 0); }
+  }
+
+  [data-step] { display: none; }
+  [data-step].on { display: block; animation: t-fade-in 0.35s ease; }
+  @keyframes t-fade-in { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
+
   /* Feedback modal (close-intent survey → doubles discount) */
   .fb-backdrop {
     position: fixed; inset: 0;
@@ -2244,10 +2657,127 @@
     })();
   </script>
 
-  <!-- Feedback modal: close-intent survey that doubles the Pro discount -->
+  <!-- Reactivation toast (slides from top-right when ?toast=reactivated) -->
+  <div class="reactivate-toast" id="reactivate-toast" data-open="false" role="status" aria-live="polite">
+    <span class="icon"><i class="ph-fill ph-check-circle"></i></span>
+    <div class="body">
+      <h4>Reactivated discount for you, just this once</h4>
+    </div>
+    <button class="close-x" id="reactivate-toast-close" aria-label="Dismiss">
+      <i class="ph ph-x"></i>
+    </button>
+    <div class="progress" aria-hidden="true"></div>
+  </div>
+  <script>
+    (function () {
+      const params = new URLSearchParams(window.location.search);
+      // Apply Pro bump if requested via query string
+      if (params.get('bumped') === '1') {
+        if (typeof window.applyProBump === 'function') {
+          window.applyProBump();
+        } else {
+          // applyProBump defined later in DOM — run after window load
+          window.addEventListener('load', () => {
+            if (typeof window.applyProBump === 'function') window.applyProBump();
+          });
+        }
+      }
+      // Show reactivation toast
+      if (params.get('toast') === 'reactivated') {
+        const toast = document.getElementById('reactivate-toast');
+        const closeBtn = document.getElementById('reactivate-toast-close');
+        let autoTimer = null;
+        const show = () => {
+          if (!toast) return;
+          toast.dataset.open = 'true';
+          autoTimer = setTimeout(() => { toast.dataset.open = 'false'; }, 6000);
+        };
+        const hide = () => {
+          if (!toast) return;
+          toast.dataset.open = 'false';
+          if (autoTimer) clearTimeout(autoTimer);
+        };
+        if (closeBtn) closeBtn.addEventListener('click', hide);
+        setTimeout(show, 400);
+      }
+    })();
+  </script>
+
+  <!-- Close-intent: export-ppt-pricing testimonial picker (ported as vanilla HTML) -->
   <div id="page-dim" aria-hidden="true"></div>
 
-  <div class="fb-backdrop" id="fb-modal" role="dialog" aria-modal="true" aria-labelledby="fb-title" data-open="false">
+  <div class="t-modal-backdrop" id="t-modal-backdrop" role="dialog" aria-modal="true" data-open="false">
+    <div class="t-offer-nudge" id="t-offer-nudge">
+      <button class="t-close-btn" id="t-close-btn" aria-label="Close"><i class="ph ph-x"></i></button>
+
+      <!-- Header -->
+      <div class="t-nudge-header">
+        <span class="t-conf" style="top:14px;  right:20px; width:10px; height:16px; background:#ff5500; --r:22deg;  --tx:-6px; --ty:-8px;  animation-duration:4.2s; animation-delay:-0.3s;"></span>
+        <span class="t-conf" style="top:32px;  right:70px; width:6px;  height:6px;  border-radius:999px; background:#4285f4; --r:0deg;   --tx:4px;  --ty:-12px; animation-duration:5.5s; animation-delay:-1.1s;"></span>
+        <span class="t-conf" style="bottom:18px; right:28px; width:10px; height:16px; background:#fbbc04; --r:-30deg; --tx:-5px; --ty:-9px; animation-duration:4.8s; animation-delay:-0.6s;"></span>
+        <span class="t-conf" style="bottom:60px; right:18px; width:8px; height:8px; border-radius:999px; background:#16a34a; --r:0deg; --tx:6px; --ty:-14px; animation-duration:6s; animation-delay:-2s;"></span>
+        <span class="t-conf" style="top:80px; right:12px; width:7px; height:11px; background:#ff732d; --r:12deg; --tx:-4px; --ty:-10px; animation-duration:5.2s; animation-delay:-1.6s;"></span>
+
+        <div class="t-nudge-header-row">
+          <span class="t-gift-emoji">🎁</span>
+          <div class="t-nudge-copy">
+            <span class="t-badge" id="t-tag">Share Feedback and Get</span>
+            <div class="t-price-line">
+              <span class="t-amt" data-price-loading="true">
+                <span class="t-amt-real">
+                  <span class="t-sym">$</span>
+                  <span class="t-digits">
+                    <span class="t-digit" data-target="6"><span class="t-digit-track"></span></span>
+                    <span class="t-digit" data-target="0"><span class="t-digit-track"></span></span>
+                  </span>
+                </span>
+              </span>
+              <span class="t-lbl" id="t-lbl">off Pro Annual</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Body -->
+      <div class="t-body">
+        <!-- FORM step -->
+        <div data-step="form" class="on" id="t-step-form">
+          <h3 class="t-heading">Your feedback</h3>
+
+          <div class="t-input-card" id="t-input-card">
+            <div class="t-quote" id="t-quote" contenteditable="true" role="textbox" aria-multiline="true" data-placeholder="Tap a feeling — or type your own testimonial."></div>
+            <div class="t-emoji-row">
+              <div class="t-emoji-track" id="t-emoji-track"></div>
+            </div>
+          </div>
+
+          <button class="t-cta" id="t-submit" style="margin-top: 16px;" disabled>
+            <span class="t-cta-lock" aria-hidden="true">
+              <i class="ph-fill ph-lock"></i>
+              <i class="ph-fill ph-lock-open"></i>
+            </span>
+            Submit feedback and unlock discount
+          </button>
+
+          <p class="t-disclaimer" style="text-align: center; margin-top: 12px;">We may share your testimonial for marketing.</p>
+        </div>
+
+        <!-- SUCCESS step -->
+        <div data-step="success" id="t-step-success">
+          <p class="t-success-body">
+            We heard you. As a token of appreciation, we've unlocked <strong>$60 off Pro Annual</strong> for the next <strong>hour</strong>.
+          </p>
+          <div class="t-cta-wrap" style="margin-top: 36px;">
+            <span class="t-cta-badge"><i class="ph-fill ph-clock"></i>Ends in <span id="t-success-timer">59:59</span></span>
+            <button class="t-cta" id="t-claim">Buy Pro Annual at $60 off</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Legacy survey modal kept as hidden DOM for back-compat; never rendered. -->
+  <div class="fb-backdrop hidden" id="fb-modal" role="dialog" aria-modal="true" aria-labelledby="fb-title" data-open="false" style="display:none !important;">
     <div class="fb-dialog-wrap">
       <button class="fb-close" id="fb-close" aria-label="Close">
         <i class="ph ph-x text-[18px]"></i>
@@ -2347,6 +2877,220 @@
 
   <script>
     (function () {
+      const FEELINGS = [
+        { em: "😀", label: "Happy", qs: [
+          "In just 2 minutes I built an investment pitch from cofounder notes — slides were polished and ready to share.",
+          "Walked into the QBR with a deck I was actually proud of. Smooth flow, clean layout, zero last-minute panic.",
+          "Built our annual offsite keynote in one afternoon. Looked like a pro deck, felt like a real story.",
+          "My team applauded after the all-hands deck I shipped. First time that's ever happened.",
+          "Took my rough Friday brainstorm and shipped a 20-slide product update by Monday. Clients loved it.",
+        ] },
+        { em: "⚡️", label: "Fast", qs: [
+          "Generated a full investor deck before my second coffee. Game-changer for exec reviews.",
+          "Shipped the board update in 8 minutes flat — that used to be a half-day job for my team.",
+          "Last-minute client pitch turned around in under 15 minutes.",
+          "Three decks in one hour for three different stakeholders.",
+          "Friday afternoon ask, Monday morning slides. AI did in minutes what my designer did in days.",
+        ] },
+        { em: "📝", label: "Detailed", qs: [
+          "Notes from our offsite turned into a 30-slide narrative I felt proud to walk into the boardroom with.",
+          "My scrappy bullet points became a structured strategy deck — every slide earned its place.",
+          "It picked up the nuance in my data and turned it into slide-level stories, not just bullets.",
+          "Detailed enough that even my CFO didn't have follow-up questions.",
+          "Each slide felt curated — narrative, visuals, data callouts.",
+        ] },
+        { em: "🤯", label: "Mind blown", qs: [
+          "Mind blown. AI nailed our brand voice on the first pass.",
+          "I gave it 3 lines of context and got back a deck that closed our seed round.",
+          "Did not expect this level of slide design from typed notes.",
+          "Generated a customer-success deck so good our VP forwarded it as a template.",
+          "Watched it turn rough talking points into a pixel-perfect product launch deck.",
+        ] },
+        { em: "😍", label: "Love it", qs: [
+          "In love with this. Every deck I ship now lands harder than the last.",
+          "I look forward to making decks now.",
+          "My favorite tool of the year. Board prep used to drain me; now it energizes me.",
+          "Obsessed. Used it for our IPO roadshow deck and the bankers asked who designed it.",
+          "Every slide feels intentional.",
+        ] },
+        { em: "😲", label: "Surprised", qs: [
+          "Did not see this coming — output landed sharper than our deck designer's work.",
+          "Surprised how on-brand the slides came out.",
+          "Honestly didn't think AI could write a coherent investor narrative.",
+          "Walked into the demo expecting rough drafts; got a presentation-ready deck instead.",
+          "Surprised the data viz was thoughtful — chart types matched the insight.",
+        ] },
+        { em: "🙌", label: "Grateful", qs: [
+          "Finally — investor storytelling that doesn't eat my weekend.",
+          "Grateful. Cleared 6 hours off my prep schedule for our last fundraise round.",
+          "Saved my team during a brutal quarter.",
+          "Thank you for building a tool that respects my time.",
+          "Genuinely grateful. Helped me nail the keynote that got me promoted.",
+        ] },
+        { em: "🖌️", label: "Crafted", qs: [
+          "The narrative arc from my rough notes reads like I wrote it — only sharper.",
+          "Crafted slides — typography, spacing, hierarchy. Not template soup.",
+          "Felt designed, not generated.",
+          "The cover slide alone was worth it. Looked like a magazine spread.",
+          "Layouts varied across the deck — section dividers, data slides, quote slides.",
+        ] },
+      ];
+      const pickRandomQuote = (label) => {
+        const f = FEELINGS.find((x) => x.label === label);
+        if (!f) return '';
+        return f.qs[Math.floor(Math.random() * f.qs.length)];
+      };
+
+      const backdrop = document.getElementById('t-modal-backdrop');
+      const closeBtn = document.getElementById('t-close-btn');
+      const card = document.getElementById('t-input-card');
+      const track = document.getElementById('t-emoji-track');
+      const quote = document.getElementById('t-quote');
+      const submit = document.getElementById('t-submit');
+      const claimBtn = document.getElementById('t-claim');
+      const tag = document.getElementById('t-tag');
+      const lbl = document.getElementById('t-lbl');
+      const stepForm = document.getElementById('t-step-form');
+      const stepSuccess = document.getElementById('t-step-success');
+      const successTimer = document.getElementById('t-success-timer');
+
+      // Build chips (doubled for seamless marquee)
+      const buildChip = (f) => {
+        const b = document.createElement('button');
+        b.className = 't-emoji-chip';
+        b.dataset.feeling = f.label;
+        b.title = f.label;
+        b.innerHTML = '<span class="em">' + f.em + '</span><span class="lbl">' + f.label + '</span>';
+        return b;
+      };
+      FEELINGS.forEach((f) => track.appendChild(buildChip(f)));
+      FEELINGS.forEach((f) => track.appendChild(buildChip(f)));
+
+      const triggerUnlock = () => {
+        submit.disabled = false;
+        submit.classList.remove('just-unlocked');
+        void submit.offsetWidth;
+        submit.classList.add('just-unlocked');
+      };
+
+      const onPick = (chip) => {
+        const feeling = chip.dataset.feeling;
+        track.querySelectorAll('.t-emoji-chip').forEach((c) => c.classList.toggle('active', c.dataset.feeling === feeling));
+        quote.textContent = pickRandomQuote(feeling);
+        card.classList.add('picked');
+        triggerUnlock();
+      };
+      track.querySelectorAll('.t-emoji-chip').forEach((chip) => chip.addEventListener('click', () => onPick(chip)));
+
+      quote.addEventListener('input', () => {
+        const txt = quote.textContent.trim();
+        if (txt.length === 0) {
+          submit.disabled = true;
+          track.querySelectorAll('.t-emoji-chip').forEach((c) => c.classList.remove('active'));
+          card.classList.remove('picked');
+        } else {
+          card.classList.add('picked');
+          if (submit.disabled) triggerUnlock();
+        }
+      });
+
+      // V8 slow-drift digit dial — runs on every modal open
+      let dialTimer = null;
+      const DIGIT_H = 40;
+      function runDigitDial() {
+        const digits = Array.from(document.querySelectorAll('.t-digit[data-target]'));
+        if (!digits.length) return;
+        const cycleCounts = [5, 6];
+        digits.forEach((digit, i) => {
+          const t = digit.querySelector('.t-digit-track');
+          if (!t) return;
+          t.innerHTML = '';
+          const total = cycleCounts[i] + 1;
+          for (let c = 0; c < total; c++) {
+            for (let n = 0; n <= 9; n++) {
+              const span = document.createElement('span');
+              span.textContent = String(n);
+              t.appendChild(span);
+            }
+          }
+          t.dataset.cycles = String(cycleCounts[i]);
+          t.style.transition = 'none';
+          t.style.transform = 'translateY(0)';
+        });
+        document.querySelectorAll('.t-amt').forEach((el) => { el.dataset.priceLoading = 'true'; });
+        void document.body.offsetWidth;
+        digits.forEach((d) => { const t = d.querySelector('.t-digit-track'); if (t) t.style.transition = ''; });
+        if (dialTimer) clearTimeout(dialTimer);
+        dialTimer = setTimeout(() => {
+          document.querySelectorAll('.t-amt').forEach((el) => { el.dataset.priceLoading = 'false'; });
+          digits.forEach((digit) => {
+            const t = digit.querySelector('.t-digit-track');
+            if (!t) return;
+            const target = parseInt(digit.dataset.target || '0', 10);
+            const cycles = parseInt(t.dataset.cycles || '0', 10);
+            t.style.transform = 'translateY(-' + ((cycles * 10 + target) * DIGIT_H) + 'px)';
+          });
+        }, 1200);
+      }
+
+      let successTimerInterval = null;
+      function tickSuccessTimer() {
+        const start = parseInt(localStorage.getItem('proBumpStart') || '0', 10);
+        if (!start) { successTimer.textContent = '60:00'; return; }
+        const BUMP_MS = 60 * 60 * 1000;
+        const left = Math.max(0, BUMP_MS - (Date.now() - start));
+        const m = Math.floor(left / 60000);
+        const s = Math.floor((left % 60000) / 1000);
+        successTimer.textContent = m + ':' + String(s).padStart(2, '0');
+        if (left <= 0 && successTimerInterval) { clearInterval(successTimerInterval); successTimerInterval = null; }
+      }
+
+      function openModal() {
+        // Reset to form step
+        stepForm.classList.add('on');
+        stepSuccess.classList.remove('on');
+        tag.textContent = 'Share Feedback and Get';
+        lbl.textContent = 'off Pro Annual';
+        quote.textContent = '';
+        card.classList.remove('picked');
+        submit.disabled = true;
+        track.querySelectorAll('.t-emoji-chip').forEach((c) => c.classList.remove('active'));
+        backdrop.dataset.open = 'true';
+        // Kick off dial reveal
+        requestAnimationFrame(runDigitDial);
+      }
+      function closeModal() {
+        backdrop.dataset.open = 'false';
+        if (dialTimer) { clearTimeout(dialTimer); dialTimer = null; }
+        if (successTimerInterval) { clearInterval(successTimerInterval); successTimerInterval = null; }
+      }
+
+      submit.addEventListener('click', () => {
+        if (submit.disabled) return;
+        if (typeof window.applyProBump === 'function') window.applyProBump();
+        // Swap to success
+        stepForm.classList.remove('on');
+        stepSuccess.classList.add('on');
+        tag.textContent = 'Thank you';
+        lbl.textContent = 'off Pro Annual — unlocked';
+        tickSuccessTimer();
+        if (successTimerInterval) clearInterval(successTimerInterval);
+        successTimerInterval = setInterval(tickSuccessTimer, 1000);
+      });
+
+      claimBtn.addEventListener('click', closeModal);
+      closeBtn.addEventListener('click', closeModal);
+
+      window.openFeedbackModal = openModal;
+    })();
+  </script>
+
+  <!-- Legacy survey modal IIFE retained as no-op stub (dead DOM). -->
+  <script>
+    (function () {
+      // No-op block — survey replaced by .v2-close-toast.
+      const dead = false;
+      if (dead) {
       const modal       = document.getElementById('fb-modal');
       const stepForm    = document.getElementById('fb-step-form');
       const stepSuccess = document.getElementById('fb-step-success');
@@ -2497,6 +3241,7 @@
 
       // Expose a way for the main close (X) button to trigger the feedback flow
       window.openFeedbackModal = openModal;
+      } // end if(dead) — legacy stub
     })();
   </script>
 
