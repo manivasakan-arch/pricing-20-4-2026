@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Crazy 8 · 1 · Quiet utility</title>
+<link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/regular/style.css" />
+<link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/fill/style.css" />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="_shared.css" />
+<style>
+  .v1-popup { max-width: 460px; }
+  .v1-body { padding: 36px 32px 28px; }
+  .v1-eyebrow { font-size: 12px; font-weight: 600; color: #525252; letter-spacing: 0.04em; }
+  .v1-eyebrow strong { color: #0055ED; font-weight: 800; }
+  .v1-heading { font-size: 22px; font-weight: 600; line-height: 1.25; margin: 8px 0 18px; color: #171717; }
+  .v1-textarea {
+    width: 100%; min-height: 120px;
+    border: 1px solid #d4dae2; border-radius: 8px;
+    padding: 14px 16px; font-family: inherit; font-size: 14px;
+    resize: vertical; outline: none;
+    color: #171717;
+  }
+  .v1-textarea:focus { border-color: #0055ED; }
+  .v1-textarea::placeholder { color: #a3a3a3; }
+  .v1-footer-note { font-size: 11px; color: #8d8d8d; margin: 10px 0 18px; text-align: center; }
+</style>
+</head>
+<body>
+<div class="crazy8-tag"><strong>Variant 1</strong> · Quiet utility</div>
+<div class="popup v1-popup">
+  <button class="popup-close" aria-label="Close"><i class="ph ph-x"></i></button>
+  <div class="v1-body">
+    <p class="v1-eyebrow">One line → <strong>$60 off Pro Annual</strong></p>
+    <h2 class="v1-heading">What's working — or not?</h2>
+    <textarea class="v1-textarea" placeholder="Tap to share a single line about your experience."></textarea>
+    <p class="v1-footer-note">We may share your testimonial for marketing.</p>
+    <button class="btn-primary"><i class="ph-fill ph-lock-open"></i>Submit and unlock $60 off</button>
+  </div>
+</div>
+</body>
+</html>

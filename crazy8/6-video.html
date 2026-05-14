@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Crazy 8 · 6 · Video toggle</title>
+<link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/regular/style.css" />
+<link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/fill/style.css" />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="_shared.css" />
+<style>
+  .v6-popup { max-width: 560px; }
+  .v6-body { padding: 28px 28px 28px; }
+  .v6-h { font-size: 22px; font-weight: 600; line-height: 1.3; color: #171717; margin: 0 0 6px; }
+  .v6-sub { font-size: 13px; color: #525252; line-height: 1.5; margin: 0 0 22px; }
+
+  .v6-toggle {
+    display: grid; grid-template-columns: 1fr 1fr;
+    gap: 0; margin-bottom: 22px;
+    border: 1px solid #e3e7ee; border-radius: 10px;
+    overflow: hidden;
+  }
+  .v6-toggle button {
+    border: 0; background: #fff; padding: 14px 12px;
+    font-family: inherit; font-size: 13px; font-weight: 600;
+    color: #525252; cursor: pointer;
+    display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+    position: relative;
+  }
+  .v6-toggle button.on { background: #0055ED; color: #fff; }
+  .v6-toggle button .bonus {
+    position: absolute; top: 6px; right: 8px;
+    font-size: 10px; font-weight: 700; padding: 2px 6px;
+    background: #16a34a; color: #fff; border-radius: 999px;
+    letter-spacing: 0.04em;
+  }
+  .v6-toggle button.on .bonus { background: #fff; color: #16a34a; }
+
+  .v6-record {
+    border: 2px dashed #d4dae2; border-radius: 12px;
+    padding: 36px 20px;
+    text-align: center;
+    margin-bottom: 18px;
+    background: #fafbfd;
+  }
+  .v6-record-btn {
+    width: 64px; height: 64px; border-radius: 999px; border: 0;
+    background: linear-gradient(180deg, #ff4d4d, #d62828);
+    color: #fff; cursor: pointer;
+    display: inline-flex; align-items: center; justify-content: center;
+    box-shadow: 0 8px 22px rgba(214,40,40,0.35);
+    margin-bottom: 14px;
+  }
+  .v6-record-btn i { font-size: 26px; }
+  .v6-record-copy { font-size: 14px; font-weight: 600; color: #171717; margin: 0; }
+  .v6-record-sub { font-size: 12px; color: #8d8d8d; margin: 4px 0 0; }
+  .v6-foot-note { font-size: 11px; color: #8d8d8d; text-align: center; margin: 0 0 14px; }
+</style>
+</head>
+<body>
+<div class="crazy8-tag"><strong>Variant 6</strong> · Video testimonial toggle</div>
+<div class="popup v6-popup">
+  <button class="popup-close" aria-label="Close"><i class="ph ph-x"></i></button>
+  <div class="v6-body">
+    <h2 class="v6-h">Show us how you use it</h2>
+    <p class="v6-sub">Type one line, or record a 15-second clip — the bigger gift unlocks for video.</p>
+    <div class="v6-toggle">
+      <button><i class="ph-fill ph-pencil-simple"></i> Type · $60 off</button>
+      <button class="on"><i class="ph-fill ph-video"></i> Record 15s<span class="bonus">+$20</span></button>
+    </div>
+    <div class="v6-record">
+      <button class="v6-record-btn" aria-label="Record"><i class="ph-fill ph-record"></i></button>
+      <p class="v6-record-copy">Tap to record · 0:15 max</p>
+      <p class="v6-record-sub">Camera + mic permission requested on tap</p>
+    </div>
+    <p class="v6-foot-note">We may share your clip for marketing.</p>
+    <button class="btn-primary"><i class="ph-fill ph-lock-open"></i>Submit and unlock $80 off</button>
+  </div>
+</div>
+</body>
+</html>

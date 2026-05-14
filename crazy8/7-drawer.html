@@ -1,0 +1,118 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Crazy 8 · 7 · Inline drawer</title>
+<link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/regular/style.css" />
+<link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/fill/style.css" />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="_shared.css" />
+<style>
+  body { align-items: flex-start; padding-top: 80px; }
+
+  .v7-stack { width: 100%; max-width: 360px; display: flex; flex-direction: column; gap: 12px; }
+
+  /* Pro card (mini repro) */
+  .v7-pro {
+    border: 2px solid #a6c8ff;
+    border-radius: 14px;
+    padding: 24px;
+    background: linear-gradient(125deg, #fff 0%, #fff 41%, #e6efff 100%);
+    text-align: center;
+    box-shadow: 0 14px 36px rgba(0,0,0,0.06);
+  }
+  .v7-pro h3 {
+    background: linear-gradient(180deg, #6b94f7 0%, #0055ED 100%);
+    -webkit-background-clip: text; background-clip: text; color: transparent;
+    font-size: 22px; font-weight: 800; letter-spacing: -0.01em;
+    margin: 0 0 10px;
+  }
+  .v7-pro .price { font-size: 36px; font-weight: 800; color: #171717; }
+  .v7-pro .price sup { font-size: 18px; vertical-align: top; padding-top: 6px; display: inline-block; }
+  .v7-pro .sub { font-size: 12px; color: #525252; margin: 4px 0 14px; }
+  .v7-pro .cta {
+    width: 100%; height: 44px; border: 0; border-radius: 6px;
+    background: linear-gradient(180deg, #2873f5 0%, #0055ED 100%);
+    color: #fff; font-weight: 700; font-size: 14px;
+    cursor: pointer;
+  }
+
+  /* Drawer (slides under card) */
+  .v7-drawer {
+    border-radius: 12px;
+    overflow: hidden;
+    border: 1px solid #d4dae2;
+    background: #fff;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.06);
+    animation: slidein 0.45s cubic-bezier(0.34, 1.35, 0.64, 1);
+  }
+  @keyframes slidein {
+    from { opacity: 0; transform: translateY(-12px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  .v7-drawer-head {
+    padding: 14px 18px;
+    display: flex; align-items: center; gap: 10px;
+    background: linear-gradient(180deg, #f4f8ff 0%, #fff 100%);
+    border-bottom: 1px solid #eef2f6;
+  }
+  .v7-drawer-head .pill {
+    display: inline-flex; align-items: center; gap: 4px;
+    padding: 3px 8px; border-radius: 999px;
+    background: rgba(0,85,237,0.12); color: #0055ED;
+    font-size: 11px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase;
+  }
+  .v7-drawer-head .title { font-size: 13px; font-weight: 600; color: #171717; }
+
+  .v7-drawer-body {
+    padding: 14px 18px 16px;
+  }
+  .v7-drawer-body textarea {
+    width: 100%; min-height: 64px;
+    border: 1px solid #d4dae2; border-radius: 8px;
+    padding: 10px 12px; font-family: inherit; font-size: 13px;
+    resize: vertical; outline: none; color: #171717;
+    margin-bottom: 10px;
+  }
+  .v7-drawer-body textarea:focus { border-color: #0055ED; }
+  .v7-drawer-body .actions { display: flex; gap: 8px; }
+  .v7-drawer-body .actions button {
+    flex: 1; height: 38px; border-radius: 6px; cursor: pointer;
+    font-size: 13px; font-weight: 600;
+  }
+  .v7-drawer-body .actions .skip {
+    background: #fff; border: 1px solid #d4dae2; color: #525252;
+  }
+  .v7-drawer-body .actions .submit {
+    background: linear-gradient(180deg, #2873f5 0%, #0055ED 100%);
+    color: #fff; border: 0;
+  }
+</style>
+</head>
+<body>
+<div class="crazy8-tag"><strong>Variant 7</strong> · Inline drawer (no modal)</div>
+<div class="v7-stack">
+  <div class="v7-pro">
+    <h3>Pro Annual</h3>
+    <div class="price"><sup>$</sup>89<span style="font-size:14px;font-weight:500;color:#525252;">/yr</span></div>
+    <p class="sub">Most popular for solo creators</p>
+    <button class="cta">Buy Pro Annual</button>
+  </div>
+
+  <div class="v7-drawer">
+    <div class="v7-drawer-head">
+      <span class="pill">$60 off · drops in</span>
+      <span class="title">One line about your last deck?</span>
+    </div>
+    <div class="v7-drawer-body">
+      <textarea placeholder="Type one sentence to unlock $60 off Pro Annual…"></textarea>
+      <div class="actions">
+        <button class="skip">Maybe later</button>
+        <button class="submit">Unlock $60 off</button>
+      </div>
+    </div>
+  </div>
+</div>
+</body>
+</html>

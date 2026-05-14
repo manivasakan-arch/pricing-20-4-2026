@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Crazy 8 · 4 · 2-step wizard</title>
+<link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/regular/style.css" />
+<link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/fill/style.css" />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="_shared.css" />
+<style>
+  .v4-popup { max-width: 540px; }
+  .v4-progress {
+    padding: 18px 24px 0;
+    display: flex; align-items: center; gap: 10px;
+  }
+  .v4-dot {
+    flex: 1; height: 4px; border-radius: 999px;
+    background: #eef2f6;
+  }
+  .v4-dot.on { background: #0055ED; }
+  .v4-step-label {
+    font-size: 11px; font-weight: 700; letter-spacing: 0.1em;
+    text-transform: uppercase; color: #8d8d8d;
+    padding: 14px 24px 0;
+  }
+  .v4-step-label strong { color: #0055ED; }
+
+  .v4-body { padding: 16px 24px 28px; }
+  .v4-h { font-size: 22px; font-weight: 600; line-height: 1.25; color: #171717; margin: 4px 0 18px; }
+
+  .v4-feel-grid {
+    display: grid; grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+    margin-bottom: 18px;
+  }
+  .v4-feel {
+    display: flex; align-items: center; gap: 10px;
+    padding: 14px 14px;
+    border: 1px solid #e3e7ee; border-radius: 10px;
+    background: #fff; cursor: pointer;
+    font-size: 14px; color: #171717;
+  }
+  .v4-feel:hover { border-color: #0055ED; background: rgba(0,85,237,0.04); }
+  .v4-feel .emj { font-size: 20px; line-height: 1; }
+  .v4-feel .lbl { font-weight: 500; }
+
+  .v4-hint {
+    font-size: 12px; color: #8d8d8d;
+    text-align: center;
+    margin-bottom: 14px;
+  }
+  .v4-amt-line {
+    text-align: center;
+    margin: 4px 0 18px;
+    font-size: 13px; color: #525252;
+  }
+  .v4-amt-line .pill {
+    display: inline-flex; align-items: center; gap: 4px;
+    padding: 4px 10px; border-radius: 999px;
+    background: rgba(0,85,237,0.12); color: #0055ED;
+    font-weight: 700;
+  }
+</style>
+</head>
+<body>
+<div class="crazy8-tag"><strong>Variant 4</strong> · 2-step wizard</div>
+<div class="popup v4-popup">
+  <button class="popup-close" aria-label="Close"><i class="ph ph-x"></i></button>
+  <div class="v4-progress">
+    <span class="v4-dot on"></span>
+    <span class="v4-dot"></span>
+  </div>
+  <div class="v4-step-label">Step <strong>1 of 2</strong> · Pick a feeling</div>
+  <div class="v4-body">
+    <h2 class="v4-h">How did today's deck go?</h2>
+    <div class="v4-feel-grid">
+      <button class="v4-feel"><span class="emj">🚀</span><span class="lbl">Saved hours</span></button>
+      <button class="v4-feel"><span class="emj">🧠</span><span class="lbl">Sharper ideas</span></button>
+      <button class="v4-feel"><span class="emj">🎯</span><span class="lbl">On-brand</span></button>
+      <button class="v4-feel"><span class="emj">😬</span><span class="lbl">Hit a snag</span></button>
+      <button class="v4-feel"><span class="emj">✨</span><span class="lbl">Loved the polish</span></button>
+      <button class="v4-feel"><span class="emj">💬</span><span class="lbl">Other…</span></button>
+    </div>
+    <p class="v4-amt-line">Pick one → step 2 unlocks <span class="pill">$60 off Pro Annual</span></p>
+  </div>
+</div>
+</body>
+</html>

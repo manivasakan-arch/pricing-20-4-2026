@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Presentations AI — Pricing · Blue v2</title>
+<title>Presentations AI — Pricing · Navy</title>
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Hedvig+Letters+Serif&family=Instrument+Serif:ital@0;1&family=Inter:wght@400;500;600;700;800;900&family=Roboto+Condensed:wght@400;500;600;700&display=swap" rel="stylesheet" />
@@ -18,7 +18,7 @@
       extend: {
         fontFamily: { sans: ['Inter', 'system-ui', 'sans-serif'] },
         colors: {
-          brand: { 50: '#eef2f6', 100: '#d4dae2', 500: '#0B0F14' },
+          brand: { 50: '#eef2f6', 100: '#d4dae2', 500: '#0A1925' },
           ink: { primary: '#171717', secondary: '#525252', tertiary: '#a3a3a3' },
           success: { bg: '#dcfce7', fg: '#16a34a' },
         },
@@ -238,10 +238,10 @@
   }
   .border-primary { border-color: rgba(26, 26, 26, 0.2); }
   .border-tertiary { border-color: rgba(26, 26, 26, 0.06); }
-  .border-brand-secondary { border-color: #a6c8ff; }
-  .bg-brand-selected { background-color: rgba(0, 85, 237, 0.10); }
+  .border-brand-secondary { border-color: #b8c1cc; }
+  .bg-brand-selected { background-color: rgba(10, 25, 37, 0.12); }
   .pro-card-bg {
-    background-image: linear-gradient(125.62deg, #ffffff 2.19%, #ffffff 41.38%, #e6efff 98.14%);
+    background-image: linear-gradient(125.62deg, #ffffff 2.19%, #ffffff 41.38%, #eef2f6 98.14%);
   }
   /* Inset the Pro card's inner content 1px behind the blue border-2 frame
      so the frame stands proud + content reads recessed. */
@@ -251,13 +251,13 @@
     z-index: 0;
   }
   .pro-title {
-    background: linear-gradient(180deg, #6b94f7 0%, #0055ED 100%);
+    background: linear-gradient(180deg, #3a5570 0%, #0A1925 100%);
     -webkit-background-clip: text;
     background-clip: text;
     color: transparent;
   }
   .pro-btn {
-    background: linear-gradient(180deg, #2873f5 0%, #0055ED 100%);
+    background: linear-gradient(180deg, #1c3550 0%, #0A1925 100%);
   }
   .popular-tag {
     background: linear-gradient(90deg, #d4dae2 0%, #ffffff 100%);
@@ -293,8 +293,6 @@
     height: 28px;
     width: auto;
     object-fit: contain;
-    
-    
   }
   /* coin-style credit icon */
   .credit-dot {
@@ -336,7 +334,7 @@
     transition: background .15s ease, color .15s ease;
   }
   .plan-seg-btn.is-active {
-    background: #0B0F14;
+    background: #0A1925;
     color: #fff;
   }
 
@@ -506,7 +504,7 @@
     top: -8px; left: 0; right: 0;
     margin: 0 auto;
     padding: 1px 5px;
-    background: #0B0F14;
+    background: #0055ED;
     color: #fff;
     font-family: 'Roboto Condensed', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
     font-size: 10px;
@@ -716,7 +714,7 @@
     height: 180px;
     flex-shrink: 0;
     overflow: hidden;
-    background: linear-gradient(164.93deg, #cfe0ff 0%, #eaf2ff 71.43%);
+    background: linear-gradient(164.93deg, #d4dae2 0%, #eef2f6 71.43%);
   }
   .t-nudge-header-row {
     position: absolute;
@@ -738,8 +736,8 @@
   .t-badge {
     display: inline-flex; align-items: center;
     align-self: flex-start;
-    background: rgba(0, 85, 237, 0.18);
-    color: #003e9c;
+    background: rgba(10, 25, 37, 0.08);
+    color: #525252;
     font-size: 10px; font-weight: 700;
     letter-spacing: 0.1em; text-transform: uppercase;
     padding: 5px 10px;
@@ -747,25 +745,25 @@
   }
   .t-price-line {
     display: flex; flex-direction: column; align-items: flex-start;
-    line-height: 1; letter-spacing: -0.02em; margin-top: 0; gap: 4px;
+    line-height: 1; letter-spacing: -0.02em; margin-top: 0; gap: 12px;
   }
   .t-amt {
-    font-size: 56px; font-weight: 800;
-    line-height: 60px; height: 60px;
-    color: #0055ED;
+    font-size: 36px; font-weight: 800;
+    line-height: 40px; height: 40px;
+    color: #0A1925;
     display: inline-flex; align-items: stretch;
   }
-  .t-amt-real { display: inline-flex; align-items: stretch; color: #0055ED; }
+  .t-amt-real { display: inline-flex; align-items: stretch; color: #0A1925; }
   .t-amt .t-sym {
-    font-size: 32px; font-weight: 700; line-height: 60px;
-    padding-top: 2px; margin-right: 2px;
-    display: inline-block; color: #0055ED;
+    font-size: 22px; font-weight: 700; line-height: 40px;
+    padding-top: 2px; margin-right: 1px;
+    display: inline-block; color: #0A1925;
   }
-  .t-digits { display: inline-flex; gap: 4px; height: 60px; }
+  .t-digits { display: inline-flex; gap: 4px; height: 40px; }
   .t-digit {
     display: inline-block;
     position: relative;
-    width: 38px; height: 60px;
+    width: 26px; height: 40px;
     overflow: hidden;
     -webkit-mask-image: linear-gradient(to bottom, transparent 0%, #000 30%, #000 70%, transparent 100%);
             mask-image: linear-gradient(to bottom, transparent 0%, #000 30%, #000 70%, transparent 100%);
@@ -780,9 +778,9 @@
   }
   .t-digit-track > span {
     display: block;
-    height: 60px; line-height: 60px;
+    height: 40px; line-height: 40px;
     text-align: center; font-weight: 800;
-    color: #0055ED;
+    color: #0A1925;
   }
   .t-amt[data-price-loading="true"]  .t-digit-track { filter: blur(6px); }
   .t-amt[data-price-loading="false"] .t-digit-track { filter: blur(0); }
@@ -894,7 +892,7 @@
     width: 100%;
     height: 48px;
     border-radius: 4px;
-    background: linear-gradient(180deg, #2873f5 0%, #0055ED 100%);
+    background: linear-gradient(180deg, #1c3550 0%, #0A1925 100%);
     color: #fff;
     font-size: 15px; font-weight: 700;
     cursor: pointer;
@@ -1097,8 +1095,8 @@
     padding: 5px 10px;
     border-radius: 4px;
     font-size: 10px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase;
-    background: rgba(0, 85, 237, 0.18);
-    color: #003e9c;
+    background: rgba(10, 25, 37, 0.08);
+    color: #525252;
     margin-bottom: 12px;
   }
 
@@ -1110,7 +1108,7 @@
   .fb-panel-title .amt {
     font-size: 36px; font-weight: 800;
     line-height: 1;
-    background: linear-gradient(180deg, #2873f5 0%, #0055ED 100%);
+    background: linear-gradient(180deg, #1c3550 0%, #0A1925 100%);
     -webkit-background-clip: text; background-clip: text; color: transparent;
   }
   .fb-panel-title .amt .sym {
@@ -1130,7 +1128,7 @@
     display: inline-flex; align-items: center; gap: 6px;
   }
   .fb-panel-sub .arrow {
-    color: #003e9c;
+    color: #525252;
     display: inline-flex;
     animation: fb-arrow-pulse 1.4s ease-in-out infinite;
   }
@@ -1413,7 +1411,7 @@
   .top-view-seg-btn i { font-size: 14px; line-height: 1; }
   .top-view-seg-btn:hover { color: #171717; }
   .top-view-seg-btn.is-active {
-    background: #0B0F14;
+    background: #0A1925;
     color: #fff;
   }
   .top-view-seg-btn.is-active:hover { color: #fff; }
@@ -2726,8 +2724,8 @@
         <div class="t-nudge-header-row">
           <span class="t-gift-emoji">🎁</span>
           <div class="t-nudge-copy">
+            <span class="t-badge" id="t-tag">Share Feedback and Get</span>
             <div class="t-price-line">
-              <span class="t-lbl" id="t-tag">Share feedback and get</span>
               <span class="t-amt" data-price-loading="true">
                 <span class="t-amt-real">
                   <span class="t-sym">$</span>
@@ -3001,7 +2999,7 @@
 
       // V8 slow-drift digit dial — runs on every modal open
       let dialTimer = null;
-      const DIGIT_H = 60;
+      const DIGIT_H = 40;
       function runDigitDial() {
         const digits = Array.from(document.querySelectorAll('.t-digit[data-target]'));
         if (!digits.length) return;
@@ -3054,7 +3052,7 @@
         // Reset to form step
         stepForm.classList.add('on');
         stepSuccess.classList.remove('on');
-        tag.textContent = 'Share feedback and get';
+        tag.textContent = 'Share Feedback and Get';
         lbl.textContent = 'off Pro Annual';
         quote.textContent = '';
         card.classList.remove('picked');

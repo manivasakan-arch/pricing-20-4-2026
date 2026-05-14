@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Crazy 8 · 3 · Conversational DM</title>
+<link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/regular/style.css" />
+<link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/fill/style.css" />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="_shared.css" />
+<style>
+  .v3-popup { max-width: 480px; background: #f7f9fc; }
+  .v3-top {
+    padding: 14px 16px;
+    display: flex; align-items: center; gap: 10px;
+    background: #fff; border-bottom: 1px solid #eef2f6;
+  }
+  .v3-avatar {
+    width: 36px; height: 36px; border-radius: 999px;
+    background: linear-gradient(135deg, #0055ED, #4285f4);
+    display: inline-flex; align-items: center; justify-content: center;
+    color: #fff; font-weight: 700; font-size: 13px;
+  }
+  .v3-who { display: flex; flex-direction: column; line-height: 1.2; }
+  .v3-who .name { font-size: 13px; font-weight: 600; color: #171717; }
+  .v3-who .role { font-size: 11px; color: #8d8d8d; }
+
+  .v3-thread {
+    padding: 20px 16px 8px;
+    display: flex; flex-direction: column; gap: 10px;
+  }
+  .v3-bubble {
+    max-width: 80%;
+    padding: 10px 14px;
+    border-radius: 16px;
+    background: #fff;
+    font-size: 14px; line-height: 1.5;
+    color: #171717;
+    border-bottom-left-radius: 4px;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.04);
+    align-self: flex-start;
+  }
+  .v3-bubble .pill {
+    display: inline-flex; align-items: center; gap: 4px;
+    padding: 2px 8px; border-radius: 999px;
+    background: rgba(0,85,237,0.10); color: #0055ED;
+    font-size: 12px; font-weight: 700;
+    margin: 0 2px;
+  }
+  .v3-meta { font-size: 10px; color: #a3a3a3; margin-top: 2px; padding-left: 4px; }
+
+  .v3-compose {
+    padding: 12px 14px 16px;
+    background: #fff; border-top: 1px solid #eef2f6;
+    display: flex; gap: 8px; align-items: flex-end;
+  }
+  .v3-compose-box {
+    flex: 1;
+    min-height: 40px; max-height: 120px;
+    padding: 10px 14px; border-radius: 20px;
+    border: 1px solid #d4dae2;
+    font-family: inherit; font-size: 14px; outline: none;
+    resize: none; color: #171717;
+  }
+  .v3-compose-box:focus { border-color: #0055ED; }
+  .v3-send {
+    width: 40px; height: 40px; border-radius: 999px; border: 0;
+    background: linear-gradient(180deg, #2873f5 0%, #0055ED 100%);
+    color: #fff; cursor: pointer;
+    display: inline-flex; align-items: center; justify-content: center;
+  }
+  .v3-send i { font-size: 16px; }
+</style>
+</head>
+<body>
+<div class="crazy8-tag"><strong>Variant 3</strong> · Conversational DM</div>
+<div class="popup v3-popup">
+  <button class="popup-close" aria-label="Close"><i class="ph ph-x"></i></button>
+  <div class="v3-top">
+    <div class="v3-avatar">PA</div>
+    <div class="v3-who">
+      <span class="name">Presentations AI</span>
+      <span class="role">Founders' inbox · active now</span>
+    </div>
+  </div>
+  <div class="v3-thread">
+    <div class="v3-bubble">Hey 👋 quick favour — one line about what you built today.</div>
+    <div class="v3-bubble">We'll DM you back <span class="pill">$60 off Pro Annual</span> the second you hit send.</div>
+    <div class="v3-meta">Today · 4:12 PM</div>
+  </div>
+  <div class="v3-compose">
+    <textarea class="v3-compose-box" rows="1" placeholder="Reply with one sentence…"></textarea>
+    <button class="v3-send" aria-label="Send"><i class="ph-fill ph-paper-plane-right"></i></button>
+  </div>
+</div>
+</body>
+</html>

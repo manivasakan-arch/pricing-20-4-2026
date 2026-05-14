@@ -1,0 +1,52 @@
+/* Crazy 8 — shared scaffolding for share-feedback-and-get popup variants */
+* { box-sizing: border-box; }
+html, body { margin: 0; padding: 0; }
+body {
+  font-family: "Inter", -apple-system, system-ui, sans-serif;
+  background: #f4f6fa;
+  min-height: 100vh;
+  display: flex; align-items: center; justify-content: center;
+  padding: 48px 24px;
+  color: #171717;
+}
+.crazy8-tag {
+  position: fixed; top: 16px; left: 20px;
+  font-size: 11px; font-weight: 700; letter-spacing: 0.1em;
+  text-transform: uppercase; color: #8d8d8d;
+}
+.crazy8-tag strong { color: #171717; }
+
+.popup {
+  width: 100%;
+  max-width: 560px;
+  background: #fff;
+  border-radius: 14px;
+  box-shadow: 0 24px 60px rgba(0,0,0,0.15), 0 2px 8px rgba(0,0,0,0.05);
+  overflow: hidden;
+  position: relative;
+}
+.popup-close {
+  position: absolute; top: 14px; right: 14px;
+  width: 28px; height: 28px;
+  display: inline-flex; align-items: center; justify-content: center;
+  border: 0; background: rgba(0,0,0,0.04); border-radius: 999px;
+  cursor: pointer; color: #525252;
+  z-index: 5;
+}
+.popup-close i { font-size: 14px; }
+
+.btn-primary {
+  width: 100%; height: 48px; border: 0; border-radius: 6px;
+  background: linear-gradient(180deg, #2873f5 0%, #0055ED 100%);
+  color: #fff; font-size: 15px; font-weight: 700;
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+  cursor: pointer;
+}
+.btn-primary:hover { filter: brightness(1.08); }
+.btn-ghost {
+  width: 100%; height: 44px; border: 1px solid #d4dae2; border-radius: 6px;
+  background: #fff; color: #171717; font-size: 14px; font-weight: 600;
+  cursor: pointer;
+}
+
+.amt-blue { color: #0055ED; font-weight: 800; }

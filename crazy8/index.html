@@ -1,0 +1,98 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Crazy 8 · Share-feedback-and-get popup variants</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+<style>
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body {
+    font-family: "Inter", system-ui, sans-serif;
+    background: #0f172a;
+    color: #fff;
+    min-height: 100vh;
+    padding: 56px 32px 96px;
+  }
+  h1 {
+    margin: 0 0 6px; font-size: 28px; font-weight: 700;
+    letter-spacing: -0.01em;
+  }
+  .sub { color: #94a3b8; font-size: 14px; margin: 0 0 32px; }
+
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 18px;
+  }
+  .tile {
+    display: block; text-decoration: none;
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 12px;
+    padding: 18px 18px 20px;
+    transition: all 0.15s;
+  }
+  .tile:hover { background: rgba(255,255,255,0.08); border-color: rgba(0,85,237,0.5); }
+  .tile .num {
+    font-size: 11px; font-weight: 700; letter-spacing: 0.12em;
+    text-transform: uppercase; color: #4d8bff;
+  }
+  .tile .name {
+    font-size: 17px; font-weight: 600; color: #fff;
+    margin: 6px 0 8px;
+  }
+  .tile .desc {
+    font-size: 12px; line-height: 1.55; color: #cbd5e1;
+    margin: 0;
+  }
+</style>
+</head>
+<body>
+<h1>Crazy 8 · Share-feedback-and-get popup</h1>
+<p class="sub">Eight directions for the same ask. Click any tile to open the variant.</p>
+<div class="grid">
+  <a class="tile" href="1-quiet.html">
+    <div class="num">Variant 1</div>
+    <div class="name">Quiet utility</div>
+    <p class="desc">No header. No gift. Single textarea. For high-intent users who hate noise.</p>
+  </a>
+  <a class="tile" href="2-reward.html">
+    <div class="num">Variant 2</div>
+    <div class="name">Reward-first hero</div>
+    <p class="desc">Giant $60 above the fold. Feedback ask sits as footer. Dopamine spike first.</p>
+  </a>
+  <a class="tile" href="3-chat.html">
+    <div class="num">Variant 3</div>
+    <div class="name">Conversational DM</div>
+    <p class="desc">Chat bubbles from "founders' inbox" + reply field. Intimate, low writing-block.</p>
+  </a>
+  <a class="tile" href="4-wizard.html">
+    <div class="num">Variant 4</div>
+    <div class="name">2-step wizard</div>
+    <p class="desc">Step 1: tap a feeling. Step 2: write. Progress dots split cognitive load.</p>
+  </a>
+  <a class="tile" href="5-nps.html">
+    <div class="num">Variant 5</div>
+    <div class="name">NPS + comment</div>
+    <p class="desc">0-10 scale + one-line box. Familiar SaaS pattern, calibratable score.</p>
+  </a>
+  <a class="tile" href="6-video.html">
+    <div class="num">Variant 6</div>
+    <div class="name">Video toggle</div>
+    <p class="desc">Type for $60 · record 15s for $80. Higher-leverage testimonial asset.</p>
+  </a>
+  <a class="tile" href="7-drawer.html">
+    <div class="num">Variant 7</div>
+    <div class="name">Inline drawer</div>
+    <p class="desc">No modal. Drawer slides under the Pro card. Non-blocking, dismissable.</p>
+  </a>
+  <a class="tile" href="8-letter.html">
+    <div class="num">Variant 8</div>
+    <div class="name">Letter / serif intimacy</div>
+    <p class="desc">Instrument Serif italic, no chips. Signed "— Mani &amp; team". Editorial tone.</p>
+  </a>
+</div>
+</body>
+</html>

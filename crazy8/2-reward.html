@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Crazy 8 · 2 · Reward-first hero</title>
+<link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/regular/style.css" />
+<link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/fill/style.css" />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="_shared.css" />
+<style>
+  .v2-popup { max-width: 540px; }
+  .v2-hero {
+    position: relative;
+    padding: 56px 32px 40px;
+    background: linear-gradient(150deg, #d8e7ff 0%, #f0f5ff 60%, #fff 100%);
+    text-align: center;
+    overflow: hidden;
+  }
+  .v2-amt {
+    font-size: 96px; line-height: 1; font-weight: 800;
+    background: linear-gradient(180deg, #4d8bff 0%, #0055ED 100%);
+    -webkit-background-clip: text; background-clip: text; color: transparent;
+    letter-spacing: -0.04em;
+    display: inline-flex; align-items: flex-start;
+  }
+  .v2-amt .sym { font-size: 0.45em; padding-top: 0.32em; margin-right: 4px; font-weight: 700; }
+  .v2-sub { font-size: 16px; font-weight: 500; color: #171717; margin-top: 8px; }
+  .v2-lock-strip {
+    margin-top: 22px;
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 6px 14px; border-radius: 999px;
+    background: rgba(0, 85, 237, 0.12); color: #003e9c;
+    font-size: 11px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase;
+  }
+  .v2-lock-strip i { font-size: 13px; }
+  .v2-conf { position: absolute; pointer-events: none; }
+  .v2-conf.c1 { top: 24px; right: 30px; width: 8px; height: 14px; background: #ff8a4d; transform: rotate(18deg); }
+  .v2-conf.c2 { top: 70px; right: 80px; width: 6px; height: 6px; border-radius: 999px; background: #4285f4; }
+  .v2-conf.c3 { bottom: 36px; right: 60px; width: 8px; height: 12px; background: #fbbc04; transform: rotate(-22deg); }
+  .v2-conf.c4 { top: 50px; left: 38px; width: 6px; height: 6px; border-radius: 999px; background: #16a34a; }
+
+  .v2-foot {
+    padding: 24px 32px 28px;
+    border-top: 1px solid #eef2f6;
+  }
+  .v2-foot-ask {
+    font-size: 13px; color: #525252;
+    margin: 0 0 10px;
+  }
+  .v2-foot-ask strong { color: #171717; font-weight: 600; }
+  .v2-foot-input {
+    width: 100%; height: 44px;
+    border: 1px solid #d4dae2; border-radius: 8px;
+    padding: 0 14px; font-family: inherit; font-size: 14px; outline: none;
+    margin-bottom: 12px;
+  }
+  .v2-foot-input:focus { border-color: #0055ED; }
+</style>
+</head>
+<body>
+<div class="crazy8-tag"><strong>Variant 2</strong> · Reward-first hero</div>
+<div class="popup v2-popup">
+  <button class="popup-close" aria-label="Close"><i class="ph ph-x"></i></button>
+  <div class="v2-hero">
+    <span class="v2-conf c1"></span>
+    <span class="v2-conf c2"></span>
+    <span class="v2-conf c3"></span>
+    <span class="v2-conf c4"></span>
+    <div class="v2-amt"><span class="sym">$</span>60</div>
+    <p class="v2-sub">off Pro Annual</p>
+    <span class="v2-lock-strip"><i class="ph-fill ph-lock"></i>Unlock with one sentence</span>
+  </div>
+  <div class="v2-foot">
+    <p class="v2-foot-ask">In <strong>one line</strong>, what'd you build today?</p>
+    <input class="v2-foot-input" type="text" placeholder="Type a single sentence…" />
+    <button class="btn-primary"><i class="ph-fill ph-lock-open"></i>Unlock $60 off</button>
+  </div>
+</div>
+</body>
+</html>
