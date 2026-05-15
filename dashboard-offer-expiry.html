@@ -19,7 +19,7 @@
       extend: {
         colors: {
           ink:    { primary: '#171717', secondary: '#525252', tertiary: '#a3a3a3' },
-          brand:  { 50: '#fff5ee', 100: '#ffe4d3', 500: '#ff5500', 600: '#e14a00' },
+          brand:  { 50: '#eaf2ff', 100: '#cfe0ff', 500: '#0055ED', 600: '#003e9c' },
         },
       },
     },
@@ -42,7 +42,7 @@
     position: relative;
     display: inline-flex; align-items: center; gap: 6px;
     padding: 5px 12px;
-    background: #ff5500;
+    background: #0055ED;
     color: #ffffff;
     border-radius: 999px;
     font-size: 11px; font-weight: 800; letter-spacing: 0.06em;
@@ -58,7 +58,7 @@
     position: absolute;
     top: 50%; right: -3px;
     width: 8px; height: 8px;
-    background: #ff5500;
+    background: #0055ED;
     transform: translateY(-50%) rotate(45deg);
     border-radius: 1px;
     z-index: -1;
@@ -70,11 +70,11 @@
   }
   @keyframes up-chip-glow {
     0%, 100% { box-shadow: 0 6px 16px rgba(0,0,0,0.18),
-                           0 0 0 0   rgba(255, 85, 0, 0.55); }
+                           0 0 0 0   rgba(0, 85, 237, 0.55); }
     70%      { box-shadow: 0 6px 16px rgba(0,0,0,0.18),
-                           0 0 0 9px rgba(255, 85, 0, 0); }
+                           0 0 0 9px rgba(0, 85, 237, 0); }
     100%     { box-shadow: 0 6px 16px rgba(0,0,0,0.18),
-                           0 0 0 0   rgba(255, 85, 0, 0); }
+                           0 0 0 0   rgba(0, 85, 237, 0); }
   }
 
   /* ─── Expired (gray) chip — used in approach A ────────────────────────── */
@@ -95,7 +95,7 @@
   /* Trial pill (shared) */
   .trial-pill {
     background: #fff;
-    border: 1px solid rgba(255, 85, 0, 0.12);
+    border: 1px solid rgba(0, 85, 237, 0.12);
     border-radius: 6px;
     display: flex; align-items: center;
     padding: 4px 4px 4px 10px;
@@ -107,7 +107,7 @@
   .trial-pill > .upgrade {
     display: inline-flex; align-items: center; gap: 6px;
     height: 28px; padding: 0 14px; border-radius: 4px;
-    background: #ff5500; color: #fff;
+    background: #0055ED; color: #fff;
     font-size: 14px; font-weight: 500;
     border: 0; cursor: pointer;
   }
@@ -160,7 +160,7 @@
     width: 36px; height: 36px;
     border-radius: 999px;
     background: rgba(255,85,0,0.12);
-    color: #ff5500;
+    color: #0055ED;
     display: inline-flex; align-items: center; justify-content: center;
     flex-shrink: 0;
   }
@@ -170,11 +170,11 @@
   .toast .actions { display: flex; gap: 8px; margin-top: 10px; }
   .toast .btn-primary {
     height: 28px; padding: 0 12px; border-radius: 4px;
-    background: #ff5500; color: #fff;
+    background: #0055ED; color: #fff;
     font-size: 12px; font-weight: 600; border: 0; cursor: pointer;
     display: inline-flex; align-items: center; gap: 4px;
   }
-  .toast .btn-primary:hover { background: #e14a00; }
+  .toast .btn-primary:hover { background: #003e9c; }
   .toast .btn-secondary {
     height: 28px; padding: 0 12px; border-radius: 4px;
     background: #fff; color: #525252; border: 1px solid #e5e5e5;
@@ -220,7 +220,7 @@
     width: 44px; height: 44px;
     border-radius: 999px;
     background: rgba(255,85,0,0.12);
-    color: #ff5500;
+    color: #0055ED;
     display: inline-flex; align-items: center; justify-content: center;
     margin-bottom: 12px;
   }
@@ -229,11 +229,11 @@
   .modal-card .actions { display: flex; gap: 8px; justify-content: flex-end; margin-top: 18px; }
   .modal-card .btn-primary {
     height: 36px; padding: 0 16px; border-radius: 6px;
-    background: #ff5500; color: #fff;
+    background: #0055ED; color: #fff;
     font-size: 13px; font-weight: 700; border: 0; cursor: pointer;
     display: inline-flex; align-items: center; gap: 6px;
   }
-  .modal-card .btn-primary:hover { background: #e14a00; }
+  .modal-card .btn-primary:hover { background: #003e9c; }
   .modal-card .btn-secondary {
     height: 36px; padding: 0 14px; border-radius: 6px;
     background: #fff; color: #525252; border: 1px solid #e5e5e5;
@@ -257,7 +257,7 @@
   .cooldown-chip .fill {
     position: absolute;
     left: 0; top: 0; bottom: 0;
-    background: rgba(255, 85, 0, 0.18);
+    background: rgba(0, 85, 237, 0.18);
     width: 0;
     pointer-events: none;
     z-index: 0;
@@ -305,9 +305,9 @@
   }
   .variant-controls .pill-btn:hover { background: #f5f5f5; color: #171717; }
   .variant-controls .pill-btn.is-primary {
-    background: #ff5500; color: #fff; border-color: #ff5500;
+    background: #0055ED; color: #fff; border-color: #0055ED;
   }
-  .variant-controls .pill-btn.is-primary:hover { background: #e14a00; border-color: #e14a00; }
+  .variant-controls .pill-btn.is-primary:hover { background: #003e9c; border-color: #003e9c; }
   .variant-controls .legend {
     margin-left: auto;
     font-size: 11px; color: #a3a3a3;
