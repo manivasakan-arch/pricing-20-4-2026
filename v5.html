@@ -1562,10 +1562,10 @@
   .dp-digit-track {
     display: block;
     transform: translateY(0);
-    transition: transform 2.4s cubic-bezier(0.16, 1, 0.3, 1), filter 2s ease-out;
+    transition: transform 3.2s cubic-bezier(0.33, 1, 0.68, 1), filter 2.4s ease-out;
   }
   .dp-digit:nth-child(2) .dp-digit-track {
-    transition: transform 2.6s cubic-bezier(0.16, 1, 0.3, 1), filter 2.2s ease-out;
+    transition: transform 3.5s cubic-bezier(0.33, 1, 0.68, 1), filter 2.6s ease-out;
   }
   .dp-digit-track > span {
     display: block;
@@ -1749,7 +1749,7 @@
     box-shadow:
       0 0 0 1px rgba(10,25,37,0.06),
       0 1px 2px rgba(10,25,37,0.09);
-    transition: background 0.15s ease;
+    transition: background 0.5s ease, color 0.4s ease, box-shadow 0.4s ease;
     overflow: hidden;
   }
   .dp-cta::before {
@@ -3907,7 +3907,7 @@
             ctaBtn.textContent = 'Buy Pro Annual at $60 off';
             ctaBtn.classList.add('is-revealed');
             if (pillEl) pillEl.classList.remove('is-hidden');
-          }, 2700);
+          }, 3600);
         }, 700);
       }
 
