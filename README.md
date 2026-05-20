@@ -394,4 +394,132 @@ Drop a new HTML file at the repo root and `git push` — it'll be served at `htt
 
 ---
 
+## v3 / v4 / v5 — color + flow variants
+
+The repo grew past the original seven pages with three iteration tracks: **color**, **close-nudge flow**, and **feature reveal**. Each variant is a self-contained copy of an earlier page with a clearly-scoped delta.
+
+### Color tracks (palette swaps on the v2 base)
+
+| File | Title | Primary color | Notes |
+|---|---|---|---|
+| `v2.html` | Pricing (canonical, blue) | `#0055ED` | Same structure as `index.html` minus the Pro Monthly/Annual segment |
+| `v2-blue.html` | Pricing · Blue | `#0055ED` | Snapshot of the blue palette baseline |
+| `v2-blue-2.html` | Pricing · Blue v2 | `#0055ED` | Drops the **SHARE FEEDBACK** UPPERCASE tag chip; promotes the line to a 22px/500 label matching "off Pro Annual" so the testimonial nudge reads as a single price line. `$60` digits also bumped to 56px |
+| `v2-dark.html` | Pricing · Dark | `#0B0F14` | Black primary. MOST BOUGHT seat badge stays `#0055ED` as the only blue accent |
+| `v3.html` | Pricing · v3 (navy) | `#0A1925` | Navy primary + `#1c3550` companion gradient stop. MOST BOUGHT badge stays blue. Slate neutrals (`#d4dae2`, `#eef2f6`, `#b8c1cc`) untouched |
+| `v4.html` | Pricing · v4 (before-you-go popup) | navy + blue | Pro-card palette inherits v3 navy. Replaces the share-feedback close-nudge with a small white before-you-go popup ($60 hero + 🎁 emoji + animated blue timer pill, navy CTA). See [V4 popup spec](#v4-popup-spec) below |
+| `v5.html` | Pricing · v5 (feature-list popup) | navy + blue | Pro-card palette inherits v3 navy. Replaces the close-nudge with a 720 × 468 popup carrying a clickable 6-item feature list + per-feature preview image swap + $60 dial reveal. Auto-cycles features every 4s, blue chip surfaces on Pro card after dismiss. **See [`V5_HANDOFF.md`](./V5_HANDOFF.md) for the full engineering brief.** |
+
+Quick links:
+
+| Variant | Local | Live |
+|---|---|---|
+| v2 Blue | http://localhost:8912/v2-blue.html | https://manivasakan-arch.github.io/pricing-20-4-2026/v2-blue.html |
+| v2 Blue v2 | http://localhost:8912/v2-blue-2.html | https://manivasakan-arch.github.io/pricing-20-4-2026/v2-blue-2.html |
+| v2 Dark | http://localhost:8912/v2-dark.html | https://manivasakan-arch.github.io/pricing-20-4-2026/v2-dark.html |
+| v3 Navy | http://localhost:8912/v3.html | https://manivasakan-arch.github.io/pricing-20-4-2026/v3.html |
+| v4 | http://localhost:8912/v4.html | https://manivasakan-arch.github.io/pricing-20-4-2026/v4.html |
+| v5 | http://localhost:8912/v5.html | https://manivasakan-arch.github.io/pricing-20-4-2026/v5.html |
+
+### Palette swap rules (orange → blue)
+
+The blue treatment lands the same transform on every page it touches:
+
+| From (orange) | To (blue) |
+|---|---|
+| `#ff5500` | `#0055ED` |
+| `#e14a00` (hover dark) | `#003e9c` |
+| `#ff732d` (gradient pair) | `#2873f5` |
+| `rgba(255, 85, 0, X)` glow ripple | `rgba(0, 85, 237, X)` |
+| `#c64200` tag text | `#003e9c` |
+| `#fff5ee` / `#ffe4d3` brand-50/100 | `#eaf2ff` / `#cfe0ff` |
+
+The same rules ship on `export-ppt-pricing.html` and `dashboard-offer-expiry.html` for visual consistency. Confetti spans (multi-coloured decorative bits) are intentionally **not** swapped — they keep their festive palette.
+
+### Navy track (v3)
+
+`v3.html` started life as a copy of `v2-dark.html` (`#0B0F14`) and swapped the dark primary to navy `#0A1925`:
+
+- `#0B0F14` → `#0A1925`
+- `#1c2027` (companion gradient stop) → `#1c3550`
+- `rgba(11, 15, 20, X)` → `rgba(10, 25, 37, X)`
+- Pro title top gradient stop `#4a5260` → `#3a5570` (navy-tinted slate)
+- Pro card border `#a6c8ff` (blue) → `#b8c1cc` (slate)
+- Pro card interior wash bottom `#e6efff` → `#eef2f6`
+- MOST BOUGHT seat badge stays `#0055ED` blue (the one accent on the navy variant)
+- Timer + offer pills stay `#0055ED` blue (visual anchor against navy)
+- Tag chips (`SHARE FEEDBACK` / `UNLOCKED`) drop the orange tint and use neutral grey `rgba(10,25,37,0.08)` + `#525252`
+
+### v4 popup spec
+
+`v4.html` replaces the share-feedback testimonial nudge with a discount popup based on **Figma node 194:7289** (AMJ-26 Growth):
+
+- Blurred white scrim + soft blue-shadow ring (`#ccdbed`) + white inner container with `#dee8f4` 2px border
+- 🎁 emoji at the top centered above the box (180px, `dp-gift-float` bob animation)
+- Three lines of copy stacked: `Before you go —` (14px Inter Regular), `$60 off Pro.` (48px Merriweather Bold tracking `-0.48px`), `Yours for the next hour.` (16px Inter Regular)
+- Blue (`#005eff`) animated timer pill with `dp-chip-bob` + `dp-chip-glow` (same pattern as the Pro card bump chip)
+- Dark navy CTA `Buy Pro Annual at $60 off` → routes to `checkout.html?promo=PROANNUAL60`
+- Close (X) + Esc + backdrop-click all dismiss
+- Confetti burst (single center burst, `canvas-confetti`) fires 120ms after open
+- Gift asset stored locally at `assets/v4/gift.png` (downloaded from Figma; MCP CDN URLs expire after 7 days)
+
+### v5 popup spec
+
+`v5.html` is a richer two-column popup based on **Figma node 217:7704**. Full engineering reference lives in **[`V5_HANDOFF.md`](./V5_HANDOFF.md)**. High-level differences from v4:
+
+| | v4 | v5 |
+|---|---|---|
+| Box size | 476 × 351 (small card) | 720 × 468 (wide card) |
+| Layout | Single column hero | Two columns — feature list + preview image |
+| Reveal | Static `$60` copy | V8 spinning digit dial with blur reveal (same as the share-feedback success step) |
+| Feature interaction | None | 6 clickable items (Export · AI · Analytics · Knowledge · Team · Projects); active item shows sub-text, swaps right-hand preview image with slide+blur transition; auto-cycles every 4s until user takes over |
+| Eyebrow strip | Decorative gift emoji | Top blue-tinted strip ("Before you go, a special discount, just for you for the next hour.") that slides up out from behind the box on open |
+| CTA gating | Always enabled | Starts disabled with text "Buy Pro Annual"; after dial settles (~3.6s), enables, swaps text to "Buy Pro Annual at $60 Off", and gains a continuous shimmer sweep |
+| Backdrop click | Closes the popup | Intentionally does **not** close (X / Esc only) |
+| On dismiss | Resets state | Sets `sessionStorage.proOfferSeen = 'true'` + calls `window.applyProBump()` so the Pro card on the page reveals the blue `$60 off · Ends in MM:SS` chip above Buy Now and drops Pro Annual to `$15/mo` |
+
+### Crazy 8 explorations
+
+`crazy8/` (directory) holds eight standalone HTML previews of alternate share-feedback popup directions — quiet utility, reward-first hero, conversational DM, 2-step wizard, NPS, video toggle, inline drawer, and a letter/serif intimacy take. Each tile in `crazy8/index.html` links to its variant. The shared scaffolding lives in `crazy8/_shared.css`. These are concept previews, not wired into any pricing flow.
+
+### Engineering handoff docs
+
+Cross-link the per-feature spec PDFs/MDs from the page they cover:
+
+| Doc | Covers |
+|---|---|
+| `V2_HANDOFF.md` | Original v2 pricing-page spec |
+| `V5_HANDOFF.md` | v5 discount popup (Figma 217:7704) — DOM, animation timings, state, JS API, accessibility, prod checklist |
+| `REACTIVATION_TOAST_HANDOFF.md` | Center-bottom reactivation toast (Figma 6603:5977) — CSS custom properties, drain animation |
+| `DASHBOARD_FLASH_SALE_EXPIRED_HANDOFF.md` | Dashboard nav 3-state header (Active · Expired · Close-nudge) |
+| `EXPORT_PPT_PRICING_HANDOFF.md` | Modal-over-dashboard presentation of the pricing modal |
+| `NOTION_THREE_STATES_EXPLAINER.md` | Logic explainer for the 3-state header (Active / Expired / Close-nudge) — kept as MD for Notion import |
+| `TESTIMONIAL_HANDOFF.md` | Vanilla port of the testimonial picker used in `v2.html` |
+
+---
+
+## Local dev tips
+
+- The server fronted by `python3 -m http.server 8912` does **not** auto-reload. Hard-refresh in the browser (`Cmd+Shift+R` / `Ctrl+Shift+R`) after any edit. If a page seems unchanged after editing the file, clear `localStorage` + `sessionStorage` in DevTools too — the prototype persists `proBumpStart`, `proFeedbackSubmitted`, and (on v5) `proOfferSeen` across reloads.
+- When testing the v5 flow:
+  1. Clear `sessionStorage.proOfferSeen` and `localStorage.proBumpStart` (DevTools → Application → Storage)
+  2. Hard-refresh the page
+  3. Click the X on the pricing modal (top-right of the white card)
+  4. Wait for the dial reveal (~3.6s) then click the CTA, the X icon, or press Esc
+  5. The Pro card on the underlying page should now show the blue `$60 off · Ends in MM:SS` chip above Buy Now with the bumped price block
+- The repo is served from GitHub Pages on the `manivasakan-arch/dev-api-changes` branch of the `manivasakan-arch/pricing-20-4-2026` fork. Pushes typically take ~30s-2min to rebuild. Append `?nocache=<timestamp>` to bypass any cached 404.
+
+---
+
+## Conventions
+
+- **No build tooling** — every page is self-contained HTML with inline `<style>` + `<script>` and CDN imports.
+- **Tailwind utility classes** for layout + spacing; hand-rolled CSS classes (`.pro-card-bg`, `.plan-seg-btn`, `.seat-chip-row`, `.feature-row-label`, `.compare-block`, `.up-discount-chip`, `.regen-chip`, `.dp-*` for the v4/v5 popup, etc.) carry component-specific visual treatments.
+- **Tokens** declared in the inline `tailwind.config`: `brand.500` (varies per variant — `#ff5500` on the orange originals, `#0055ED` on the blue track, `#0B0F14` on the dark track, `#0A1925` on the navy track), `ink.{primary, secondary, tertiary}`, `success.fg = #16a34a`, `border.{primary, secondary}`.
+- **Cross-IIFE coordination** through `window` globals: `window.openFeedbackModal`, `window.openDiscountPopup` (v4/v5), `window.closeDiscountPopup` (v4/v5), `window.applyProBump`, `window.renderGoldIndividual`.
+- **Per-page `<title>` reads "<feature> — <variant>"** so tabs stay legible during multi-page review (e.g. `Presentations AI — Pricing · v5`).
+- **Variants live as siblings** — every new direction is a copy of the closest ancestor file with a focused delta. Diff against the parent (`git diff v3.html v4.html`) for the cleanest read of what changed.
+
+---
+
 If anything in this README drifts from what's actually in the file, the source of truth is the page itself — every behavior is implemented inline and easy to grep.

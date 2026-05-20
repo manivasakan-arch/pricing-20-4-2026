@@ -355,12 +355,12 @@
   .pro-discount-chip {
     position: relative;
     display: inline-flex; align-items: center; gap: 6px;
-    background: #ff5500; color: #ffffff;
+    background: #0055ED; color: #ffffff;
     font-size: 11px; font-weight: 800; letter-spacing: 0.06em;
     padding: 5px 12px; border-radius: 999px;
     white-space: nowrap;
     font-variant-numeric: tabular-nums;
-    /* Orange chip on a navy page — white text for maximum contrast. */
+    /* Primary blue chip — white text for max contrast on light Pro card. */
     animation: pro-chip-bob 2.6s ease-in-out infinite,
                pro-chip-glow 2.2s ease-in-out infinite;
   }
@@ -368,7 +368,7 @@
     content: ''; position: absolute;
     top: -4px; left: 50%;
     width: 8px; height: 8px;
-    background: #ff5500; transform: translateX(-50%) rotate(45deg);
+    background: #0055ED; transform: translateX(-50%) rotate(45deg);
     border-radius: 1px;
   }
   .pro-discount-chip i { font-size: 12px; color: #ffffff; }
@@ -378,11 +378,11 @@
   }
   @keyframes pro-chip-glow {
     0%, 100% { box-shadow: 0 4px 10px rgba(0,0,0,0.18),
-                           0 0 0 0   rgba(255, 85, 0, 0.55); }
+                           0 0 0 0   rgba(0, 85, 237, 0.55); }
     70%      { box-shadow: 0 4px 10px rgba(0,0,0,0.18),
-                           0 0 0 9px rgba(255, 85, 0, 0); }
+                           0 0 0 9px rgba(0, 85, 237, 0); }
     100%     { box-shadow: 0 4px 10px rgba(0,0,0,0.18),
-                           0 0 0 0   rgba(255, 85, 0, 0); }
+                           0 0 0 0   rgba(0, 85, 237, 0); }
   }
 
   /* Summary-row mirror of the card chip. Same bob + glow behaviour. */
@@ -1439,18 +1439,22 @@
      ================================================================= */
   .dp-backdrop {
     position: fixed; inset: 0;
-    display: none;
+    display: flex;
     align-items: center; justify-content: center;
     background: rgba(10, 25, 37, 0.72);
     backdrop-filter: blur(1px);
     -webkit-backdrop-filter: blur(1px);
     z-index: 100;
     opacity: 0;
-    transition: opacity 0.2s ease;
+    visibility: hidden;
+    pointer-events: none;
+    transition: opacity 0.2s ease, visibility 0s linear 0.2s;
   }
   .dp-backdrop[data-open="true"] {
-    display: flex;
     opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+    transition: opacity 0.2s ease, visibility 0s linear 0s;
   }
   .dp-stack {
     position: relative;
@@ -1464,7 +1468,7 @@
     opacity: 1;
   }
 
-  /* Header strip (700 x 36, blue-tinted) — slides from inside the box */
+  /* Eyebrow strip (700 x 36, blue-tinted) — sits ABOVE box, slides UP out from behind box top on open */
   .dp-eyebrow-strip {
     width: 700px;
     height: 36px;
@@ -1477,15 +1481,15 @@
     line-height: 1.43;
     position: relative;
     z-index: 0;
-    transform: translateY(14px);
+    transform: translateY(40px);
     opacity: 0;
-    transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1) 0.16s, opacity 0.28s ease-out 0.16s;
+    transition: transform 0.85s cubic-bezier(0.16, 1, 0.3, 1) 0.2s, opacity 0.4s ease-out 0.2s;
   }
   .dp-backdrop[data-open="true"] .dp-eyebrow-strip {
     transform: translateY(0);
     opacity: 1;
   }
-  /* Keep .dp-box visually above so the strip appears to slide out from under it */
+  /* Keep .dp-box visually above so the strip appears to slide out from behind its bottom */
   .dp-box { position: relative; z-index: 1; }
   .dp-eyebrow-strip .gift-icon {
     font-size: 18px; line-height: 1;
@@ -1904,7 +1908,7 @@
                   <p class="text-[24px] font-bold text-ink-primary leading-none"><span class="usd">$</span>9</p>
                   <span class="text-[13px] font-medium text-ink-tertiary">/mo</span>
                 </div>
-                <p class="text-[12px] font-medium text-ink-tertiary">billed annually</p>
+                <p class="text-[12px] font-medium text-ink-tertiary">108 billed annually (incl. tax)</p>
               </div>
             </div>
           </div>
@@ -2317,7 +2321,7 @@
               <p class="text-[12px] text-ink-tertiary">/mo</p>
             </div>
           </div>
-          <p class="text-[11px] font-medium text-ink-tertiary">billed annually</p>
+          <p class="text-[11px] font-medium text-ink-tertiary">108 billed annually (incl. tax)</p>
         </div>
         <button class="mt-2 h-9 min-w-[180px] px-4 rounded-[4px] border border-brand-500 text-brand-500 text-[13px] font-bold hover:bg-brand-50">Buy Basic</button>
       </div>
@@ -2328,7 +2332,7 @@
             <p class="text-[22px] font-bold text-ink-primary leading-none" id="sum-pro-price"><span class="usd">$</span>20</p>
             <p class="text-[12px] text-ink-tertiary">/mo</p>
           </div>
-          <p class="text-[11px] font-medium text-ink-tertiary" id="sum-pro-cadence">billed annually</p>
+          <p class="text-[11px] font-medium text-ink-tertiary" id="sum-pro-cadence">240 billed annually (incl. tax)</p>
         </div>
         <button id="sum-pro-cta" class="pro-btn mt-2 h-9 min-w-[180px] px-4 rounded-[4px] text-white text-[13px] font-bold">Buy Pro</button>
         <div id="sum-pro-pill-slot" class="flex justify-center"></div>
@@ -2336,10 +2340,10 @@
       <div class="flex flex-col items-center justify-center gap-2 p-5 border-l border-tertiary">
         <div class="flex flex-col items-center leading-none gap-1">
           <div class="flex items-baseline gap-1">
-            <p class="text-[22px] font-bold text-ink-primary leading-none" id="sum-gold-price"><span class="usd">$</span>99</p>
+            <p class="text-[22px] font-bold text-ink-primary leading-none" id="sum-gold-price"><span class="usd">$</span>100</p>
             <p class="text-[12px] text-ink-tertiary">/mo</p>
           </div>
-          <p class="text-[11px] font-medium text-ink-tertiary" id="sum-gold-cadence">billed annually</p>
+          <p class="text-[11px] font-medium text-ink-tertiary" id="sum-gold-cadence">1200 billed annually (incl. tax)</p>
         </div>
         <button id="sum-gold-cta" class="mt-2 h-9 min-w-[180px] px-4 rounded-[4px] border border-brand-500 text-brand-500 text-[13px] font-bold hover:bg-brand-50">Buy Gold</button>
       </div>
@@ -2587,8 +2591,8 @@
   <script>
     (function () {
       const PRICES = {
-        annual:  { now: '<span class="usd">$</span>99',  cadence: 'billed annually'  },
-        monthly: { now: '<span class="usd">$</span>199', cadence: 'billed monthly' },
+        annual:  { now: '<span class="usd">$</span>100', cadence: '1200 billed annually (incl. tax)' },
+        monthly: { now: '<span class="usd">$</span>200', cadence: '200 billed monthly (incl. tax)' },
       };
       const card = document.getElementById('gold-card');
       const priceEl = card.querySelector('[data-gold-price]');
@@ -2719,17 +2723,11 @@
             : '';
           sumPrice.innerHTML = `${sumStrike}<span class="usd">$</span>${annualNow}`;
         }
-        if (sumCadence) sumCadence.textContent = 'billed annually';
+        if (sumCadence) sumCadence.textContent = `${parseInt(annualNow, 10) * 12} billed annually (incl. tax)`;
         if (sumPill) {
-          // Only show the bumped pill when on the individual view — the bump
-          // doesn't apply to the team tab.
-          const isTeamView = (document.body.dataset.topView || 'individual') === 'team';
-          sumPill.innerHTML = (bumped && !isTeamView) ? `
-            <span class="pro-bumped-pill">
-              <span>$${save} off</span>
-              <i class="ph-fill ph-clock"></i>
-              <span>Ends in <span class="tabular-nums" data-pro-timer>60:00</span></span>
-            </span>` : '';
+          // Bump state is communicated via the in-card green badge now —
+          // suppress the legacy orange summary-row pill entirely.
+          sumPill.innerHTML = '';
         }
 
         if (period === 'annual') {
@@ -2744,9 +2742,19 @@
                 <span class="text-[13px] font-medium text-ink-tertiary">/mo</span>
               </div>
             </div>
-            <p class="text-[12px] font-medium text-ink-tertiary">billed annually</p>`;
+            <p class="text-[12px] font-medium text-ink-tertiary">${parseInt(annualNow, 10) * 12} billed annually (incl. tax)</p>`;
 
-          if (bumped) {
+          const offerApplied = document.getElementById('pro-offer-applied');
+          if (offerApplied) {
+            if (bumped) offerApplied.classList.remove('hidden');
+            else offerApplied.classList.add('hidden');
+          }
+          // Blue chip above CTA only appears AFTER the user has dismissed the
+          // discount popup (i.e. seen the $60 offer). Max discount tab alone
+          // doesn't surface it — only the green in-card badge.
+          let offerSeen = false;
+          try { offerSeen = sessionStorage.getItem('proOfferSeen') === 'true'; } catch (e) {}
+          if (bumped && offerSeen) {
             proChip.classList.remove('hidden');
             proChip.innerHTML = `
               <span>$${save} off</span>
@@ -2764,7 +2772,7 @@
               <p class="text-[24px] font-bold text-ink-primary leading-none"><span class="usd">$</span>40</p>
               <span class="text-[13px] font-medium text-ink-tertiary">/mo</span>
             </div>
-            <p class="text-[12px] font-medium text-ink-tertiary">billed monthly</p>`;
+            <p class="text-[12px] font-medium text-ink-tertiary">40 billed monthly (incl. tax)</p>`;
 
           proChip.classList.add('hidden');
 
@@ -2930,11 +2938,13 @@
           const gr = rateFor(TEAM_PLANS.gold, n);
           const proTotal  = (n * pr).toLocaleString();
           const goldTotal = (n * gr).toLocaleString();
+          const proYear   = (n * pr * 12).toLocaleString();
+          const goldYear  = (n * gr * 12).toLocaleString();
           if (sPro)   sPro.innerHTML   = `<span class="usd">$</span>${proTotal}`;
-          if (sProC)  sProC.textContent = `${n} seats · billed annually`;
+          if (sProC)  sProC.textContent = `${n} seats · ${proYear} billed annually (incl. tax)`;
           if (sProB)  sProB.textContent = `Buy Pro ${n} Seats`;
           if (sGold)  sGold.innerHTML   = `<span class="usd">$</span>${goldTotal}`;
-          if (sGoldC) sGoldC.textContent= `${n} seats · billed annually`;
+          if (sGoldC) sGoldC.textContent= `${n} seats · ${goldYear} billed annually (incl. tax)`;
           if (sGoldB) sGoldB.textContent= `Buy Gold ${n} Seats`;
           if (tblP)   tblP.textContent  = (n * TEAM_PLANS.pro.creditsPerSeat).toLocaleString();
           if (tblG)   tblG.textContent  = (n * TEAM_PLANS.gold.creditsPerSeat).toLocaleString();
@@ -2944,8 +2954,8 @@
           if (sumPill) sumPill.innerHTML = '';
         } else {
           // Gold column summary has no renderer of its own — reset manually.
-          if (sGold)  sGold.innerHTML   = '<span class="usd">$</span>99';
-          if (sGoldC) sGoldC.textContent= 'billed annually';
+          if (sGold)  sGold.innerHTML   = '<span class="usd">$</span>100';
+          if (sGoldC) sGoldC.textContent= '1200 billed annually (incl. tax)';
           if (sGoldB) sGoldB.textContent= 'Buy Gold';
           // Pro CTA: reset from team's "Buy Pro N Seats" back to "Buy Pro".
           if (sProB)  sProB.textContent = 'Buy Pro';
@@ -3072,7 +3082,7 @@
                 <span class="text-[13px] font-medium text-ink-tertiary">/mo</span>
               </div>
             </div>
-            <p class="text-[12px] font-medium text-ink-tertiary">${n} seats &middot; billed annually</p>`;
+            <p class="text-[12px] font-medium text-ink-tertiary">${n} seats &middot; ${(n * rate * 12).toLocaleString()} billed annually (incl. tax)</p>`;
 
           if (credits) credits.textContent = (n * plan.creditsPerSeat).toLocaleString();
           cta.textContent = plan.ctaLabel.replace('{n}', n);
@@ -3218,7 +3228,7 @@
   <!-- v5 discount popup (Figma 217:7704) — feature list + export preview, opens on pricing close -->
   <div class="dp-backdrop" id="dp-backdrop" role="dialog" aria-modal="true" aria-labelledby="dp-box-title" data-open="false">
     <div class="dp-stack">
-      <!-- Top eyebrow strip -->
+      <!-- Top eyebrow strip — slides up out from behind box top on open -->
       <div class="dp-eyebrow-strip">
         <span class="gift-icon" aria-hidden="true">🎁</span>
         <p>Before you go, a special discount, just for you for the next hour.</p>
@@ -3904,7 +3914,7 @@
           if (revealTimer) clearTimeout(revealTimer);
           revealTimer = setTimeout(() => {
             ctaBtn.disabled = false;
-            ctaBtn.textContent = 'Buy Pro Annual at $60 off';
+            ctaBtn.textContent = 'Buy Pro Annual at $60 Off';
             ctaBtn.classList.add('is-revealed');
             if (pillEl) pillEl.classList.remove('is-hidden');
           }, 3600);
@@ -3918,10 +3928,10 @@
         tick();
         if (interval) clearInterval(interval);
         interval = setInterval(tick, 1000);
-        // Celebration burst on open (matches thank-you page treatment)
-        setTimeout(fireConfettiBurst, 120);
         // Spin the $60 dial, then enable CTA + fade pill in
         runDial();
+        // Begin auto-cycling features after dial settles
+        startAutoCycle();
       }
       function close() {
         backdrop.dataset.open = 'false';
@@ -3929,6 +3939,18 @@
         if (interval) { clearInterval(interval); interval = null; }
         if (dialTimer) { clearTimeout(dialTimer); dialTimer = null; }
         if (revealTimer) { clearTimeout(revealTimer); revealTimer = null; }
+        if (typeof stopAutoCycle === 'function') stopAutoCycle();
+        // Mark that the user has seen the $60 offer reveal AND apply the
+        // hour-bump discount to the Pro card so the underlying page reflects
+        // it (blue chip above Buy Now + $15/mo + strikethrough $20 + the
+        // $240 -> $180 annual cadence).
+        try { sessionStorage.setItem('proOfferSeen', 'true'); } catch (e) {}
+        if (typeof window.applyProBump === 'function') {
+          window.applyProBump();
+        } else {
+          try { localStorage.setItem('proBumpStart', String(Date.now())); } catch (e) {}
+          if (typeof renderPro === 'function') renderPro();
+        }
       }
 
       closeBtn.addEventListener('click', close);
@@ -3941,11 +3963,60 @@
       });
       // Backdrop click no longer closes the popup — must use the X icon
 
-      // Feature-item click: swap preview + active state + icon fill/outline
+      // Feature-item auto-cycle (4s) until user manually clicks
       const featList = document.getElementById('dp-feat-list');
       const previewImg = document.getElementById('dp-preview-img');
+      let cycleInterval = null;
+      let userTookOver = false;
+      function activateFeat(item) {
+        if (!item || !featList || !previewImg) return;
+        if (item.classList.contains('is-active')) return;
+        featList.querySelectorAll('.dp-feat-item').forEach((el) => {
+          el.classList.remove('is-active');
+          const icon = el.querySelector('i');
+          const inactiveCls = el.dataset.iconInactive;
+          if (icon && inactiveCls) icon.className = inactiveCls;
+        });
+        item.classList.add('is-active');
+        const activeIcon = item.querySelector('i');
+        const activeCls = item.dataset.iconActive;
+        if (activeIcon && activeCls) activeIcon.className = activeCls;
+        const src = item.dataset.preview;
+        if (src && !previewImg.src.endsWith(src)) {
+          previewImg.classList.add('is-swapping');
+          setTimeout(() => {
+            previewImg.classList.remove('is-swapping');
+            previewImg.classList.add('is-entering');
+            previewImg.src = src;
+            requestAnimationFrame(() => {
+              requestAnimationFrame(() => previewImg.classList.remove('is-entering'));
+            });
+          }, 240);
+        }
+      }
+      function startAutoCycle() {
+        if (!featList) return;
+        if (cycleInterval) clearInterval(cycleInterval);
+        userTookOver = false;
+        // Wait for dial reveal + a beat before cycling
+        const delay = 4200;
+        cycleInterval = setTimeout(function tick() {
+          if (userTookOver) return;
+          const items = Array.from(featList.querySelectorAll('.dp-feat-item'));
+          if (!items.length) return;
+          const activeIdx = items.findIndex((el) => el.classList.contains('is-active'));
+          const nextIdx = (activeIdx + 1) % items.length;
+          activateFeat(items[nextIdx]);
+          cycleInterval = setTimeout(tick, 4000);
+        }, delay);
+      }
+      function stopAutoCycle() {
+        userTookOver = true;
+        if (cycleInterval) { clearTimeout(cycleInterval); cycleInterval = null; }
+      }
       if (featList && previewImg) {
         featList.addEventListener('click', (e) => {
+          stopAutoCycle();
           const item = e.target.closest('.dp-feat-item');
           if (!item || item.classList.contains('is-active')) return;
           featList.querySelectorAll('.dp-feat-item').forEach((el) => {
