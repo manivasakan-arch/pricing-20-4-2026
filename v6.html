@@ -2907,10 +2907,10 @@
           const goldYear = (units * gr * 12).toLocaleString();
           const creditsStr = teamState.credits.toLocaleString();
           if (sPro)   sPro.innerHTML   = `<span class="usd">$</span>${proNow}`;
-          if (sProC)  sProC.textContent = `${creditsStr} credits · unlimited seats · $${proYear} billed annually`;
+          if (sProC)  sProC.textContent = `${creditsStr} credits · $${proYear} billed annually`;
           if (sProB)  sProB.textContent = 'Buy Pro';
           if (sGold)  sGold.innerHTML   = `<span class="usd">$</span>${goldNow}`;
-          if (sGoldC) sGoldC.textContent= `${creditsStr} credits · unlimited seats · $${goldYear} billed annually`;
+          if (sGoldC) sGoldC.textContent= `${creditsStr} credits · $${goldYear} billed annually`;
           if (sGoldB) sGoldB.textContent= 'Buy Gold';
           if (tblP)   tblP.textContent  = creditsStr;
           if (tblG)   tblG.textContent  = creditsStr;
