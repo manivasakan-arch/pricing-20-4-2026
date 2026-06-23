@@ -2869,8 +2869,8 @@
       const UNIT = 5000;
       const CREDIT_OPTIONS = [25000, 50000, 75000, 100000];
       const TEAM_PLANS = {
-        pro:  { list: 20, tiers: [[4,20], [9,18], [Infinity,17]], ctaId: 'pro-team-cta',  hintId: 'pro-team-hint',  creditsId: 'pro-team-credits',  ctaLabel: 'Buy Pro' },
-        gold: { list: 99, tiers: [[4,99], [9,89], [Infinity,84]], ctaId: 'gold-team-cta', hintId: 'gold-team-hint', creditsId: 'gold-team-credits', ctaLabel: 'Buy Gold' },
+        pro:  { list: 20, tiers: [[4,20], [9,18], [Infinity,17]], ctaId: 'pro-team-cta',  hintId: 'pro-team-hint',  creditsId: 'pro-team-credits',  ctaLabel: 'Buy Pro Team' },
+        gold: { list: 99, tiers: [[4,99], [9,89], [Infinity,84]], ctaId: 'gold-team-cta', hintId: 'gold-team-hint', creditsId: 'gold-team-credits', ctaLabel: 'Buy Gold Team' },
       };
 
       function rateFor(plan, units) {
@@ -2912,10 +2912,10 @@
           const creditsStr = teamState.credits.toLocaleString();
           if (sPro)   sPro.innerHTML   = `<span class="usd">$</span>${proNow}`;
           if (sProC)  sProC.textContent = `${creditsStr} credits · $${proYear} billed annually`;
-          if (sProB)  sProB.textContent = 'Buy Pro';
+          if (sProB)  sProB.textContent = 'Buy Pro Team';
           if (sGold)  sGold.innerHTML   = `<span class="usd">$</span>${goldNow}`;
           if (sGoldC) sGoldC.textContent= `${creditsStr} credits · $${goldYear} billed annually`;
-          if (sGoldB) sGoldB.textContent= 'Buy Gold';
+          if (sGoldB) sGoldB.textContent= 'Buy Gold Team';
           if (tblP)   tblP.textContent  = creditsStr;
           if (tblG)   tblG.textContent  = creditsStr;
           // Suppress the Pro bumped-pill on the team view — the bump only
