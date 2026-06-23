@@ -2286,7 +2286,7 @@
               <p class="text-[12px] text-ink-tertiary">/mo</p>
             </div>
           </div>
-          <p class="text-[11px] font-medium text-ink-tertiary">$108 billed annually (incl. tax)</p>
+          <p class="text-[11px] font-medium text-ink-tertiary">$108 billed annually</p>
         </div>
         <button class="mt-2 h-9 min-w-[180px] px-4 rounded-[4px] border border-brand-500 text-brand-500 text-[13px] font-bold hover:bg-brand-50">Buy Basic</button>
       </div>
@@ -2297,7 +2297,7 @@
             <p class="text-[22px] font-bold text-ink-primary leading-none" id="sum-pro-price"><span class="usd">$</span>20</p>
             <p class="text-[12px] text-ink-tertiary">/mo</p>
           </div>
-          <p class="text-[11px] font-medium text-ink-tertiary" id="sum-pro-cadence">$240 billed annually (incl. tax)</p>
+          <p class="text-[11px] font-medium text-ink-tertiary" id="sum-pro-cadence">$240 billed annually</p>
         </div>
         <button id="sum-pro-cta" class="pro-btn mt-2 h-9 min-w-[180px] px-4 rounded-[4px] text-white text-[13px] font-bold">Buy Pro</button>
         <div id="sum-pro-pill-slot" class="flex justify-center"></div>
@@ -2308,7 +2308,7 @@
             <p class="text-[22px] font-bold text-ink-primary leading-none" id="sum-gold-price"><span class="usd">$</span>100</p>
             <p class="text-[12px] text-ink-tertiary">/mo</p>
           </div>
-          <p class="text-[11px] font-medium text-ink-tertiary" id="sum-gold-cadence">$1,200 billed annually (incl. tax)</p>
+          <p class="text-[11px] font-medium text-ink-tertiary" id="sum-gold-cadence">$1,200 billed annually</p>
         </div>
         <button id="sum-gold-cta" class="mt-2 h-9 min-w-[180px] px-4 rounded-[4px] border border-brand-500 text-brand-500 text-[13px] font-bold hover:bg-brand-50">Buy Gold</button>
       </div>
@@ -2556,8 +2556,8 @@
   <script>
     (function () {
       const PRICES = {
-        annual:  { now: '<span class="usd">$</span>100', cadence: '$1,200 billed annually (incl. tax)' },
-        monthly: { now: '<span class="usd">$</span>200', cadence: '$200 billed monthly (incl. tax)' },
+        annual:  { now: '<span class="usd">$</span>100', cadence: '$1,200 billed annually' },
+        monthly: { now: '<span class="usd">$</span>200', cadence: '$200 billed monthly' },
       };
       const card = document.getElementById('gold-card');
       const priceEl = card.querySelector('[data-gold-price]');
@@ -2688,7 +2688,7 @@
             : '';
           sumPrice.innerHTML = `${sumStrike}<span class="usd">$</span>${annualNow}`;
         }
-        if (sumCadence) sumCadence.textContent = `$${parseInt(annualNow, 10) * 12} billed annually (incl. tax)`;
+        if (sumCadence) sumCadence.textContent = `$${parseInt(annualNow, 10) * 12} billed annually`;
         if (sumPill) {
           // Bump state is communicated via the in-card green badge now —
           // suppress the legacy orange summary-row pill entirely.
@@ -2707,7 +2707,7 @@
                 <span class="text-[13px] font-medium text-ink-tertiary">/mo</span>
               </div>
             </div>
-            <p class="text-[12px] font-medium text-ink-tertiary">$${parseInt(annualNow, 10) * 12} billed annually (incl. tax)</p>`;
+            <p class="text-[12px] font-medium text-ink-tertiary">$${parseInt(annualNow, 10) * 12} billed annually</p>`;
 
           const offerApplied = document.getElementById('pro-offer-applied');
           if (offerApplied) {
@@ -2737,7 +2737,7 @@
               <p class="text-[24px] font-bold text-ink-primary leading-none"><span class="usd">$</span>40</p>
               <span class="text-[13px] font-medium text-ink-tertiary">/mo</span>
             </div>
-            <p class="text-[12px] font-medium text-ink-tertiary">$40 billed monthly (incl. tax)</p>`;
+            <p class="text-[12px] font-medium text-ink-tertiary">$40 billed monthly</p>`;
 
           proChip.classList.add('hidden');
 
@@ -2907,10 +2907,10 @@
           const goldYear = (units * gr * 12).toLocaleString();
           const creditsStr = teamState.credits.toLocaleString();
           if (sPro)   sPro.innerHTML   = `<span class="usd">$</span>${proNow}`;
-          if (sProC)  sProC.textContent = `${creditsStr} credits · unlimited seats · $${proYear} billed annually (incl. tax)`;
+          if (sProC)  sProC.textContent = `${creditsStr} credits · unlimited seats · $${proYear} billed annually`;
           if (sProB)  sProB.textContent = 'Buy Pro';
           if (sGold)  sGold.innerHTML   = `<span class="usd">$</span>${goldNow}`;
-          if (sGoldC) sGoldC.textContent= `${creditsStr} credits · unlimited seats · $${goldYear} billed annually (incl. tax)`;
+          if (sGoldC) sGoldC.textContent= `${creditsStr} credits · unlimited seats · $${goldYear} billed annually`;
           if (sGoldB) sGoldB.textContent= 'Buy Gold';
           if (tblP)   tblP.textContent  = creditsStr;
           if (tblG)   tblG.textContent  = creditsStr;
@@ -2921,7 +2921,7 @@
         } else {
           // Gold column summary has no renderer of its own — reset manually.
           if (sGold)  sGold.innerHTML   = '<span class="usd">$</span>100';
-          if (sGoldC) sGoldC.textContent= '$1,200 billed annually (incl. tax)';
+          if (sGoldC) sGoldC.textContent= '$1,200 billed annually';
           if (sGoldB) sGoldB.textContent= 'Buy Gold';
           // Pro CTA: reset from team's "Buy Pro N Seats" back to "Buy Pro".
           if (sProB)  sProB.textContent = 'Buy Pro';
