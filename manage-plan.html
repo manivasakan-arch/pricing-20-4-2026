@@ -13,106 +13,125 @@
 <script src="https://cdn.tailwindcss.com"></script>
 <script>
   tailwind.config = {
-    theme: {
-      extend: {
-        fontFamily: { sans: ['Inter', 'system-ui', 'sans-serif'] },
-        colors: {
-          brand: { 50: '#eef2f6', 100: '#d4dae2', 500: '#0A1925' },
-          ink: { primary: '#171717', secondary: '#525252', tertiary: '#a3a3a3' },
-          success: { bg: '#dcfce7', fg: '#16a34a' },
-        },
-        boxShadow: { card: '0 1px 2px 0 rgba(0,0,0,0.08), 0 4px 10px 0 rgba(0,0,0,0.06)' },
+    theme: { extend: {
+      fontFamily: { sans: ['Inter', 'system-ui', 'sans-serif'] },
+      colors: {
+        brand: { 50: '#eef2f6', 100: '#d4dae2', 500: '#0A1925' },
+        ink: { primary: '#171717', secondary: '#525252', tertiary: '#a3a3a3' },
+        success: { bg: '#dcfce7', fg: '#16a34a' },
       },
-    },
+    } },
   };
 </script>
 <style>
-  html, body { background: #f7f8fa; color: #171717; font-family: 'Inter', system-ui, sans-serif; }
-
-  /* $ symbol same size as the number (from v6) */
+  html, body { background: #f4f5f7; color: #171717; font-family: 'Inter', system-ui, sans-serif; }
   .usd { font-size: 1em; font-weight: inherit; vertical-align: baseline; margin-right: 0; letter-spacing: 0; }
 
-  /* ── Tabs ─────────────────────────────────────────────── */
-  .mp-tabs { display: flex; flex-wrap: wrap; gap: 8px; }
-  .mp-tab {
-    display: inline-flex; align-items: center; gap: 8px;
-    height: 40px; padding: 0 16px; border-radius: 999px;
+  /* ── Proto state switcher (dev affordance) ─────────────── */
+  .proto-bar { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+  .proto-pill {
+    height: 32px; padding: 0 14px; border-radius: 999px;
     border: 1px solid #E4E7EC; background: #fff; color: #525252;
-    font-size: 14px; font-weight: 600; cursor: pointer;
-    transition: border-color .15s ease, color .15s ease, background .15s ease;
+    font-size: 12.5px; font-weight: 600; cursor: pointer; transition: all .15s ease;
   }
-  .mp-tab:hover { border-color: #B0B7C3; }
-  .mp-tab.is-active { background: #0A1925; border-color: #0A1925; color: #fff; }
-  .mp-tab .dot { width: 7px; height: 7px; border-radius: 999px; background: #16a34a; flex: none; }
-  .mp-tab.is-active .dot { background: #6ee7b7; }
+  .proto-pill:hover { border-color: #B0B7C3; }
+  .proto-pill.is-active { background: #0A1925; border-color: #0A1925; color: #fff; }
 
-  /* ── Current-plan banner ──────────────────────────────── */
-  .mp-banner {
-    display: flex; align-items: center; gap: 16px; flex-wrap: wrap;
-    background: #fff; border: 1px solid #E4E7EC; border-radius: 14px;
-    padding: 18px 22px; box-shadow: 0 1px 2px rgba(0,0,0,.04);
+  /* ── Modal frame ───────────────────────────────────────── */
+  .modal {
+    position: relative; background: #fff; border-radius: 20px;
+    box-shadow: 0 24px 60px rgba(16,24,40,.14), 0 4px 12px rgba(16,24,40,.06);
+    max-width: 1180px; margin: 0 auto; padding: 40px 36px 28px;
   }
-  .mp-banner .pin {
-    display: inline-flex; align-items: center; gap: 6px;
-    padding: 4px 10px; border-radius: 999px;
-    background: #ECFDF3; color: #067647; font-size: 12px; font-weight: 700;
+  .modal-x {
+    position: absolute; top: 22px; right: 22px;
+    width: 38px; height: 38px; border-radius: 999px;
+    border: 1px solid #E4E7EC; background: #fff; color: #475467;
+    display: flex; align-items: center; justify-content: center; font-size: 18px; cursor: pointer;
+    transition: background .15s ease;
+  }
+  .modal-x:hover { background: #F2F4F7; }
+
+  .cur-banner {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 9px 18px; border-radius: 999px;
+    background: #ECFDF3; color: #067647; font-size: 14px; font-weight: 600;
   }
 
-  /* ── Cards ────────────────────────────────────────────── */
-  .mp-grid { display: grid; gap: 18px; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); }
-  .mp-card {
+  /* ── Individual / Team segmented toggle ────────────────── */
+  .view-seg { display: inline-flex; padding: 4px; background: #F2F4F7; border-radius: 999px; }
+  .view-seg-btn {
+    display: inline-flex; align-items: center; gap: 7px;
+    height: 36px; padding: 0 18px; border-radius: 999px;
+    font-size: 13.5px; font-weight: 600; color: #667085; cursor: pointer;
+  }
+  .view-seg-btn.is-active { background: #fff; color: #0A1925; box-shadow: 0 1px 2px rgba(16,24,40,.12); }
+
+  /* ── Plan cards ────────────────────────────────────────── */
+  .pgrid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0; align-items: stretch; }
+  .pcard {
     position: relative; display: flex; flex-direction: column;
-    background: #fff; border: 1px solid #E4E7EC; border-radius: 16px;
-    padding: 24px; box-shadow: 0 1px 2px 0 rgba(0,0,0,0.08), 0 4px 10px 0 rgba(0,0,0,0.06);
+    background: #fff; border: 1px solid #E4E7EC; padding: 28px 26px;
   }
-  .mp-card.is-recommended { border: 2px solid #0A1925; }
-  .mp-badge {
-    position: absolute; top: -11px; left: 24px;
-    padding: 4px 12px; border-radius: 999px;
+  .pcard + .pcard { border-left: 0; }
+  .pgrid > .pcard:first-child { border-top-left-radius: 14px; border-bottom-left-radius: 14px; }
+  .pgrid > .pcard:last-child  { border-top-right-radius: 14px; border-bottom-right-radius: 14px; }
+  .pcard.is-rec { border: 2px solid #0A1925; border-radius: 14px; z-index: 2; }
+  .pcard.is-current { background: #FAFBFC; }
+  .pcard-badge {
+    position: absolute; top: -11px; left: 26px; padding: 4px 12px; border-radius: 999px;
     background: #0A1925; color: #fff; font-size: 11px; font-weight: 700; letter-spacing: .02em;
   }
+  .pcard-cur-tag {
+    position: absolute; top: -11px; left: 26px; padding: 4px 12px; border-radius: 999px;
+    background: #ECFDF3; color: #067647; font-size: 11px; font-weight: 700; letter-spacing: .02em;
+  }
+  .pcard-glyph { font-size: 30px; line-height: 1; }
+  .pcard h3 { font-size: 24px; font-weight: 700; color: #171717; line-height: 1; }
+  .pcard-cta {
+    width: 100%; height: 46px; border-radius: 8px; font-size: 15px; font-weight: 700; cursor: pointer;
+    transition: opacity .15s ease, background .15s ease;
+  }
+  .pcard-cta.primary { background: #0A1925; color: #fff; }
+  .pcard-cta.primary:hover { opacity: .9; }
+  .pcard-cta.ghost { background: #fff; color: #0A1925; border: 1px solid #0A1925; }
+  .pcard-cta.ghost:hover { background: #F8FAFC; }
+  .pcard-cta.disabled { background: #F2F4F7; color: #98A2B3; cursor: default; }
+  .feat { display: flex; align-items: flex-start; gap: 9px; font-size: 14px; color: #525252; line-height: 1.43; }
+  .feat i { font-size: 19px; color: #525252; flex: none; line-height: 1.2; }
+  .feat-credits { display: flex; align-items: center; gap: 8px; font-size: 14px; }
+  .feat-head { font-weight: 600; color: #171717; }
   .mp-flag {
-    display: inline-flex; align-items: center; gap: 6px;
-    padding: 4px 10px; border-radius: 8px;
+    display: inline-flex; align-items: center; gap: 6px; padding: 4px 10px; border-radius: 8px;
     background: #FEF3F2; color: #B42318; font-size: 12px; font-weight: 600;
   }
-  .mp-cta {
-    width: 100%; height: 44px; border-radius: 10px;
-    background: #0A1925; color: #fff; font-size: 14px; font-weight: 700;
-    cursor: pointer; transition: opacity .15s ease;
-  }
-  .mp-cta:hover { opacity: .9; }
-  .mp-cta.is-ghost { background: #fff; color: #0A1925; border: 1px solid #0A1925; }
-  .mp-feat { display: flex; align-items: flex-start; gap: 8px; font-size: 13px; color: #525252; }
-  .mp-feat i { color: #16a34a; font-size: 16px; line-height: 1.2; flex: none; }
 
-  /* ── Lock note (team → no individual) ─────────────────── */
-  .mp-lock {
-    display: flex; align-items: center; gap: 10px;
-    background: #F9FAFB; border: 1px dashed #D0D5DD; border-radius: 12px;
-    padding: 14px 18px; color: #667085; font-size: 13px; font-weight: 500;
+  /* ── Seat stepper ──────────────────────────────────────── */
+  .stepper {
+    display: flex; align-items: center; justify-content: space-between;
+    height: 44px; border: 1px solid #D0D5DD; border-radius: 8px; overflow: hidden;
   }
-  .mp-lock i { font-size: 18px; color: #98A2B3; }
-
-  /* ── Monthly / Annual seg ─────────────────────────────── */
-  .mp-seg { display: inline-flex; padding: 3px; background: #F2F4F7; border-radius: 999px; }
-  .mp-seg-btn {
-    height: 30px; padding: 0 14px; border-radius: 999px;
-    font-size: 13px; font-weight: 600; color: #667085; cursor: pointer;
+  .stepper button {
+    width: 46px; height: 100%; font-size: 20px; color: #475467; cursor: pointer; background: #fff;
   }
-  .mp-seg-btn.is-active { background: #fff; color: #0A1925; box-shadow: 0 1px 2px rgba(16,24,40,.1); }
+  .stepper button:hover { background: #F2F4F7; }
+  .stepper button:disabled { color: #D0D5DD; cursor: default; background: #fff; }
+  .stepper .val { font-size: 15px; font-weight: 700; color: #0A1925; }
 
-  /* ── Credit dropdown (from v6) ────────────────────────── */
+  /* ── Monthly/Annual seg (per card) ─────────────────────── */
+  .mseg { display: inline-flex; padding: 3px; background: #F2F4F7; border-radius: 999px; }
+  .mseg-btn { height: 28px; padding: 0 12px; border-radius: 999px; font-size: 12.5px; font-weight: 600; color: #667085; cursor: pointer; }
+  .mseg-btn.is-active { background: #fff; color: #0A1925; box-shadow: 0 1px 2px rgba(16,24,40,.1); }
+
+  /* ── Credit dropdown (from v6) ─────────────────────────── */
   .credit-dd { position: relative; width: 100%; }
   .credit-dd-trigger {
-    width: 100%; height: 40px;
-    display: flex; align-items: center; justify-content: space-between; gap: 8px;
-    padding: 0 12px; border: 1px solid #D0D5DD; border-radius: 6px;
+    width: 100%; height: 44px; display: flex; align-items: center; justify-content: space-between; gap: 8px;
+    padding: 0 12px; border: 1px solid #D0D5DD; border-radius: 8px;
     background: #fff; color: #0A1925; font-size: 14px; font-weight: 600; font-family: inherit;
     cursor: pointer; text-align: left; transition: border-color .15s ease;
   }
   .credit-dd-trigger:hover { border-color: #B0B7C3; }
-  .credit-dd-trigger:focus-visible { outline: none; border-color: #0A1925; }
   .credit-dd.is-open .credit-dd-trigger { border-color: #0A1925; }
   .credit-dd-caret { color: #667085; font-size: 14px; transition: transform .15s ease; }
   .credit-dd.is-open .credit-dd-caret { transform: rotate(180deg); }
@@ -120,224 +139,297 @@
     position: absolute; left: 0; right: 0; top: calc(100% + 6px); z-index: 30;
     margin: 0; padding: 6px; list-style: none;
     background: #fff; border: 1px solid #E4E7EC; border-radius: 10px;
-    box-shadow: 0 12px 28px rgba(16,24,40,.14), 0 2px 6px rgba(16,24,40,.06);
-    display: none;
+    box-shadow: 0 12px 28px rgba(16,24,40,.14), 0 2px 6px rgba(16,24,40,.06); display: none;
   }
   .credit-dd.is-open .credit-dd-menu { display: block; }
   .credit-dd-opt {
     display: flex; align-items: center; justify-content: space-between; gap: 10px;
-    padding: 9px 10px; border-radius: 7px;
-    font-size: 14px; font-weight: 600; color: #0A1925; cursor: pointer;
+    padding: 9px 10px; border-radius: 7px; font-size: 14px; font-weight: 600; color: #0A1925; cursor: pointer;
   }
-  .credit-dd-opt:hover, .credit-dd-opt.is-active { background: #F2F4F7; }
-  .credit-dd-opt[aria-selected="true"] { background: #F2F4F7; }
+  .credit-dd-opt:hover, .credit-dd-opt.is-active, .credit-dd-opt[aria-selected="true"] { background: #F2F4F7; }
   .credit-dd-pill {
     flex: none; padding: 3px 10px; border-radius: 999px;
     background: #ECFDF3; color: #067647; font-size: 12px; font-weight: 600; line-height: 1;
   }
   .credit-dd-left, .credit-dd-optlabel { display: flex; align-items: center; gap: 8px; min-width: 0; }
 
-  /* ── Credits tooltip (from v6) ────────────────────────── */
-  .credit-tip {
-    position: relative; display: inline-flex; align-items: center; justify-content: center;
-    width: 14px; height: 14px; font-size: 14px; color: #a3a3a3; cursor: help;
-  }
+  /* ── Credits tooltip (from v6) ─────────────────────────── */
+  .credit-tip { position: relative; display: inline-flex; align-items: center; justify-content: center; width: 14px; height: 14px; font-size: 14px; color: #a3a3a3; cursor: help; }
   .credit-tip__bub {
-    position: absolute; left: calc(100% + 12px); top: 50%;
-    transform: translateY(-50%) scale(.96); transform-origin: left center;
-    width: max-content; max-width: 250px;
-    background: #1d1d1f; color: #fff;
+    position: absolute; left: calc(100% + 12px); top: 50%; transform: translateY(-50%) scale(.96); transform-origin: left center;
+    width: max-content; max-width: 240px; background: #1d1d1f; color: #fff;
     font-size: 12px; font-weight: 400; line-height: 1.4; text-align: left;
     padding: 12px 16px; border-radius: 14px; box-shadow: 0 14px 34px rgba(0,0,0,.24);
-    opacity: 0; visibility: hidden; pointer-events: none;
-    transition: opacity .14s ease, transform .14s ease; z-index: 60;
+    opacity: 0; visibility: hidden; pointer-events: none; transition: opacity .14s ease, transform .14s ease; z-index: 60;
   }
-  .credit-tip__bub::before {
-    content: ""; position: absolute; left: -4px; top: 50%;
-    transform: translateY(-50%) rotate(45deg);
-    width: 12px; height: 12px; background: #1d1d1f; border-radius: 3px;
-  }
-  .credit-tip:hover .credit-tip__bub, .credit-tip:focus-within .credit-tip__bub {
-    opacity: 1; visibility: visible; transform: translateY(-50%) scale(1);
-  }
+  .credit-tip__bub::before { content: ""; position: absolute; left: -4px; top: 50%; transform: translateY(-50%) rotate(45deg); width: 12px; height: 12px; background: #1d1d1f; border-radius: 3px; }
+  .credit-tip:hover .credit-tip__bub, .credit-tip:focus-within .credit-tip__bub { opacity: 1; visibility: visible; transform: translateY(-50%) scale(1); }
 
-  /* ── Animated brand-gradient "Unlimited seats" (from v6) ── */
+  /* ── Animated "Unlimited seats" gradient (from v6) ─────── */
   .unlimited-grad {
     background: linear-gradient(90deg, #002464, #0059ff, #0095ff, #b6daff, #0095ff, #0059ff, #002464);
-    background-size: 200% auto;
-    -webkit-background-clip: text; background-clip: text;
-    -webkit-text-fill-color: transparent; color: transparent;
-    background-position: 200% center;
+    background-size: 200% auto; -webkit-background-clip: text; background-clip: text;
+    -webkit-text-fill-color: transparent; color: transparent; background-position: 200% center;
     animation: unlimited-grad-move 3.5s linear infinite;
   }
-  @keyframes unlimited-grad-move {
-    from { background-position: 200% center; }
-    to   { background-position: 0% center; }
-  }
+  @keyframes unlimited-grad-move { from { background-position: 200% center; } to { background-position: 0% center; } }
   @media (prefers-reduced-motion: reduce) { .unlimited-grad { animation: none; } }
 
-  [data-tab-panel].hidden { display: none; }
+  /* ── Lock panel (team → no individual) ─────────────────── */
+  .lock-panel {
+    grid-column: 1 / -1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px;
+    border: 1px dashed #D0D5DD; border-radius: 14px; background: #FAFBFC; padding: 48px 24px; text-align: center;
+  }
+  .lock-panel i { font-size: 30px; color: #98A2B3; }
+
+  /* ── Trust strip (enterprise) ──────────────────────────── */
+  .trust-cap { font-size: 11px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: #a3a3a3; text-align: center; }
+
+  /* ── Footer marquee ────────────────────────────────────── */
+  .footer { max-width: 1180px; margin: 28px auto 0; padding: 8px 12px; }
+  .sp-wrap { position: relative; overflow: hidden; flex: 1; height: 48px; }
+  .sp-track { position: absolute; left: 0; top: 0; display: flex; align-items: center; height: 40px; width: max-content; gap: 32px; animation: sp-scroll 32s linear infinite; }
+  .sp-logo-img { height: 26px; width: auto; opacity: .7; }
+  @keyframes sp-scroll { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+
+  @media (max-width: 880px) {
+    .pgrid { grid-template-columns: 1fr; }
+    .pcard { border-radius: 14px !important; border-left: 1px solid #E4E7EC !important; }
+    .pcard + .pcard { margin-top: 14px; }
+    .modal { padding: 32px 18px 22px; }
+  }
 </style>
 </head>
 <body>
-  <main class="max-w-[1100px] mx-auto px-5 py-10">
-    <!-- Header -->
-    <header class="mb-7">
-      <h1 class="text-[26px] font-extrabold text-ink-primary tracking-tight">Manage your plan</h1>
-      <p class="text-[14px] text-ink-secondary mt-1">Move up a tier or grow your credit pool. Pick the plan you own to see your upgrades.</p>
-    </header>
+  <div class="max-w-[1180px] mx-auto px-5 pt-6 pb-2">
+    <div class="proto-bar">
+      <span class="text-[12px] font-semibold text-ink-tertiary uppercase tracking-wide mr-1">Preview current plan</span>
+      <button class="proto-pill is-active" data-state="pro-ind">Pro · Individual</button>
+      <button class="proto-pill" data-state="gold-ind">Gold · Individual</button>
+      <button class="proto-pill" data-state="pro-team">Pro · Team</button>
+      <button class="proto-pill" data-state="gold-team">Gold · Team</button>
+    </div>
+  </div>
 
-    <!-- Tabs = current (owned) plan -->
-    <div class="mp-tabs mb-6" role="tablist" aria-label="Your current plan">
-      <button class="mp-tab is-active" role="tab" data-tab="pro-ind" aria-selected="true"><span class="dot"></span>Pro · Individual</button>
-      <button class="mp-tab" role="tab" data-tab="gold-ind" aria-selected="false"><span class="dot"></span>Gold · Individual</button>
-      <button class="mp-tab" role="tab" data-tab="pro-team" aria-selected="false"><span class="dot"></span>Pro · Team</button>
-      <button class="mp-tab" role="tab" data-tab="gold-team" aria-selected="false"><span class="dot"></span>Gold · Team</button>
+  <div class="px-5 pb-10">
+    <div class="modal">
+      <button class="modal-x" aria-label="Close"><i class="ph ph-x"></i></button>
+      <h1 class="text-[28px] font-extrabold text-ink-primary text-center tracking-tight">Manage your plan</h1>
+      <div class="flex justify-center mt-4">
+        <span class="cur-banner"><span aria-hidden="true">🔥</span><span id="cur-banner-text"></span></span>
+      </div>
+
+      <div class="flex justify-center mt-6" id="view-toggle-wrap">
+        <div class="view-seg" role="tablist" aria-label="Plan type">
+          <button class="view-seg-btn is-active" data-view="individual" role="tab"><i class="ph-bold ph-user"></i>Individual</button>
+          <button class="view-seg-btn" data-view="team" role="tab"><i class="ph-bold ph-users-three"></i>Teams &amp; Enterprise</button>
+        </div>
+      </div>
+
+      <div class="pgrid mt-8" id="cards"></div>
     </div>
 
-    <!-- ═══════════ PANEL: Pro Individual ═══════════ -->
-    <section data-tab-panel="pro-ind">
-      <div class="mp-banner mb-6">
-        <span class="pin"><i class="ph-fill ph-seal-check"></i>Current plan</span>
-        <div class="flex-1 min-w-[200px]">
-          <p class="text-[15px] font-bold text-ink-primary">Pro · Individual</p>
-          <p class="text-[13px] text-ink-secondary"><span class="usd">$</span>20/mo billed annually ($240/year) · 5,000 credits/year · 1 seat</p>
+    <!-- Social-proof footer -->
+    <aside class="footer" aria-label="Trusted by">
+      <div class="flex items-center gap-4">
+        <p class="shrink-0 whitespace-nowrap uppercase text-ink-secondary" style="font-size:13px; font-weight:600; letter-spacing:.04em;">
+          <span aria-hidden="true">♥</span> Loved by 10M+ presenters at
+        </p>
+        <div class="sp-wrap">
+          <div class="sp-track">
+            <img class="sp-logo-img" src="assets/export-ppt/logos/microsoftlogo.svg" alt="Microsoft">
+            <img class="sp-logo-img" src="assets/export-ppt/logos/googlelogo.svg" alt="Google">
+            <img class="sp-logo-img" src="assets/export-ppt/logos/adobelogo.svg" alt="Adobe">
+            <img class="sp-logo-img" src="assets/export-ppt/logos/facebooklogo.svg" alt="Meta">
+            <img class="sp-logo-img" src="assets/export-ppt/logos/mckinseylogo.svg" alt="McKinsey">
+            <img class="sp-logo-img" src="assets/export-ppt/logos/amazonlogo.svg" alt="Amazon">
+            <img class="sp-logo-img" src="assets/export-ppt/logos/notionlogo.svg" alt="Notion">
+            <img class="sp-logo-img" src="assets/export-ppt/logos/microsoftlogo.svg" alt="" aria-hidden="true">
+            <img class="sp-logo-img" src="assets/export-ppt/logos/googlelogo.svg" alt="" aria-hidden="true">
+            <img class="sp-logo-img" src="assets/export-ppt/logos/adobelogo.svg" alt="" aria-hidden="true">
+            <img class="sp-logo-img" src="assets/export-ppt/logos/facebooklogo.svg" alt="" aria-hidden="true">
+            <img class="sp-logo-img" src="assets/export-ppt/logos/mckinseylogo.svg" alt="" aria-hidden="true">
+            <img class="sp-logo-img" src="assets/export-ppt/logos/amazonlogo.svg" alt="" aria-hidden="true">
+            <img class="sp-logo-img" src="assets/export-ppt/logos/notionlogo.svg" alt="" aria-hidden="true">
+          </div>
         </div>
       </div>
-      <h2 class="text-[15px] font-bold text-ink-primary mb-3">Available upgrades</h2>
-      <div class="mp-grid">
-        <div id="card-goldind-1"></div>
-        <div id="card-proteam-1"></div>
-        <div id="card-goldteam-1"></div>
-      </div>
-    </section>
-
-    <!-- ═══════════ PANEL: Gold Individual ═══════════ -->
-    <section data-tab-panel="gold-ind" class="hidden">
-      <div class="mp-banner mb-6">
-        <span class="pin"><i class="ph-fill ph-seal-check"></i>Current plan</span>
-        <div class="flex-1 min-w-[200px]">
-          <p class="text-[15px] font-bold text-ink-primary">Gold · Individual</p>
-          <p class="text-[13px] text-ink-secondary"><span class="usd">$</span>100/mo billed annually ($1,200/year) · 50,000 credits/year · 1 seat</p>
-        </div>
-      </div>
-      <h2 class="text-[15px] font-bold text-ink-primary mb-3">Move your team onto a shared plan</h2>
-      <div class="mp-grid">
-        <div id="card-goldteam-2"></div>
-        <div id="card-proteam-2"></div>
-      </div>
-    </section>
-
-    <!-- ═══════════ PANEL: Pro Team ═══════════ -->
-    <section data-tab-panel="pro-team" class="hidden">
-      <div class="mp-banner mb-6">
-        <span class="pin"><i class="ph-fill ph-seal-check"></i>Current plan</span>
-        <div class="flex-1 min-w-[200px]">
-          <p class="text-[15px] font-bold text-ink-primary">Pro · Team</p>
-          <p class="text-[13px] text-ink-secondary">15,000 credits · Unlimited seats · centralized billing</p>
-        </div>
-      </div>
-      <h2 class="text-[15px] font-bold text-ink-primary mb-3">Grow your plan</h2>
-      <div class="mp-grid mb-5">
-        <div id="card-morecredits-pro"></div>
-        <div id="card-goldteam-3"></div>
-      </div>
-      <div class="mp-lock"><i class="ph ph-lock-simple"></i>Team plans can't switch back to an individual plan. You can grow credits or move up to Gold Team.</div>
-    </section>
-
-    <!-- ═══════════ PANEL: Gold Team ═══════════ -->
-    <section data-tab-panel="gold-team" class="hidden">
-      <div class="mp-banner mb-6">
-        <span class="pin"><i class="ph-fill ph-crown"></i>Top plan</span>
-        <div class="flex-1 min-w-[200px]">
-          <p class="text-[15px] font-bold text-ink-primary">Gold · Team</p>
-          <p class="text-[13px] text-ink-secondary">25,000 credits · Unlimited seats · priority support</p>
-        </div>
-      </div>
-      <h2 class="text-[15px] font-bold text-ink-primary mb-3">You're on the top tier. Add more credits any time.</h2>
-      <div class="mp-grid mb-5">
-        <div id="card-morecredits-gold"></div>
-      </div>
-      <div class="mp-lock"><i class="ph ph-lock-simple"></i>Team plans can't switch back to an individual plan. Gold Team is the highest tier.</div>
-    </section>
-  </main>
+    </aside>
+  </div>
 
   <script>
     (function () {
-      // ── Pricing model (mirrors v6) ──────────────────────────────────────
+      // ── Pricing data ────────────────────────────────────────────────────
       const UNIT = 5000;
       const CREDIT_OPTIONS = [15000, 25000, 50000, 75000, 100000];
       const OFFERS = { 15000: 0.10, 25000: 0.20, 50000: 0.30, 75000: 0.40, 100000: 0.50 };
-      const LIST = { pro: 20, gold: 99 };
+      const LIST = { pro: 20, gold: 99 };               // per-unit annual rate
       const offerFor = c => OFFERS[c] || 0;
       const offerPct = c => Math.round(offerFor(c) * 100);
-      const monthlyNow  = (planKey, c) => Math.floor((c / UNIT) * LIST[planKey] * (1 - offerFor(c)));
-      const monthlyList = (planKey, c) => (c / UNIT) * LIST[planKey];
+      const teamAnnualMo = (plan, c) => Math.floor((c / UNIT) * LIST[plan] * (1 - offerFor(c)));
+      const teamListMo   = (plan, c) => (c / UNIT) * LIST[plan];
 
-      const SPARK = `<svg style="flex:none;color:#0A1925" width="16" height="16" viewBox="0 0 20 20" fill="currentColor" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M10 1.5C10.3939 1.5 10.871 1.70087 11.0547 2.19629L11.4316 3.21387H11.4326C12.4124 5.85615 14.7271 8.00421 17.7676 9.0293C18.1842 9.16981 18.4593 9.5102 18.4961 9.91016C18.5324 10.3064 18.3269 10.6925 17.9463 10.8945L17.9277 10.9043L17.9082 10.9121L17.8047 10.957L17.7861 10.9648L17.7676 10.9707C14.7273 11.9951 12.4122 14.1423 11.4326 16.7842L11.0547 17.8037C10.8836 18.265 10.4548 18.4721 10.083 18.4971C9.71655 18.5215 9.27311 18.3795 9.03125 17.9824L9.01953 17.9619L9.00879 17.9395L8.96387 17.8477L8.9541 17.8262L8.94531 17.8037L8.56641 16.7832C7.58645 14.1419 5.27208 11.9951 2.23242 10.9707C1.81581 10.8302 1.54073 10.4898 1.50391 10.0898C1.4676 9.69363 1.67314 9.30749 2.05371 9.10547L2.07227 9.0957L2.0918 9.08789L2.19531 9.04297L2.21387 9.03516L2.23242 9.0293C5.27234 8.00417 7.58717 5.85653 8.56738 3.21484L8.94531 2.19629C9.12904 1.70087 9.60608 1.5 10 1.5Z"/></svg>`;
-
-      const TIP = `<span class="credit-tip" tabindex="0" role="button" aria-label="What are credits?"><i class="ph ph-info"></i><span class="credit-tip__bub" role="tooltip">Credits power every AI generation. You spend them to create presentations and other AI outputs. Pick a larger pool for heavier use.</span></span>`;
-
-      const FEATS = {
-        pro:  ['Everything in Pro, for the whole team', 'Shared credit pool', 'Centralized billing'],
-        gold: ['Everything in Gold, for the whole team', 'Priority support', 'Advanced exports & analytics'],
+      const INDIV = {
+        pro:  { name: 'Pro',  glyph: '✈️', annual: 20,  monthly: 40,  cA: 5000,  cM: 1000,
+                feats: [['head', 'All Free features, plus:'], ['ph-star-four', 'Advanced AI models and agents'], ['ph-chart-bar', 'Presentation tracking & analytics'], ['ph-paint-brush-broad', 'Basic brand customization']] },
+        gold: { name: 'Gold', glyph: '🚀', annual: 100, monthly: 200, cA: 50000, cM: 5000,
+                feats: [['head', 'All Pro features, plus:'], ['ph-star-four', 'Frontier AI models and agents'], ['ph-paint-brush-broad', 'Advanced brand customization'], ['ph-files', 'Projects with a shared knowledge base']] },
+      };
+      const TEAM_FEATS = {
+        pro:  [['head', 'All Free features, plus:'], ['ph-users-three', 'Unlimited seats'], ['ph-star-four', 'Advanced AI models and agents'], ['ph-chart-bar', 'Presentation tracking & analytics'], ['ph-paint-brush-broad', 'Basic brand customization']],
+        gold: [['head', 'All Pro features, plus:'], ['ph-users-three', 'Unlimited seats'], ['ph-star-four', 'Frontier AI models and agents'], ['ph-paint-brush-broad', 'Advanced brand customization'], ['ph-files', 'Projects with a shared knowledge base']],
       };
 
+      const STATES = {
+        'pro-ind':  { kind: 'individual', plan: 'pro',  banner: 'Your current plan is <b>Pro</b> with 1 User' },
+        'gold-ind': { kind: 'individual', plan: 'gold', banner: 'Your current plan is <b>Gold</b> with 1 User' },
+        'pro-team': { kind: 'team', plan: 'pro',  owned: 15000, banner: 'Your current plan is <b>Pro Team</b> · 15,000 credits · Unlimited seats' },
+        'gold-team':{ kind: 'team', plan: 'gold', owned: 25000, banner: 'Your current plan is <b>Gold Team</b> · 25,000 credits · Unlimited seats' },
+      };
+      const TIER = { pro: 1, gold: 2 };
+
+      const SPARK = `<svg style="flex:none;color:#0A1925" width="16" height="16" viewBox="0 0 20 20" fill="currentColor" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M10 1.5C10.3939 1.5 10.871 1.70087 11.0547 2.19629L11.4316 3.21387H11.4326C12.4124 5.85615 14.7271 8.00421 17.7676 9.0293C18.1842 9.16981 18.4593 9.5102 18.4961 9.91016C18.5324 10.3064 18.3269 10.6925 17.9463 10.8945L17.9277 10.9043L17.9082 10.9121L17.8047 10.957L17.7861 10.9648L17.7676 10.9707C14.7273 11.9951 12.4122 14.1423 11.4326 16.7842L11.0547 17.8037C10.8836 18.265 10.4548 18.4721 10.083 18.4971C9.71655 18.5215 9.27311 18.3795 9.03125 17.9824L9.01953 17.9619L9.00879 17.9395L8.96387 17.8477L8.9541 17.8262L8.94531 17.8037L8.56641 16.7832C7.58645 14.1419 5.27208 11.9951 2.23242 10.9707C1.81581 10.8302 1.54073 10.4898 1.50391 10.0898C1.4676 9.69363 1.67314 9.30749 2.05371 9.10547L2.07227 9.0957L2.0918 9.08789L2.19531 9.04297L2.21387 9.03516L2.23242 9.0293C5.27234 8.00417 7.58717 5.85653 8.56738 3.21484L8.94531 2.19629C9.12904 1.70087 9.60608 1.5 10 1.5Z"/></svg>`;
+      const TIP = `<span class="credit-tip" tabindex="0" role="button" aria-label="What are credits?"><i class="ph ph-info"></i><span class="credit-tip__bub" role="tooltip">Credits power every AI generation. You spend them to create presentations and other AI outputs. Pick a larger pool for heavier use.</span></span>`;
+
+      const featsHTML = list => list.map(([ic, txt]) =>
+        ic === 'head'
+          ? `<p class="feat feat-head">${txt}</p>`
+          : `<p class="feat"><i class="ph ${ic}"></i>${txt}</p>`).join('');
+
+      const ENT_LOGOS = `<svg width="240" height="36" viewBox="0 0 268 40" fill="none" xmlns="http://www.w3.org/2000/svg" aria-label="Google, Adobe, Notion"><g clip-path="url(#el0)"><path d="M25.891 11.1641H26.3896C28.1209 11.2017 29.824 11.898 31.0472 13.1306C30.5955 13.5916 30.1345 14.0338 29.6922 14.4949C29.0054 13.8739 28.1774 13.394 27.2741 13.2247C25.938 12.9424 24.4984 13.1964 23.3787 13.9586C22.1555 14.7584 21.3275 16.1133 21.1487 17.5623C20.9512 18.9925 21.3558 20.4979 22.2873 21.6082C23.1811 22.6903 24.5454 23.3677 25.9568 23.4148C27.2741 23.49 28.6478 23.0854 29.6076 22.1633C30.3603 21.5141 30.7084 20.5261 30.8213 19.5664C29.2594 19.5664 27.6975 19.5758 26.1356 19.5664V17.6281H32.7126C33.0513 19.7076 32.562 22.0504 30.9813 23.5371C29.9275 24.5909 28.4691 25.2119 26.9824 25.3342C25.5428 25.4754 24.0562 25.2025 22.7765 24.5062C21.2428 23.6876 20.0197 22.3045 19.4175 20.6767C18.8529 19.1806 18.8435 17.487 19.3704 15.9815C19.8503 14.6078 20.7724 13.394 21.9579 12.5472C23.0964 11.7098 24.4796 11.2487 25.891 11.1641Z" fill="#525252"/><path d="M63.6211 11.6562H65.6346V25.0925C64.9666 25.0925 64.2891 25.1019 63.6211 25.0831C63.6305 20.6137 63.6211 16.135 63.6211 11.6562Z" fill="#525252"/><path d="M37.1919 16.31C38.4339 16.0748 39.7794 16.3383 40.805 17.0816C41.7365 17.7402 42.3857 18.7752 42.5833 19.9043C42.8374 21.2122 42.5175 22.6424 41.6706 23.6774C40.758 24.8347 39.2619 25.4557 37.8035 25.3616C36.4674 25.2863 35.1689 24.6183 34.3786 23.5268C33.4847 22.3225 33.2683 20.6665 33.7576 19.2551C34.2468 17.7402 35.63 16.5829 37.1919 16.31ZM37.4742 18.0978C36.9661 18.2295 36.4956 18.5212 36.1569 18.9352C35.2442 20.0266 35.3007 21.805 36.3074 22.8211C36.8814 23.4045 37.747 23.6774 38.5468 23.5174C39.2901 23.3857 39.9394 22.887 40.2969 22.2284C40.9179 21.1087 40.7391 19.5656 39.7888 18.6905C39.1772 18.126 38.2834 17.8908 37.4742 18.0978Z" fill="#525252"/><path d="M47.1655 16.3107C48.5863 16.0379 50.1388 16.433 51.202 17.4304C52.9333 18.9829 53.1215 21.8903 51.6443 23.6781C50.7504 24.8072 49.3014 25.4282 47.8712 25.3623C46.5069 25.3247 45.1614 24.6472 44.3522 23.5275C43.4395 22.2949 43.2419 20.6013 43.7594 19.1617C44.2769 17.6939 45.6318 16.5742 47.1655 16.3107ZM47.4478 18.0985C46.9397 18.2302 46.4692 18.5219 46.1305 18.9265C45.2272 19.9991 45.2649 21.7492 46.234 22.7748C46.808 23.3864 47.7018 23.6875 48.5298 23.5181C49.2637 23.377 49.9224 22.8877 50.2799 22.2291C50.8915 21.1 50.7127 19.5569 49.753 18.6818C49.1414 18.1173 48.2476 17.8915 47.4478 18.0985Z" fill="#525252"/><path d="M55.6234 16.8489C56.7054 16.1715 58.145 15.9833 59.3117 16.5667C59.6787 16.7266 59.9798 16.9995 60.2715 17.2723C60.2809 17.0183 60.2715 16.7548 60.2809 16.4914C60.9113 16.5008 61.5417 16.4914 62.1815 16.5008V24.7996C62.1721 26.0511 61.8522 27.3777 60.9489 28.2904C59.961 29.2972 58.4461 29.6077 57.0818 29.4007C55.6234 29.1843 54.3531 28.1211 53.7886 26.7756C54.3531 26.5027 54.9459 26.2863 55.5293 26.0322C55.8586 26.8038 56.5266 27.4624 57.364 27.613C58.2015 27.7635 59.1706 27.5565 59.7163 26.8602C60.2997 26.1452 60.2997 25.1666 60.2715 24.2916C59.8386 24.715 59.34 25.0913 58.7378 25.2325C57.4299 25.5994 55.9903 25.1478 54.9835 24.2633C53.9673 23.3789 53.3652 22.0145 53.4216 20.6596C53.4498 19.1259 54.3155 17.6487 55.6234 16.8489ZM57.571 18.0533C56.9971 18.1474 56.4608 18.4673 56.0938 18.9095C55.2094 19.9634 55.2094 21.6476 56.1032 22.6826C56.6113 23.2942 57.4299 23.6329 58.2203 23.5482C58.9636 23.473 59.6505 23.0025 60.0174 22.3533C60.6384 21.2524 60.5349 19.7564 59.6975 18.7966C59.18 18.2038 58.352 17.9122 57.571 18.0533Z" fill="#525252"/><path d="M68.0536 17.3347C69.1827 16.2808 70.9234 15.9233 72.3724 16.4784C73.7461 16.9959 74.6211 18.3038 75.0634 19.6493C73.0216 20.4961 70.9892 21.3336 68.9474 22.1804C69.2297 22.7167 69.6625 23.206 70.2459 23.4036C71.0645 23.6952 72.043 23.5917 72.7299 23.046C73.0028 22.839 73.2192 22.5661 73.4262 22.3027C73.9437 22.6508 74.4612 22.9896 74.9787 23.3377C74.2448 24.4386 73.0122 25.2101 71.6855 25.3324C70.2177 25.5112 68.6558 24.9467 67.7054 23.7987C66.1435 21.9922 66.2941 18.9625 68.0536 17.3347ZM69.0603 19.0754C68.7404 19.5364 68.6087 20.101 68.6181 20.6561C69.9824 20.0915 71.3468 19.527 72.7111 18.953C72.4853 18.4261 71.9395 18.1062 71.3844 18.0215C70.4905 17.8616 69.559 18.3414 69.0603 19.0754Z" fill="#525252"/></g><g clip-path="url(#el1)"><path d="M109.3 11.2812H102.604V27.2973L109.3 11.2812Z" fill="#525252"/><path d="M114.012 11.2812H120.7V27.2973L114.012 11.2812Z" fill="#525252"/><path d="M111.656 17.1719L115.918 27.2849H113.122L111.848 24.0652H108.729L111.656 17.1719Z" fill="#525252"/><path d="M131.627 21.4533L132.417 23.7176C132.443 23.7743 132.482 23.8005 132.552 23.8005H134.071C134.153 23.8005 134.167 23.7612 134.153 23.6783L131.017 14.9657C131.003 14.8959 130.99 14.8828 130.921 14.8828H129.036C128.983 14.8828 128.953 14.9221 128.953 14.9788C128.927 15.4369 128.887 15.5765 128.831 15.7118L126.034 23.6652C126.021 23.7612 126.052 23.8005 126.13 23.8005H127.487C127.57 23.8005 127.609 23.7743 127.64 23.6914L128.386 21.4533H131.627ZM128.818 19.9743C129.228 18.7352 129.769 17.1471 129.987 16.2397H130C130.271 17.1908 130.907 19.0755 131.195 19.9743H128.818Z" fill="#525252"/><path d="M138.186 23.9318C139.002 23.9318 139.87 23.7834 140.751 23.4039C140.821 23.3777 140.834 23.3471 140.834 23.2817C140.808 23.0374 140.777 22.684 140.777 22.4135V14.2113C140.777 14.159 140.777 14.1328 140.712 14.1328H139.233C139.176 14.1328 139.15 14.159 139.15 14.2288V17.0079C138.919 16.9817 138.757 16.9687 138.565 16.9687C136.179 16.9687 134.713 18.5436 134.713 20.5113C134.713 22.7931 136.218 23.9318 138.186 23.9318ZM139.15 22.4135C138.906 22.492 138.635 22.5226 138.36 22.5226C137.278 22.5226 136.393 21.9118 136.393 20.4284C136.393 19.1152 137.304 18.3386 138.513 18.3386C138.757 18.3386 138.971 18.3648 139.15 18.4346V22.4135Z" fill="#525252"/><path d="M145.552 16.9609C143.515 16.9609 142.254 18.5228 142.254 20.4512C142.254 22.1745 143.257 23.924 145.522 23.924C147.437 23.924 148.781 22.5148 148.781 20.4076C148.781 18.549 147.642 16.9609 145.552 16.9609ZM145.469 18.3309C146.621 18.3309 147.11 19.3212 147.11 20.4512C147.11 21.8473 146.39 22.541 145.552 22.541C144.518 22.541 143.907 21.6728 143.907 20.4207C143.907 19.1336 144.557 18.3309 145.469 18.3309Z" fill="#525252"/><path d="M150.309 14.1328C150.252 14.1328 150.213 14.159 150.213 14.2288V23.5129C150.213 23.5522 150.252 23.622 150.309 23.6351C150.959 23.8358 151.64 23.9318 152.342 23.9318C154.353 23.9318 156.308 22.684 156.308 20.171C156.308 18.3517 155.06 16.9687 153.105 16.9687C152.656 16.9687 152.237 17.0385 151.871 17.1606L151.853 14.2419C151.853 14.1459 151.827 14.1328 151.731 14.1328H150.309ZM154.637 20.3368C154.637 21.842 153.607 22.5487 152.495 22.5487C152.263 22.5487 152.058 22.5356 151.871 22.4789V18.5175C152.085 18.4346 152.342 18.3648 152.818 18.3648C153.891 18.3648 154.637 19.0454 154.637 20.3368Z" fill="#525252"/><path d="M161.829 20.8177C162.492 20.8177 163.037 20.8046 163.225 20.761C163.295 20.7479 163.321 20.7217 163.334 20.665C163.373 20.5167 163.391 20.2069 163.391 19.8273C163.391 18.5359 162.614 16.9609 160.607 16.9609C158.557 16.9609 157.418 18.6319 157.418 20.5167C157.418 22.1876 158.299 23.924 160.769 23.924C161.694 23.924 162.291 23.7757 162.806 23.5314C162.858 23.5052 162.885 23.4616 162.885 23.383V22.2531C162.885 22.1876 162.845 22.1745 162.806 22.2007C162.291 22.4189 161.733 22.5279 161.122 22.5279C159.739 22.5279 159.111 21.7644 159.071 20.8177H161.829ZM159.071 19.6484C159.181 18.9853 159.599 18.2654 160.537 18.2654C161.571 18.2654 161.842 19.1336 161.842 19.5263C161.842 19.5394 161.842 19.5961 161.842 19.6354C161.785 19.6484 161.611 19.6484 161.096 19.6484H159.071Z" fill="#525252"/></g><defs><clipPath id="el0"><rect width="56.0784" height="18.304" fill="white" transform="translate(18.9844 11.1641)"/></clipPath><clipPath id="el1"><rect width="60.786" height="16.016" fill="white" transform="translate(102.604 11.2656)"/></clipPath></defs></svg>`;
+
       let uid = 0;
+      const cardsEl = document.getElementById('cards');
 
-      // ── Team credit card (Pro/Gold team + buy-more-credits) ─────────────
-      // mode 'upgrade'  → full option list, default 15,000
-      // mode 'more'     → up-size only (options >= owned), default = owned
-      function creditCard(mountId, cfg) {
-        const mount = document.getElementById(mountId);
-        if (!mount) return;
-        const planKey = cfg.planKey;
-        const planName = planKey === 'pro' ? 'Pro Team' : 'Gold Team';
-        const options = cfg.mode === 'more' ? CREDIT_OPTIONS.filter(c => c >= cfg.owned) : CREDIT_OPTIONS.slice();
-        let credits = cfg.mode === 'more' ? cfg.owned : (cfg.defaultCredits || options[0]);
-        const ddKey = 'dd' + (++uid);
+      // ── Build an individual plan card (seat stepper + M/A) ───────────────
+      function buildIndividualCard(planKey, role) {
+        const p = INDIV[planKey];
+        const el = document.createElement('div');
+        el.className = 'pcard' + (role === 'current' ? ' is-current' : '') + (role === 'upgrade' ? ' is-rec' : '');
+        const tag = role === 'current'
+          ? `<span class="pcard-cur-tag">Current plan</span>`
+          : (role === 'upgrade' ? `<span class="pcard-badge">Recommended</span>` : '');
 
-        const badge = cfg.recommended ? `<span class="mp-badge">Recommended</span>` : '';
-        const flag  = cfg.flag ? `<div class="mp-flag mb-3"><i class="ph-fill ph-warning"></i>${cfg.flag}</div>` : '';
-        const title = cfg.title || (planKey === 'pro' ? 'Pro Team' : 'Gold Team');
-
-        mount.innerHTML = `
-          <div class="mp-card ${cfg.recommended ? 'is-recommended' : ''}">
-            ${badge}
-            <p class="text-[17px] font-bold text-ink-primary">${title}</p>
-            ${flag}
-            <p class="text-[12px] font-semibold unlimited-grad mt-1">Unlimited seats</p>
-
-            <div class="my-4" data-price></div>
-
-            <div class="flex flex-col gap-2 mb-4">
-              <p class="text-[12px] font-medium text-ink-secondary inline-flex items-center gap-1">${cfg.mode === 'more' ? 'New credit pool' : 'How many credits?'}${TIP}</p>
-              <div class="credit-dd" data-dd="${ddKey}">
-                <button type="button" class="credit-dd-trigger" aria-haspopup="listbox" aria-expanded="false" aria-label="Credit pool size">
-                  <span class="credit-dd-left">${SPARK}<span class="credit-dd-value">${credits.toLocaleString()} credits</span></span>
-                  <i class="ph ph-caret-down credit-dd-caret" aria-hidden="true"></i>
-                </button>
-                <ul class="credit-dd-menu" role="listbox" aria-label="Credit pool size"></ul>
-              </div>
+        el.innerHTML = `
+          ${tag}
+          <div class="flex items-center justify-between mb-4">
+            <span class="pcard-glyph">${p.glyph}</span>
+            <div class="mseg" data-mseg>
+              <button class="mseg-btn" data-period="monthly">Monthly</button>
+              <button class="mseg-btn is-active" data-period="annual">Annual</button>
             </div>
-
-            <div class="flex flex-col gap-2 mb-5">
-              ${FEATS[planKey].map(f => `<p class="mp-feat"><i class="ph-fill ph-check-circle"></i>${f}</p>`).join('')}
-            </div>
-
-            <div class="mt-auto">
-              <button class="mp-cta" data-cta>${cfg.cta}</button>
-              <p class="text-[12px] font-medium text-center mt-2" data-hint></p>
-            </div>
+          </div>
+          <div class="flex items-baseline justify-between gap-2">
+            <h3>${p.name}</h3>
+            <div class="text-right" data-price></div>
+          </div>
+          <p class="text-[12px] font-medium text-ink-secondary mt-5 mb-2">How many seats?</p>
+          <div class="stepper" data-stepper>
+            <button data-dec aria-label="Fewer seats">−</button>
+            <span class="val" data-seats>1</span>
+            <button data-inc aria-label="More seats">+</button>
+          </div>
+          <div class="mt-4">
+            <button class="pcard-cta ${role === 'current' ? 'disabled' : (role === 'upgrade' ? 'primary' : 'ghost')}" ${role === 'current' ? 'disabled' : ''} data-cta></button>
+          </div>
+          <div class="flex flex-col gap-3.5 mt-6">
+            <p class="feat-credits"><span style="display:inline-flex">${SPARK}</span><span data-credits class="font-semibold text-ink-primary"></span><span class="text-ink-secondary">Credits</span></p>
+            ${featsHTML(p.feats)}
           </div>`;
 
-        const dd = mount.querySelector(`[data-dd="${ddKey}"]`);
+        cardsEl.appendChild(el);
+
+        let period = 'annual', seats = 1;
+        const priceEl = el.querySelector('[data-price]');
+        const seatsEl = el.querySelector('[data-seats]');
+        const creditsEl = el.querySelector('[data-credits]');
+        const ctaEl = el.querySelector('[data-cta]');
+        const decBtn = el.querySelector('[data-dec]');
+        const segBtns = Array.from(el.querySelectorAll('[data-mseg] .mseg-btn'));
+
+        ctaEl.textContent = role === 'current' ? 'Current Plan'
+          : role === 'upgrade' ? `Upgrade to ${p.name}` : `Switch to ${p.name}`;
+
+        function render() {
+          const per = period === 'annual' ? p.annual : p.monthly;
+          const total = per * seats;
+          const credits = (period === 'annual' ? p.cA : p.cM) * seats;
+          const cadence = period === 'annual'
+            ? `${seats} seat${seats > 1 ? 's' : ''} · $${(total * 12).toLocaleString()} billed annually`
+            : `${seats} seat${seats > 1 ? 's' : ''} · billed monthly`;
+          priceEl.innerHTML = `
+            <div class="flex items-baseline gap-1 justify-end">
+              <p class="text-[26px] font-bold text-ink-primary leading-none"><span class="usd">$</span>${total.toLocaleString()}</p>
+              <span class="text-[13px] font-medium text-ink-tertiary">/mo</span>
+            </div>
+            <p class="text-[12px] font-medium text-ink-tertiary mt-1">${cadence}</p>`;
+          creditsEl.textContent = credits.toLocaleString();
+          seatsEl.textContent = seats;
+          decBtn.disabled = seats <= 1;
+          segBtns.forEach(b => b.classList.toggle('is-active', b.dataset.period === period));
+        }
+        segBtns.forEach(b => b.addEventListener('click', () => { period = b.dataset.period; render(); }));
+        el.querySelector('[data-inc]').addEventListener('click', () => { seats++; render(); });
+        decBtn.addEventListener('click', () => { if (seats > 1) { seats--; render(); } });
+        render();
+      }
+
+      // ── Build a team plan card (credit pool + M/A) ───────────────────────
+      function buildTeamCard(planKey, cfg) {
+        const name = planKey === 'pro' ? 'Pro Team' : 'Gold Team';
+        const glyph = planKey === 'pro' ? '✈️' : '🚀';
+        const options = cfg.mode === 'more' ? CREDIT_OPTIONS.filter(c => c >= cfg.owned) : CREDIT_OPTIONS.slice();
+        let credits = cfg.mode === 'more' ? cfg.owned : options[0];
+        let period = 'annual';
+        const ddKey = 'dd' + (++uid);
+
+        const el = document.createElement('div');
+        el.className = 'pcard' + (cfg.role === 'current' ? ' is-current' : '') + (cfg.role === 'recommended' ? ' is-rec' : '');
+        const tag = cfg.role === 'current'
+          ? `<span class="pcard-cur-tag">Current plan</span>`
+          : (cfg.role === 'recommended' ? `<span class="pcard-badge">Recommended</span>` : '');
+        const flag = cfg.flag ? `<div class="mp-flag mb-1 self-start"><i class="ph-fill ph-warning"></i>${cfg.flag}</div>` : '';
+
+        el.innerHTML = `
+          ${tag}
+          <div class="flex items-center justify-between mb-4">
+            <span class="pcard-glyph">${glyph}</span>
+            <div class="mseg" data-mseg>
+              <button class="mseg-btn" data-period="monthly">Monthly</button>
+              <button class="mseg-btn is-active" data-period="annual">Annual</button>
+            </div>
+          </div>
+          <div class="flex items-baseline justify-between gap-2">
+            <div>
+              <h3>${name}</h3>
+              <p class="text-[12px] font-semibold unlimited-grad mt-1">Unlimited seats</p>
+            </div>
+            <div class="text-right" data-price></div>
+          </div>
+          ${flag}
+          <p class="text-[12px] font-medium text-ink-secondary mt-5 mb-2 inline-flex items-center gap-1">${cfg.mode === 'more' ? 'New credit pool' : 'How many credits?'}${TIP}</p>
+          <div class="credit-dd" data-dd="${ddKey}">
+            <button type="button" class="credit-dd-trigger" aria-haspopup="listbox" aria-expanded="false" aria-label="Credit pool size">
+              <span class="credit-dd-left">${SPARK}<span class="credit-dd-value">${credits.toLocaleString()} credits</span></span>
+              <i class="ph ph-caret-down credit-dd-caret" aria-hidden="true"></i>
+            </button>
+            <ul class="credit-dd-menu" role="listbox" aria-label="Credit pool size"></ul>
+          </div>
+          <div class="mt-4">
+            <button class="pcard-cta ${cfg.role === 'recommended' ? 'primary' : 'ghost'}" data-cta>${cfg.cta}</button>
+            <p class="text-[12px] font-medium text-center mt-2" data-hint></p>
+          </div>
+          <div class="flex flex-col gap-3.5 mt-5">${featsHTML(TEAM_FEATS[planKey])}</div>`;
+
+        cardsEl.appendChild(el);
+
+        const dd = el.querySelector(`[data-dd="${ddKey}"]`);
         const trigger = dd.querySelector('.credit-dd-trigger');
         const valueEl = dd.querySelector('.credit-dd-value');
         const menu = dd.querySelector('.credit-dd-menu');
-        const priceEl = mount.querySelector('[data-price]');
-        const hintEl = mount.querySelector('[data-hint]');
-        const cta = mount.querySelector('[data-cta]');
+        const priceEl = el.querySelector('[data-price]');
+        const hintEl = el.querySelector('[data-hint]');
+        const segBtns = Array.from(el.querySelectorAll('[data-mseg] .mseg-btn'));
 
         menu.innerHTML = options.map(c => `
           <li class="credit-dd-opt" role="option" data-value="${c}" aria-selected="${c === credits}">
@@ -371,20 +463,22 @@
         function render() {
           valueEl.textContent = `${credits.toLocaleString()} credits`;
           opts.forEach(o => o.setAttribute('aria-selected', String(parseInt(o.dataset.value, 10) === credits)));
-          const now = monthlyNow(planKey, credits);
-          const list = monthlyList(planKey, credits);
-          const hasDisc = now < list;
+          const factor = period === 'monthly' ? 2 : 1;
+          const baseNow = teamAnnualMo(planKey, credits), baseList = teamListMo(planKey, credits);
+          const now = baseNow * factor, list = baseList * factor;
+          const cadence = period === 'monthly'
+            ? `${credits.toLocaleString()} credits · billed monthly`
+            : `${credits.toLocaleString()} credits · $${(now * 12).toLocaleString()} billed annually`;
           priceEl.innerHTML = `
-            <div class="flex items-baseline gap-2 h-6">
-              ${hasDisc ? `<p class="text-[14px] font-medium line-through text-ink-tertiary leading-none"><span class="usd">$</span>${list.toLocaleString()}</p>` : ''}
+            <div class="flex items-baseline gap-2 justify-end">
+              ${now < list ? `<p class="text-[14px] font-medium line-through text-ink-tertiary leading-none"><span class="usd">$</span>${list.toLocaleString()}</p>` : ''}
               <div class="flex items-baseline gap-1">
                 <p class="text-[26px] font-bold text-ink-primary leading-none"><span class="usd">$</span>${now.toLocaleString()}</p>
                 <span class="text-[13px] font-medium text-ink-tertiary">/mo</span>
               </div>
             </div>
-            <p class="text-[12px] font-medium text-ink-tertiary mt-1">${credits.toLocaleString()} credits · $${(now * 12).toLocaleString()} billed annually</p>`;
-
-          const savings = (list - now) * 12;
+            <p class="text-[12px] font-medium text-ink-tertiary mt-1">${cadence}</p>`;
+          const savings = (baseList - baseNow) * 12;
           if (savings > 0) {
             hintEl.className = 'text-[12px] font-medium text-center mt-2 text-success-fg';
             hintEl.innerHTML = `<i class="ph-fill ph-check-circle text-[13px]"></i> You're saving $${savings.toLocaleString()} every year`;
@@ -392,93 +486,113 @@
             hintEl.className = 'text-[12px] font-medium text-center mt-2 text-ink-tertiary';
             hintEl.textContent = 'Volume pricing scales with credits';
           }
-        }
-        render();
-      }
-
-      // ── Individual Gold card (Monthly/Annual toggle) ────────────────────
-      function goldIndividualCard(mountId) {
-        const mount = document.getElementById(mountId);
-        if (!mount) return;
-        const DATA = {
-          monthly: { price: 200, cadence: 'Billed monthly', credits: '5,000 credits/month' },
-          annual:  { price: 100, cadence: '$1,200 billed annually', credits: '50,000 credits/year' },
-        };
-        let period = 'annual';
-        const feats = ['Everything in Pro, plus:', 'Priority support', 'Advanced exports & analytics'];
-
-        mount.innerHTML = `
-          <div class="mp-card">
-            <div class="flex items-center justify-between mb-1">
-              <p class="text-[17px] font-bold text-ink-primary">Gold</p>
-              <div class="mp-seg" data-seg>
-                <button class="mp-seg-btn" data-period="monthly">Monthly</button>
-                <button class="mp-seg-btn is-active" data-period="annual">Annual</button>
-              </div>
-            </div>
-            <p class="text-[12px] text-ink-tertiary mb-3">Individual · 1 seat</p>
-            <div class="my-3" data-price></div>
-            <div class="flex flex-col gap-2 mb-5 mt-2">
-              ${feats.map((f, i) => `<p class="mp-feat">${i === 0 ? '' : '<i class="ph-fill ph-check-circle"></i>'}<span class="${i === 0 ? 'font-semibold text-ink-secondary' : ''}">${f}</span></p>`).join('')}
-            </div>
-            <div class="mt-auto">
-              <button class="mp-cta" data-cta>Upgrade to Gold</button>
-            </div>
-          </div>`;
-
-        const priceEl = mount.querySelector('[data-price]');
-        const segBtns = Array.from(mount.querySelectorAll('[data-seg] .mp-seg-btn'));
-        function render() {
-          const d = DATA[period];
-          priceEl.innerHTML = `
-            <div class="flex items-baseline gap-1 h-7">
-              <p class="text-[26px] font-bold text-ink-primary leading-none"><span class="usd">$</span>${d.price}</p>
-              <span class="text-[13px] font-medium text-ink-tertiary">/mo</span>
-            </div>
-            <p class="text-[12px] font-medium text-ink-tertiary mt-1">${d.cadence} · ${d.credits}</p>`;
           segBtns.forEach(b => b.classList.toggle('is-active', b.dataset.period === period));
         }
         segBtns.forEach(b => b.addEventListener('click', () => { period = b.dataset.period; render(); }));
         render();
       }
 
-      // ── Mount cards per panel ───────────────────────────────────────────
-      // Pro Individual → Gold Individual, Pro Team, Gold Team
-      goldIndividualCard('card-goldind-1');
-      creditCard('card-proteam-1',  { planKey: 'pro',  mode: 'upgrade', cta: 'Switch to Pro Team' });
-      creditCard('card-goldteam-1', { planKey: 'gold', mode: 'upgrade', cta: 'Buy Gold Team', recommended: true });
-
-      // Gold Individual → Gold Team (recommended), Pro Team (flagged)
-      creditCard('card-goldteam-2', { planKey: 'gold', mode: 'upgrade', cta: 'Upgrade to Gold Team', recommended: true });
-      creditCard('card-proteam-2',  { planKey: 'pro',  mode: 'upgrade', cta: 'Switch to Pro Team', flag: 'Drops your Gold features' });
-
-      // Pro Team → buy more credits, upgrade to Gold Team
-      creditCard('card-morecredits-pro', { planKey: 'pro',  mode: 'more', owned: 15000, title: 'Buy more credits', cta: 'Buy more credits' });
-      creditCard('card-goldteam-3',      { planKey: 'gold', mode: 'upgrade', cta: 'Upgrade to Gold Team', recommended: true });
-
-      // Gold Team → buy more credits
-      creditCard('card-morecredits-gold', { planKey: 'gold', mode: 'more', owned: 25000, title: 'Buy more credits', cta: 'Buy more credits' });
-
-      // ── Tabs ────────────────────────────────────────────────────────────
-      const tabs = Array.from(document.querySelectorAll('.mp-tab'));
-      const panels = { 'pro-ind': 'pro-ind', 'gold-ind': 'gold-ind', 'pro-team': 'pro-team', 'gold-team': 'gold-team' };
-      function setTab(key) {
-        tabs.forEach(t => {
-          const active = t.dataset.tab === key;
-          t.classList.toggle('is-active', active);
-          t.setAttribute('aria-selected', String(active));
-        });
-        Object.keys(panels).forEach(k => {
-          const el = document.querySelector(`[data-tab-panel="${k}"]`);
-          if (el) el.classList.toggle('hidden', k !== key);
-        });
+      // ── Enterprise card ──────────────────────────────────────────────────
+      function buildEnterpriseCard() {
+        const el = document.createElement('div');
+        el.className = 'pcard';
+        el.innerHTML = `
+          <div class="flex items-center justify-between mb-4" style="min-height:34px">
+            <span class="pcard-glyph">🛰️</span>
+          </div>
+          <h3>Enterprise</h3>
+          <div class="flex flex-col items-center gap-2 mt-8 mb-4">
+            <p class="trust-cap">Trusted by 1000+ enterprises</p>
+            ${ENT_LOGOS}
+          </div>
+          <div class="mt-auto">
+            <button class="pcard-cta ghost">Talk to Sales</button>
+            <p class="text-[12px] font-medium text-ink-tertiary text-center mt-2">Tailored to your org &amp; security needs</p>
+          </div>`;
+        cardsEl.appendChild(el);
       }
-      tabs.forEach(t => t.addEventListener('click', () => setTab(t.dataset.tab)));
-      setTab('pro-ind');
+
+      // ── Lock panel (team users can't go individual) ──────────────────────
+      function buildLockPanel(planLabel) {
+        const el = document.createElement('div');
+        el.className = 'lock-panel';
+        el.innerHTML = `
+          <i class="ph ph-lock-simple"></i>
+          <p class="text-[15px] font-semibold text-ink-primary">Individual plans aren't available on a team plan</p>
+          <p class="text-[13px] text-ink-secondary max-w-[460px]">You're on <b>${planLabel}</b>. Team plans can't switch back to an individual plan. Stay on Teams &amp; Enterprise to grow credits or move up a tier.</p>`;
+        cardsEl.appendChild(el);
+      }
+
+      // ── Render a full page for a (state, view) ───────────────────────────
+      let currentStateKey = 'pro-ind', currentView = 'individual';
+
+      function render() {
+        const st = STATES[currentStateKey];
+        document.getElementById('cur-banner-text').innerHTML = st.banner;
+        cardsEl.innerHTML = '';
+
+        if (currentView === 'individual') {
+          if (st.kind === 'team') {
+            buildLockPanel(st.plan === 'pro' ? 'Pro Team' : 'Gold Team');
+            return;
+          }
+          // individual state: mark current, the other plan is upgrade/downgrade
+          const cur = st.plan;
+          ['pro', 'gold'].forEach(pk => {
+            let role;
+            if (pk === cur) role = 'current';
+            else role = TIER[pk] > TIER[cur] ? 'upgrade' : 'downgrade';
+            buildIndividualCard(pk, role);
+          });
+          buildEnterpriseCard();
+        } else {
+          // team view
+          ['pro', 'gold'].forEach(pk => {
+            let cfg;
+            if (st.kind === 'team' && st.plan === pk) {
+              cfg = { mode: 'more', owned: st.owned, role: 'current', cta: 'Buy more credits' };
+            } else if (st.kind === 'team') {
+              // other team plan: upgrade if higher tier, else switch (downgrade)
+              const up = TIER[pk] > TIER[st.plan];
+              cfg = { mode: 'upgrade', role: up ? 'recommended' : 'normal', cta: up ? `Upgrade to ${pk === 'pro' ? 'Pro Team' : 'Gold Team'}` : 'Switch to Pro Team' };
+            } else {
+              // from an individual state -> both team plans are upgrades
+              const rec = pk === 'gold';
+              cfg = { mode: 'upgrade', role: rec ? 'recommended' : 'normal',
+                      cta: pk === 'pro' ? 'Buy Pro Team' : 'Buy Gold Team',
+                      flag: (st.plan === 'gold' && pk === 'pro') ? 'Drops your Gold features' : null };
+            }
+            buildTeamCard(pk, cfg);
+          });
+          buildEnterpriseCard();
+        }
+      }
+
+      // ── Wire view toggle + proto state switcher ──────────────────────────
+      const viewBtns = Array.from(document.querySelectorAll('.view-seg-btn'));
+      viewBtns.forEach(b => b.addEventListener('click', () => {
+        currentView = b.dataset.view;
+        viewBtns.forEach(x => x.classList.toggle('is-active', x === b));
+        render();
+      }));
+      function setView(v) {
+        currentView = v;
+        viewBtns.forEach(x => x.classList.toggle('is-active', x.dataset.view === v));
+      }
+
+      document.querySelectorAll('.proto-pill').forEach(p => p.addEventListener('click', () => {
+        currentStateKey = p.dataset.state;
+        document.querySelectorAll('.proto-pill').forEach(x => x.classList.toggle('is-active', x === p));
+        // team states default to the team view
+        setView(STATES[currentStateKey].kind === 'team' ? 'team' : 'individual');
+        render();
+      }));
+
+      render();
     })();
   </script>
 
-  <!-- Agentation: visual feedback toolbar (bottom-right). React via esm.sh CDN. -->
+  <!-- Agentation: visual feedback toolbar. React via esm.sh CDN. -->
   <div id="agentation-root"></div>
   <script type="module">
     import React from 'https://esm.sh/react@18';

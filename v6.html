@@ -2097,7 +2097,13 @@
 
         <div class="pt-[45px] px-6 pb-6 flex flex-col gap-4">
           <div class="flex flex-col gap-3" style="width:312px;">
-            <div class="illus illus-pro" aria-hidden="true"></div>
+            <div class="flex items-start justify-between" style="width:312px;">
+              <div class="illus illus-pro" aria-hidden="true"></div>
+              <div class="plan-seg" role="tablist" aria-label="Billing period" data-team-seg="pro">
+                <button type="button" class="plan-seg-btn" data-period="monthly" role="tab" aria-selected="false">Monthly</button>
+                <button type="button" class="plan-seg-btn is-active" data-period="annual" role="tab" aria-selected="true">Annual</button>
+              </div>
+            </div>
             <div class="flex items-start justify-between gap-2" style="width:312px;">
               <div class="flex flex-col gap-1">
                 <h3 class="text-[24px] font-bold text-ink-primary leading-none">Pro Team</h3>
@@ -2160,7 +2166,13 @@
 
         <div class="p-6 flex flex-col gap-4 h-full">
           <div class="flex flex-col gap-3" style="width:312px;">
-            <div class="illus illus-gold" aria-hidden="true"></div>
+            <div class="flex items-start justify-between" style="width:312px;">
+              <div class="illus illus-gold" aria-hidden="true"></div>
+              <div class="plan-seg" role="tablist" aria-label="Billing period" data-team-seg="gold">
+                <button type="button" class="plan-seg-btn" data-period="monthly" role="tab" aria-selected="false">Monthly</button>
+                <button type="button" class="plan-seg-btn is-active" data-period="annual" role="tab" aria-selected="true">Annual</button>
+              </div>
+            </div>
             <div class="flex items-start justify-between gap-2" style="width:312px;">
               <div class="flex flex-col gap-1">
                 <h3 class="text-[24px] font-bold text-ink-primary leading-none">Gold Team</h3>
@@ -2968,7 +2980,8 @@
       }
 
       // Shared credit-pool state — Pro and Gold team cards mirror each other.
-      const teamState = { credits: 15000 };
+      // period: 'annual' (per-month rate, billed yearly) | 'monthly' (2× rate, billed monthly).
+      const teamState = { credits: 15000, period: 'annual' };
       const teamRenders = [];
       function renderAllTeams() {
         teamRenders.forEach(fn => fn());
@@ -2991,18 +3004,23 @@
         const tblG  = document.getElementById('table-gold-credits');
 
         if (view === 'team') {
-          const proM  = monthlyNow(TEAM_PLANS.pro,  teamState.credits);
-          const goldM = monthlyNow(TEAM_PLANS.gold, teamState.credits);
+          const f = teamState.period === 'monthly' ? 2 : 1;
+          const proM  = monthlyNow(TEAM_PLANS.pro,  teamState.credits) * f;
+          const goldM = monthlyNow(TEAM_PLANS.gold, teamState.credits) * f;
           const proNow  = proM.toLocaleString();
           const goldNow = goldM.toLocaleString();
-          const proYear  = (proM * 12).toLocaleString();
-          const goldYear = (goldM * 12).toLocaleString();
           const creditsStr = teamState.credits.toLocaleString();
+          const proCad  = teamState.period === 'monthly'
+            ? `${creditsStr} credits · billed monthly`
+            : `${creditsStr} credits · $${(proM * 12).toLocaleString()} billed annually`;
+          const goldCad = teamState.period === 'monthly'
+            ? `${creditsStr} credits · billed monthly`
+            : `${creditsStr} credits · $${(goldM * 12).toLocaleString()} billed annually`;
           if (sPro)   sPro.innerHTML   = `<span class="usd">$</span>${proNow}`;
-          if (sProC)  sProC.textContent = `${creditsStr} credits · $${proYear} billed annually`;
+          if (sProC)  sProC.textContent = proCad;
           if (sProB)  sProB.textContent = 'Buy Pro Team';
           if (sGold)  sGold.innerHTML   = `<span class="usd">$</span>${goldNow}`;
-          if (sGoldC) sGoldC.textContent= `${creditsStr} credits · $${goldYear} billed annually`;
+          if (sGoldC) sGoldC.textContent= goldCad;
           if (sGoldB) sGoldB.textContent= 'Buy Gold Team';
           if (tblP)   tblP.textContent  = creditsStr;
           if (tblG)   tblG.textContent  = creditsStr;
@@ -3100,11 +3118,18 @@
 
         function render() {
           if (dropdown) dropdown.sync();
-          const now  = monthlyNow(plan, teamState.credits);
-          const list = monthlyList(plan, teamState.credits);
+          // Monthly billing = 2× the annual per-month rate (annual saves 50%).
+          const factor = teamState.period === 'monthly' ? 2 : 1;
+          const baseNow  = monthlyNow(plan, teamState.credits);
+          const baseList = monthlyList(plan, teamState.credits);
+          const now  = baseNow * factor;
+          const list = baseList * factor;
           const hasDiscount = now < list;
           const totalNow  = now.toLocaleString();
           const totalList = list.toLocaleString();
+          const cadence = teamState.period === 'monthly'
+            ? 'Billed monthly'
+            : `$${(now * 12).toLocaleString()} billed annually`;
 
           priceEl.innerHTML = `
             <div class="flex items-baseline gap-2 h-6">
@@ -3114,12 +3139,12 @@
                 <span class="text-[13px] font-medium text-ink-tertiary">/mo</span>
               </div>
             </div>
-            <p class="text-[12px] font-medium text-ink-tertiary">$${(now * 12).toLocaleString()} billed annually</p>`;
+            <p class="text-[12px] font-medium text-ink-tertiary">${cadence}</p>`;
 
           if (credits) credits.textContent = teamState.credits.toLocaleString();
           cta.textContent = plan.ctaLabel;
 
-          const savings = (list - now) * 12;
+          const savings = (baseList - baseNow) * 12;
           if (savings > 0) {
             hint.className = 'text-[12px] font-medium text-success-fg flex items-center justify-center gap-1 leading-none';
             hint.innerHTML = `<i class="ph-fill ph-check-circle text-[13px]"></i>You're saving $${savings.toLocaleString()} every year`;
@@ -3134,6 +3159,22 @@
 
       wireTeamCard('pro');
       wireTeamCard('gold');
+
+      // Monthly/Annual toggle on team cards — mirrors across both cards.
+      document.querySelectorAll('[data-team-seg]').forEach(seg => {
+        seg.querySelectorAll('.plan-seg-btn').forEach(btn => {
+          btn.addEventListener('click', () => {
+            teamState.period = btn.dataset.period;
+            document.querySelectorAll('[data-team-seg] .plan-seg-btn').forEach(b => {
+              const on = b.dataset.period === teamState.period;
+              b.classList.toggle('is-active', on);
+              b.setAttribute('aria-selected', String(on));
+            });
+            renderAllTeams();
+          });
+        });
+      });
+
       renderAllTeams();
     })();
   </script>
