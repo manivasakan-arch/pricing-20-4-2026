@@ -163,6 +163,10 @@
   @keyframes unlimited-grad-move { from { background-position: 200% center; } to { background-position: 0% center; } }
   @media (prefers-reduced-motion: reduce) { .unlimited-grad { animation: none; } }
 
+  /* ── Locked (lower-tier) card ──────────────────────────── */
+  .pcard.is-locked { background: #FAFBFC; }
+  .pcard.is-locked .pcard-glyph, .pcard.is-locked h3 { opacity: .5; }
+
   /* ── Lock panel (team → no individual) ─────────────────── */
   .lock-panel {
     grid-column: 1 / -1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px;
@@ -489,6 +493,26 @@
         cardsEl.appendChild(el);
       }
 
+      // ── Locked lower-tier card (no downgrades after upgrading) ───────────
+      function buildLockedCard(glyph, name, sub) {
+        const el = document.createElement('div');
+        el.className = 'pcard is-locked';
+        el.innerHTML = `
+          <div class="flex items-center justify-between mb-4" style="min-height:34px">
+            <span class="pcard-glyph">${glyph}</span>
+            <span class="text-[18px] text-ink-tertiary"><i class="ph ph-lock-simple"></i></span>
+          </div>
+          <div class="flex items-baseline justify-between gap-2">
+            <div>
+              <h3>${name}</h3>
+              ${sub ? `<p class="text-[12px] font-semibold text-ink-tertiary mt-1">${sub}</p>` : ''}
+            </div>
+          </div>
+          <div class="mt-6"><button class="pcard-cta disabled" disabled>Not available</button></div>
+          <p class="text-[12px] font-medium text-ink-tertiary mt-3">You can't move to a lower plan once you've upgraded.</p>`;
+        cardsEl.appendChild(el);
+      }
+
       // ── Lock panel (team users can't go individual) ──────────────────────
       function buildLockPanel(planLabel) {
         const el = document.createElement('div');
@@ -513,13 +537,12 @@
             buildLockPanel(st.plan === 'pro' ? 'Pro Team' : 'Gold Team');
             return;
           }
-          // individual state: mark current, the other plan is upgrade/downgrade
+          // individual state: current plan, higher = upgrade, lower = locked.
           const cur = st.plan;
           ['pro', 'gold'].forEach(pk => {
-            let role;
-            if (pk === cur) role = 'current';
-            else role = TIER[pk] > TIER[cur] ? 'upgrade' : 'downgrade';
-            buildIndividualCard(pk, role);
+            if (pk === cur) buildIndividualCard(pk, 'current');
+            else if (TIER[pk] > TIER[cur]) buildIndividualCard(pk, 'upgrade');
+            else buildLockedCard(INDIV[pk].glyph, INDIV[pk].name, '');
           });
           buildEnterpriseCard();
         } else {
@@ -529,9 +552,13 @@
             if (st.kind === 'team' && st.plan === pk) {
               cfg = { mode: 'more', owned: st.owned, role: 'current', cta: 'Buy more credits' };
             } else if (st.kind === 'team') {
-              // other team plan: upgrade if higher tier, else switch (downgrade)
-              const up = TIER[pk] > TIER[st.plan];
-              cfg = { mode: 'upgrade', role: up ? 'recommended' : 'normal', cta: up ? `Upgrade to ${pk === 'pro' ? 'Pro Team' : 'Gold Team'}` : 'Switch to Pro Team' };
+              // other team plan: upgrade if higher tier, else lock (no downgrade)
+              if (TIER[pk] > TIER[st.plan]) {
+                cfg = { mode: 'upgrade', role: 'recommended', cta: `Upgrade to ${pk === 'pro' ? 'Pro Team' : 'Gold Team'}` };
+              } else {
+                buildLockedCard(pk === 'pro' ? '✈️' : '🚀', pk === 'pro' ? 'Pro Team' : 'Gold Team', 'Unlimited seats');
+                return;
+              }
             } else {
               // from an individual state -> both team plans are upgrades
               const rec = pk === 'gold';
