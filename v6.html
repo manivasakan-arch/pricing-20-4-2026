@@ -1432,6 +1432,35 @@
     cursor: help;
   }
 
+  /* Custom dark tooltip (credit selector). Bubble floats to the right of
+     the info icon with a left-pointing tail. */
+  .credit-tip {
+    position: relative;
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 14px; height: 14px; font-size: 14px; color: #a3a3a3; cursor: help;
+  }
+  .credit-tip__bub {
+    position: absolute; left: calc(100% + 12px); top: 50%;
+    transform: translateY(-50%) scale(.96); transform-origin: left center;
+    width: max-content; max-width: 250px;
+    background: #1d1d1f; color: #fff;
+    font-size: 14px; font-weight: 500; line-height: 1.45; text-align: left;
+    padding: 12px 16px; border-radius: 14px;
+    box-shadow: 0 14px 34px rgba(0,0,0,.24);
+    opacity: 0; visibility: hidden; pointer-events: none;
+    transition: opacity .14s ease, transform .14s ease;
+    z-index: 60;
+  }
+  .credit-tip__bub::before {
+    content: ""; position: absolute; left: -4px; top: 50%;
+    transform: translateY(-50%) rotate(45deg);
+    width: 12px; height: 12px; background: #1d1d1f; border-radius: 3px;
+  }
+  .credit-tip:hover .credit-tip__bub,
+  .credit-tip:focus-within .credit-tip__bub {
+    opacity: 1; visibility: visible; transform: translateY(-50%) scale(1);
+  }
+
   /* Thin segmented control for the top-of-page view switcher.
      Same visual family as the card Monthly/Annual control — trimmer padding. */
   .top-view-seg {
@@ -2065,7 +2094,7 @@
 
           <!-- credit-pool selector (seats unlimited) -->
           <div class="flex flex-col gap-2" style="width:312px; height:66px;">
-            <p class="text-[12px] font-medium text-ink-secondary inline-flex items-center gap-1">How many credits?<span class="feature-tip" title="Credits power every AI generation. You spend them to create presentations and other AI outputs — pick a larger pool for heavier use."><i class="ph ph-info"></i></span></p>
+            <p class="text-[12px] font-medium text-ink-secondary inline-flex items-center gap-1">How many credits?<span class="credit-tip" tabindex="0" role="button" aria-label="What are credits?"><i class="ph ph-info"></i><span class="credit-tip__bub" role="tooltip">Credits power every AI generation. You spend them to create presentations and other AI outputs. Pick a larger pool for heavier use.</span></span></p>
             <div class="credit-dd" data-team-credit-dd="pro">
               <button type="button" class="credit-dd-trigger" aria-haspopup="listbox" aria-expanded="false" aria-label="Credit pool size">
                 <span class="credit-dd-left">
@@ -2128,7 +2157,7 @@
 
           <!-- credit-pool selector (seats unlimited) -->
           <div class="flex flex-col gap-2" style="width:312px; height:66px;">
-            <p class="text-[12px] font-medium text-ink-secondary inline-flex items-center gap-1">How many credits?<span class="feature-tip" title="Credits power every AI generation. You spend them to create presentations and other AI outputs — pick a larger pool for heavier use."><i class="ph ph-info"></i></span></p>
+            <p class="text-[12px] font-medium text-ink-secondary inline-flex items-center gap-1">How many credits?<span class="credit-tip" tabindex="0" role="button" aria-label="What are credits?"><i class="ph ph-info"></i><span class="credit-tip__bub" role="tooltip">Credits power every AI generation. You spend them to create presentations and other AI outputs. Pick a larger pool for heavier use.</span></span></p>
             <div class="credit-dd" data-team-credit-dd="gold">
               <button type="button" class="credit-dd-trigger" aria-haspopup="listbox" aria-expanded="false" aria-label="Credit pool size">
                 <span class="credit-dd-left">
