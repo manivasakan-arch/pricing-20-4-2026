@@ -563,20 +563,45 @@
   .seat-chip-input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
   .seat-chip-input { -moz-appearance: textfield; }
 
-  /* Credit-pool dropdown (team Credits plan) */
-  .credit-select-wrap { position: relative; width: 100%; }
-  .credit-select {
+  /* Credit-pool dropdown (team Credits plan) — custom DS dropdown with offer pills */
+  .credit-dd { position: relative; width: 100%; }
+  .credit-dd-trigger {
     width: 100%; height: 40px;
-    padding: 0 38px 0 12px;
+    display: flex; align-items: center; justify-content: space-between; gap: 8px;
+    padding: 0 12px;
     border: 1px solid #D0D5DD; border-radius: 6px;
     background: #fff; color: #0A1925;
     font-size: 14px; font-weight: 600; font-family: inherit;
-    appearance: none; -webkit-appearance: none; -moz-appearance: none;
-    cursor: pointer; transition: border-color .15s ease, box-shadow .15s ease;
+    cursor: pointer; text-align: left;
+    transition: border-color .15s ease;
   }
-  .credit-select:hover { border-color: #B0B7C3; }
-  .credit-select:focus { outline: none; border-color: #0A1925; }
-  .credit-select-caret { position: absolute; right: 12px; top: 50%; transform: translateY(-50%); pointer-events: none; color: #667085; font-size: 14px; }
+  .credit-dd-trigger:hover { border-color: #B0B7C3; }
+  .credit-dd-trigger:focus-visible { outline: none; border-color: #0A1925; }
+  .credit-dd.is-open .credit-dd-trigger { border-color: #0A1925; }
+  .credit-dd-caret { color: #667085; font-size: 14px; transition: transform .15s ease; }
+  .credit-dd.is-open .credit-dd-caret { transform: rotate(180deg); }
+
+  .credit-dd-menu {
+    position: absolute; left: 0; right: 0; top: calc(100% + 6px); z-index: 30;
+    margin: 0; padding: 6px; list-style: none;
+    background: #fff; border: 1px solid #E4E7EC; border-radius: 10px;
+    box-shadow: 0 12px 28px rgba(16,24,40,.14), 0 2px 6px rgba(16,24,40,.06);
+    display: none;
+  }
+  .credit-dd.is-open .credit-dd-menu { display: block; }
+  .credit-dd-opt {
+    display: flex; align-items: center; justify-content: space-between; gap: 10px;
+    padding: 9px 10px; border-radius: 7px;
+    font-size: 14px; font-weight: 600; color: #0A1925;
+    cursor: pointer;
+  }
+  .credit-dd-opt:hover, .credit-dd-opt.is-active { background: #F2F4F7; }
+  .credit-dd-opt[aria-selected="true"] { background: #F2F4F7; }
+  .credit-dd-pill {
+    flex: none; padding: 3px 10px; border-radius: 999px;
+    background: #ECFDF3; color: #067647;
+    font-size: 12px; font-weight: 600; line-height: 1;
+  }
 
   /* =================================================================
      Reactivation toast (Figma 6603:5977 — dark, center-bottom)
@@ -2039,14 +2064,12 @@
           <!-- credit-pool selector (seats unlimited) -->
           <div class="flex flex-col gap-2" style="width:312px;">
             <p class="text-[12px] font-medium text-ink-secondary">How many credits?</p>
-            <div class="credit-select-wrap">
-              <select class="credit-select" data-team-credit-select="pro" aria-label="Credit pool size">
-                <option value="25000">25,000 credits</option>
-                <option value="50000">50,000 credits</option>
-                <option value="75000">75,000 credits</option>
-                <option value="100000">100,000 credits</option>
-              </select>
-              <i class="ph ph-caret-down credit-select-caret" aria-hidden="true"></i>
+            <div class="credit-dd" data-team-credit-dd="pro">
+              <button type="button" class="credit-dd-trigger" aria-haspopup="listbox" aria-expanded="false" aria-label="Credit pool size">
+                <span class="credit-dd-value">25,000 credits</span>
+                <i class="ph ph-caret-down credit-dd-caret" aria-hidden="true"></i>
+              </button>
+              <ul class="credit-dd-menu" role="listbox" aria-label="Credit pool size"></ul>
             </div>
           </div>
 
@@ -2097,14 +2120,12 @@
           <!-- credit-pool selector (seats unlimited) -->
           <div class="flex flex-col gap-2" style="width:312px;">
             <p class="text-[12px] font-medium text-ink-secondary">How many credits?</p>
-            <div class="credit-select-wrap">
-              <select class="credit-select" data-team-credit-select="gold" aria-label="Credit pool size">
-                <option value="25000">25,000 credits</option>
-                <option value="50000">50,000 credits</option>
-                <option value="75000">75,000 credits</option>
-                <option value="100000">100,000 credits</option>
-              </select>
-              <i class="ph ph-caret-down credit-select-caret" aria-hidden="true"></i>
+            <div class="credit-dd" data-team-credit-dd="gold">
+              <button type="button" class="credit-dd-trigger" aria-haspopup="listbox" aria-expanded="false" aria-label="Credit pool size">
+                <span class="credit-dd-value">25,000 credits</span>
+                <i class="ph ph-caret-down credit-dd-caret" aria-hidden="true"></i>
+              </button>
+              <ul class="credit-dd-menu" role="listbox" aria-label="Credit pool size"></ul>
             </div>
           </div>
 
@@ -2862,20 +2883,27 @@
       setTopView('individual');
 
       // ── Credits Team Plan ────────────────────────────────────────────────
-      // Teams pick a CREDIT POOL; seats are unlimited. Price reuses the v5
-      // per-seat tiers via 5,000 credits = 1 unit:
-      //   Pro  per unit: <=4=$20, <=9=$18, else $17  (list $20)
-      //   Gold per unit: <=4=$99, <=9=$89, else $84  (list $99)
+      // Teams pick a CREDIT POOL; seats are unlimited. Price = list per unit
+      // (5,000 credits = 1 unit) minus a volume OFFER that scales with the pool:
+      //   25,000=10% off · 50,000=20% · 75,000=30% · 100,000=40%
+      //   Pro list $20/unit · Gold list $99/unit.
       const UNIT = 5000;
       const CREDIT_OPTIONS = [25000, 50000, 75000, 100000];
+      const OFFERS = { 25000: 0.10, 50000: 0.20, 75000: 0.30, 100000: 0.40 };
+      const offerFor = (credits) => OFFERS[credits] || 0;
+      const offerPct = (credits) => Math.round(offerFor(credits) * 100);
       const TEAM_PLANS = {
-        pro:  { list: 20, tiers: [[4,20], [9,18], [Infinity,17]], ctaId: 'pro-team-cta',  hintId: 'pro-team-hint',  creditsId: 'pro-team-credits',  ctaLabel: 'Buy Pro Team' },
-        gold: { list: 99, tiers: [[4,99], [9,89], [Infinity,84]], ctaId: 'gold-team-cta', hintId: 'gold-team-hint', creditsId: 'gold-team-credits', ctaLabel: 'Buy Gold Team' },
+        pro:  { list: 20, ctaId: 'pro-team-cta',  hintId: 'pro-team-hint',  creditsId: 'pro-team-credits',  ctaLabel: 'Buy Pro Team' },
+        gold: { list: 99, ctaId: 'gold-team-cta', hintId: 'gold-team-hint', creditsId: 'gold-team-credits', ctaLabel: 'Buy Gold Team' },
       };
 
-      function rateFor(plan, units) {
-        for (const [cap, rate] of plan.tiers) if (units <= cap) return rate;
-        return plan.tiers[plan.tiers.length - 1][1];
+      // Discounted monthly total for a plan at the current credit pool.
+      function monthlyNow(plan, credits) {
+        const units = credits / UNIT;
+        return Math.floor(units * plan.list * (1 - offerFor(credits)));
+      }
+      function monthlyList(plan, credits) {
+        return (credits / UNIT) * plan.list;
       }
 
       // Shared credit-pool state — Pro and Gold team cards mirror each other.
@@ -2902,13 +2930,12 @@
         const tblG  = document.getElementById('table-gold-credits');
 
         if (view === 'team') {
-          const units = teamState.credits / UNIT;
-          const pr = rateFor(TEAM_PLANS.pro,  units);
-          const gr = rateFor(TEAM_PLANS.gold, units);
-          const proNow  = (units * pr).toLocaleString();
-          const goldNow = (units * gr).toLocaleString();
-          const proYear  = (units * pr * 12).toLocaleString();
-          const goldYear = (units * gr * 12).toLocaleString();
+          const proM  = monthlyNow(TEAM_PLANS.pro,  teamState.credits);
+          const goldM = monthlyNow(TEAM_PLANS.gold, teamState.credits);
+          const proNow  = proM.toLocaleString();
+          const goldNow = goldM.toLocaleString();
+          const proYear  = (proM * 12).toLocaleString();
+          const goldYear = (goldM * 12).toLocaleString();
           const creditsStr = teamState.credits.toLocaleString();
           if (sPro)   sPro.innerHTML   = `<span class="usd">$</span>${proNow}`;
           if (sProC)  sProC.textContent = `${creditsStr} credits · $${proYear} billed annually`;
@@ -2942,32 +2969,81 @@
         }
       }
 
+      // Custom credit dropdown — option rows carry an offer pill, opens/closes,
+      // keyboard accessible, and mirrors the shared credit pool across cards.
+      function buildCreditDropdown(planKey) {
+        const dd = document.querySelector(`[data-team-credit-dd="${planKey}"]`);
+        if (!dd) return null;
+        const trigger = dd.querySelector('.credit-dd-trigger');
+        const valueEl = dd.querySelector('.credit-dd-value');
+        const menu    = dd.querySelector('.credit-dd-menu');
+
+        menu.innerHTML = CREDIT_OPTIONS.map(c => `
+          <li class="credit-dd-opt" role="option" data-value="${c}" aria-selected="${c === teamState.credits}">
+            <span>${c.toLocaleString()} credits</span>
+            <span class="credit-dd-pill">${offerPct(c)}% off</span>
+          </li>`).join('');
+
+        const opts = Array.from(menu.querySelectorAll('.credit-dd-opt'));
+        let activeIdx = CREDIT_OPTIONS.indexOf(teamState.credits);
+
+        const highlight = () => opts.forEach((o, i) => o.classList.toggle('is-active', i === activeIdx));
+        function open() {
+          dd.classList.add('is-open');
+          trigger.setAttribute('aria-expanded', 'true');
+          activeIdx = CREDIT_OPTIONS.indexOf(teamState.credits);
+          highlight();
+        }
+        function close() {
+          dd.classList.remove('is-open');
+          trigger.setAttribute('aria-expanded', 'false');
+        }
+        function choose(credits) {
+          teamState.credits = credits;
+          close();
+          renderAllTeams();
+          trigger.focus();
+        }
+
+        trigger.addEventListener('click', () => dd.classList.contains('is-open') ? close() : open());
+        opts.forEach((o, i) => {
+          o.addEventListener('mouseenter', () => { activeIdx = i; highlight(); });
+          o.addEventListener('click', () => choose(parseInt(o.dataset.value, 10)));
+        });
+        trigger.addEventListener('keydown', (e) => {
+          if (['ArrowDown', 'ArrowUp', 'Enter', ' '].includes(e.key)) {
+            e.preventDefault();
+            if (!dd.classList.contains('is-open')) { open(); return; }
+            if (e.key === 'ArrowDown')      { activeIdx = Math.min(opts.length - 1, activeIdx + 1); highlight(); }
+            else if (e.key === 'ArrowUp')   { activeIdx = Math.max(0, activeIdx - 1); highlight(); }
+            else                            { choose(CREDIT_OPTIONS[activeIdx]); }
+          } else if (e.key === 'Escape') { close(); }
+        });
+        document.addEventListener('click', (e) => { if (!dd.contains(e.target)) close(); });
+
+        return {
+          sync() {
+            valueEl.textContent = `${teamState.credits.toLocaleString()} credits`;
+            opts.forEach(o => o.setAttribute('aria-selected', String(parseInt(o.dataset.value, 10) === teamState.credits)));
+          }
+        };
+      }
+
       function wireTeamCard(planKey) {
         const plan    = TEAM_PLANS[planKey];
         const priceEl = document.querySelector(`[data-team-price="${planKey}"]`);
-        const select  = document.querySelector(`[data-team-credit-select="${planKey}"]`);
+        const dropdown = buildCreditDropdown(planKey);
         const cta     = document.getElementById(plan.ctaId);
         const hint    = document.getElementById(plan.hintId);
         const credits = document.getElementById(plan.creditsId);
 
-        if (select) {
-          select.value = String(teamState.credits);
-          select.addEventListener('change', () => {
-            teamState.credits = parseInt(select.value, 10);
-            renderAllTeams();
-          });
-        }
-
         function render() {
-          // Keep both cards' dropdowns in sync with the shared pool.
-          if (select && parseInt(select.value, 10) !== teamState.credits) {
-            select.value = String(teamState.credits);
-          }
-          const units = teamState.credits / UNIT;
-          const rate  = rateFor(plan, units);
-          const hasDiscount = rate < plan.list;
-          const totalNow  = (units * rate).toLocaleString();
-          const totalList = (units * plan.list).toLocaleString();
+          if (dropdown) dropdown.sync();
+          const now  = monthlyNow(plan, teamState.credits);
+          const list = monthlyList(plan, teamState.credits);
+          const hasDiscount = now < list;
+          const totalNow  = now.toLocaleString();
+          const totalList = list.toLocaleString();
 
           priceEl.innerHTML = `
             <div class="flex items-baseline gap-2">
@@ -2977,12 +3053,12 @@
                 <span class="text-[13px] font-medium text-ink-tertiary">/mo</span>
               </div>
             </div>
-            <p class="text-[12px] font-medium text-ink-tertiary">$${(units * rate * 12).toLocaleString()} billed annually</p>`;
+            <p class="text-[12px] font-medium text-ink-tertiary">$${(now * 12).toLocaleString()} billed annually</p>`;
 
           if (credits) credits.textContent = teamState.credits.toLocaleString();
           cta.textContent = plan.ctaLabel;
 
-          const savings = units * (plan.list - rate) * 12;
+          const savings = (list - now) * 12;
           if (savings > 0) {
             hint.className = 'text-[12px] font-medium text-success-fg flex items-center justify-center gap-1 leading-none';
             hint.innerHTML = `<i class="ph-fill ph-check-circle text-[13px]"></i>You're saving $${savings.toLocaleString()} every year`;
