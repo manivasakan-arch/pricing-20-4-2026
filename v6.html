@@ -1467,9 +1467,13 @@
     background-size: 200% auto;
     -webkit-background-clip: text; background-clip: text;
     -webkit-text-fill-color: transparent; color: transparent;
+    background-position: 200% center;
     animation: unlimited-grad-move 3.5s linear infinite;
   }
-  @keyframes unlimited-grad-move { to { background-position: 200% center; } }
+  @keyframes unlimited-grad-move {
+    from { background-position: 200% center; }
+    to   { background-position: 0% center; }
+  }
   @media (prefers-reduced-motion: reduce) { .unlimited-grad { animation: none; } }
 
   /* Thin segmented control for the top-of-page view switcher.
