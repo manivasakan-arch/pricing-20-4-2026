@@ -106,18 +106,6 @@
     background: #FEF3F2; color: #B42318; font-size: 12px; font-weight: 600;
   }
 
-  /* ── Seat stepper ──────────────────────────────────────── */
-  .stepper {
-    display: flex; align-items: center; justify-content: space-between;
-    height: 44px; border: 1px solid #D0D5DD; border-radius: 8px; overflow: hidden;
-  }
-  .stepper button {
-    width: 46px; height: 100%; font-size: 20px; color: #475467; cursor: pointer; background: #fff;
-  }
-  .stepper button:hover { background: #F2F4F7; }
-  .stepper button:disabled { color: #D0D5DD; cursor: default; background: #fff; }
-  .stepper .val { font-size: 15px; font-weight: 700; color: #0A1925; }
-
   /* ── Monthly/Annual seg (per card) ─────────────────────── */
   .mseg { display: inline-flex; padding: 3px; background: #F2F4F7; border-radius: 999px; }
   .mseg-btn { height: 28px; padding: 0 12px; border-radius: 999px; font-size: 12.5px; font-weight: 600; color: #667085; cursor: pointer; }
@@ -323,13 +311,7 @@
             <h3>${p.name}</h3>
             <div class="text-right" data-price></div>
           </div>
-          <p class="text-[12px] font-medium text-ink-secondary mt-5 mb-2">How many seats?</p>
-          <div class="stepper" data-stepper>
-            <button data-dec aria-label="Fewer seats">−</button>
-            <span class="val" data-seats>1</span>
-            <button data-inc aria-label="More seats">+</button>
-          </div>
-          <div class="mt-4">
+          <div class="mt-6">
             <button class="pcard-cta ${role === 'current' ? 'disabled' : (role === 'upgrade' ? 'primary' : 'ghost')}" ${role === 'current' ? 'disabled' : ''} data-cta></button>
           </div>
           <div class="flex flex-col gap-3.5 mt-6">
@@ -339,24 +321,21 @@
 
         cardsEl.appendChild(el);
 
-        let period = 'annual', seats = 1;
+        let period = 'annual';
         const priceEl = el.querySelector('[data-price]');
-        const seatsEl = el.querySelector('[data-seats]');
         const creditsEl = el.querySelector('[data-credits]');
         const ctaEl = el.querySelector('[data-cta]');
-        const decBtn = el.querySelector('[data-dec]');
         const segBtns = Array.from(el.querySelectorAll('[data-mseg] .mseg-btn'));
 
         ctaEl.textContent = role === 'current' ? 'Current Plan'
           : role === 'upgrade' ? `Upgrade to ${p.name}` : `Switch to ${p.name}`;
 
         function render() {
-          const per = period === 'annual' ? p.annual : p.monthly;
-          const total = per * seats;
-          const credits = (period === 'annual' ? p.cA : p.cM) * seats;
+          const total = period === 'annual' ? p.annual : p.monthly;
+          const credits = period === 'annual' ? p.cA : p.cM;
           const cadence = period === 'annual'
-            ? `${seats} seat${seats > 1 ? 's' : ''} · $${(total * 12).toLocaleString()} billed annually`
-            : `${seats} seat${seats > 1 ? 's' : ''} · billed monthly`;
+            ? `1 user · $${(total * 12).toLocaleString()} billed annually`
+            : '1 user · billed monthly';
           priceEl.innerHTML = `
             <div class="flex items-baseline gap-1 justify-end">
               <p class="text-[26px] font-bold text-ink-primary leading-none"><span class="usd">$</span>${total.toLocaleString()}</p>
@@ -364,13 +343,9 @@
             </div>
             <p class="text-[12px] font-medium text-ink-tertiary mt-1">${cadence}</p>`;
           creditsEl.textContent = credits.toLocaleString();
-          seatsEl.textContent = seats;
-          decBtn.disabled = seats <= 1;
           segBtns.forEach(b => b.classList.toggle('is-active', b.dataset.period === period));
         }
         segBtns.forEach(b => b.addEventListener('click', () => { period = b.dataset.period; render(); }));
-        el.querySelector('[data-inc]').addEventListener('click', () => { seats++; render(); });
-        decBtn.addEventListener('click', () => { if (seats > 1) { seats--; render(); } });
         render();
       }
 
