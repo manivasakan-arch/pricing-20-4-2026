@@ -292,6 +292,7 @@
       // ── Build an individual plan card (seat stepper + M/A) ───────────────
       function buildIndividualCard(planKey, role) {
         const p = INDIV[planKey];
+        const hasMonthly = planKey === 'gold';   // Pro is annual-only
         const el = document.createElement('div');
         el.className = 'pcard' + (role === 'current' ? ' is-current' : '') + (role === 'upgrade' ? ' is-rec' : '');
         const tag = role === 'current'
@@ -300,12 +301,12 @@
 
         el.innerHTML = `
           ${tag}
-          <div class="flex items-center justify-between mb-4">
+          <div class="flex items-center justify-between mb-4" style="min-height:34px">
             <span class="pcard-glyph">${p.glyph}</span>
-            <div class="mseg" data-mseg>
+            ${hasMonthly ? `<div class="mseg" data-mseg>
               <button class="mseg-btn" data-period="monthly">Monthly</button>
               <button class="mseg-btn is-active" data-period="annual">Annual</button>
-            </div>
+            </div>` : ''}
           </div>
           <div class="flex items-baseline justify-between gap-2">
             <h3>${p.name}</h3>
@@ -353,6 +354,7 @@
       function buildTeamCard(planKey, cfg) {
         const name = planKey === 'pro' ? 'Pro Team' : 'Gold Team';
         const glyph = planKey === 'pro' ? '✈️' : '🚀';
+        const hasMonthly = planKey === 'gold';   // Pro Team is annual-only
         const options = cfg.mode === 'more' ? CREDIT_OPTIONS.filter(c => c >= cfg.owned) : CREDIT_OPTIONS.slice();
         let credits = cfg.mode === 'more' ? cfg.owned : options[0];
         let period = 'annual';
@@ -367,12 +369,12 @@
 
         el.innerHTML = `
           ${tag}
-          <div class="flex items-center justify-between mb-4">
+          <div class="flex items-center justify-between mb-4" style="min-height:34px">
             <span class="pcard-glyph">${glyph}</span>
-            <div class="mseg" data-mseg>
+            ${hasMonthly ? `<div class="mseg" data-mseg>
               <button class="mseg-btn" data-period="monthly">Monthly</button>
               <button class="mseg-btn is-active" data-period="annual">Annual</button>
-            </div>
+            </div>` : ''}
           </div>
           <div class="flex items-baseline justify-between gap-2">
             <div>

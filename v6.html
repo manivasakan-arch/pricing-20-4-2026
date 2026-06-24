@@ -2097,13 +2097,7 @@
 
         <div class="pt-[45px] px-6 pb-6 flex flex-col gap-4">
           <div class="flex flex-col gap-3" style="width:312px;">
-            <div class="flex items-start justify-between" style="width:312px;">
-              <div class="illus illus-pro" aria-hidden="true"></div>
-              <div class="plan-seg" role="tablist" aria-label="Billing period" data-team-seg="pro">
-                <button type="button" class="plan-seg-btn" data-period="monthly" role="tab" aria-selected="false">Monthly</button>
-                <button type="button" class="plan-seg-btn is-active" data-period="annual" role="tab" aria-selected="true">Annual</button>
-              </div>
-            </div>
+            <div class="illus illus-pro" aria-hidden="true"></div>
             <div class="flex items-start justify-between gap-2" style="width:312px;">
               <div class="flex flex-col gap-1">
                 <h3 class="text-[24px] font-bold text-ink-primary leading-none">Pro Team</h3>
@@ -3004,15 +2998,13 @@
         const tblG  = document.getElementById('table-gold-credits');
 
         if (view === 'team') {
-          const f = teamState.period === 'monthly' ? 2 : 1;
-          const proM  = monthlyNow(TEAM_PLANS.pro,  teamState.credits) * f;
-          const goldM = monthlyNow(TEAM_PLANS.gold, teamState.credits) * f;
+          const fGold = teamState.period === 'monthly' ? 2 : 1;   // only Gold Team has monthly
+          const proM  = monthlyNow(TEAM_PLANS.pro,  teamState.credits);       // Pro Team annual-only
+          const goldM = monthlyNow(TEAM_PLANS.gold, teamState.credits) * fGold;
           const proNow  = proM.toLocaleString();
           const goldNow = goldM.toLocaleString();
           const creditsStr = teamState.credits.toLocaleString();
-          const proCad  = teamState.period === 'monthly'
-            ? `${creditsStr} credits · billed monthly`
-            : `${creditsStr} credits · $${(proM * 12).toLocaleString()} billed annually`;
+          const proCad  = `${creditsStr} credits · $${(proM * 12).toLocaleString()} billed annually`;
           const goldCad = teamState.period === 'monthly'
             ? `${creditsStr} credits · billed monthly`
             : `${creditsStr} credits · $${(goldM * 12).toLocaleString()} billed annually`;
@@ -3119,7 +3111,8 @@
         function render() {
           if (dropdown) dropdown.sync();
           // Monthly billing = 2× the annual per-month rate (annual saves 50%).
-          const factor = teamState.period === 'monthly' ? 2 : 1;
+          // Only Gold Team offers monthly; Pro Team is annual-only.
+          const factor = (planKey === 'gold' && teamState.period === 'monthly') ? 2 : 1;
           const baseNow  = monthlyNow(plan, teamState.credits);
           const baseList = monthlyList(plan, teamState.credits);
           const now  = baseNow * factor;
@@ -3127,7 +3120,7 @@
           const hasDiscount = now < list;
           const totalNow  = now.toLocaleString();
           const totalList = list.toLocaleString();
-          const cadence = teamState.period === 'monthly'
+          const cadence = (planKey === 'gold' && teamState.period === 'monthly')
             ? 'Billed monthly'
             : `$${(now * 12).toLocaleString()} billed annually`;
 
