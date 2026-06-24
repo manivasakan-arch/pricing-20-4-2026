@@ -602,6 +602,8 @@
     background: #ECFDF3; color: #067647;
     font-size: 12px; font-weight: 600; line-height: 1;
   }
+  .credit-dd-left, .credit-dd-optlabel { display: flex; align-items: center; gap: 8px; min-width: 0; }
+  .credit-dd-ic { flex: none; color: #0A1925; font-size: 15px; }
 
   /* =================================================================
      Reactivation toast (Figma 6603:5977 — dark, center-bottom)
@@ -2066,7 +2068,10 @@
             <p class="text-[12px] font-medium text-ink-secondary">How many credits?</p>
             <div class="credit-dd" data-team-credit-dd="pro">
               <button type="button" class="credit-dd-trigger" aria-haspopup="listbox" aria-expanded="false" aria-label="Credit pool size">
-                <span class="credit-dd-value">25,000 credits</span>
+                <span class="credit-dd-left">
+                  <i class="ph-fill ph-star-four credit-dd-ic" aria-hidden="true"></i>
+                  <span class="credit-dd-value">25,000 credits</span>
+                </span>
                 <i class="ph ph-caret-down credit-dd-caret" aria-hidden="true"></i>
               </button>
               <ul class="credit-dd-menu" role="listbox" aria-label="Credit pool size"></ul>
@@ -2126,7 +2131,10 @@
             <p class="text-[12px] font-medium text-ink-secondary">How many credits?</p>
             <div class="credit-dd" data-team-credit-dd="gold">
               <button type="button" class="credit-dd-trigger" aria-haspopup="listbox" aria-expanded="false" aria-label="Credit pool size">
-                <span class="credit-dd-value">25,000 credits</span>
+                <span class="credit-dd-left">
+                  <i class="ph-fill ph-star-four credit-dd-ic" aria-hidden="true"></i>
+                  <span class="credit-dd-value">25,000 credits</span>
+                </span>
                 <i class="ph ph-caret-down credit-dd-caret" aria-hidden="true"></i>
               </button>
               <ul class="credit-dd-menu" role="listbox" aria-label="Credit pool size"></ul>
@@ -2988,7 +2996,7 @@
 
         menu.innerHTML = CREDIT_OPTIONS.map(c => `
           <li class="credit-dd-opt" role="option" data-value="${c}" aria-selected="${c === teamState.credits}">
-            <span>${c.toLocaleString()} credits</span>
+            <span class="credit-dd-optlabel"><i class="ph-fill ph-star-four credit-dd-ic" aria-hidden="true"></i>${c.toLocaleString()} credits</span>
             <span class="credit-dd-pill">${offerPct(c)}% off</span>
           </li>`).join('');
 
