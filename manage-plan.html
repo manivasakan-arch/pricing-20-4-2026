@@ -535,11 +535,12 @@
                 return; // lower tier: not shown
               }
             } else {
-              // from an individual state -> both team plans are upgrades
+              // from an individual state -> team upgrades, no tier downgrades.
+              // Pro can go to Pro Team or Gold Team; Gold can only go to Gold Team.
+              if (TIER[pk] < TIER[st.plan]) return; // lower-tier team plan: not shown
               const rec = pk === 'gold';
               cfg = { mode: 'upgrade', role: rec ? 'recommended' : 'normal',
-                      cta: pk === 'pro' ? 'Buy Pro Team' : 'Buy Gold Team',
-                      flag: (st.plan === 'gold' && pk === 'pro') ? 'Drops your Gold features' : null };
+                      cta: pk === 'pro' ? 'Buy Pro Team' : 'Buy Gold Team' };
             }
             buildTeamCard(pk, cfg);
           });

@@ -22,8 +22,8 @@ page (not the v6 absolute-positioned canvas).
 ## Per-tab upgrade matrix
 | Tab (owned) | Banner | Upgrade cards |
 |---|---|---|
-| Pro Individual | Pro · Individual | Gold Individual (per-card M/A toggle) · Pro Team · Gold Team (Recommended) |
-| Gold Individual | Gold · Individual | Gold Team (Recommended) · Pro Team (flag: "Drops Gold features") |
+| Pro Individual | Pro · Individual | Gold Individual · Pro Team · Gold Team (Recommended) |
+| Gold Individual | Gold · Individual | Gold Team (Recommended) only. Pro Team is a tier downgrade and is NOT shown. |
 | Pro Team | Pro Team · 15,000 credits · Unlimited seats | Buy more credits (up-size only) · Upgrade to Gold Team (Recommended). **Lock note** |
 | Gold Team | Gold Team · 25,000 credits · Unlimited seats · Top tier | Buy more credits (up-size only). **Lock note** |
 
@@ -32,7 +32,8 @@ page (not the v6 absolute-positioned canvas).
 - Team tabs: individual cards are NOT rendered. A note replaces them:
   "Team plans can't switch back to individual."
 - **Buy more credits** dropdown is up-size only: options filtered to `>= owned credits`.
-- Gold Individual → Pro Team is shown but flagged "Drops Gold features"; Gold Team is the recommended path.
+- No tier downgrades: Gold can only go to Gold Team. Pro can go to Pro Team or Gold Team.
+  Gold Individual → Pro Team is a downgrade and is NOT shown.
 
 ## Components / wiring
 - `creditCard({planKey, mountId, owned, label, cta, recommended, flag})` — builds credit dropdown
