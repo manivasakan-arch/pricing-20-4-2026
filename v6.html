@@ -2950,14 +2950,17 @@
       //   15,000 credits = 3 units (the new starting pool).
       //   Pro list $20/unit · Gold list $99/unit.
       // Each plan's team unit = one seat of its individual plan: Pro 5,000
-      // credits at $20, Gold 50,000 credits at $99. Both use the same 5-step
-      // ladder (3,5,10,15,20 units) and the same 10–50% volume discount, so
-      // Pro options = [15K,25K,50K,75K,100K] and Gold = [150K,250K,500K,750K,1M].
+      // credits at $20/mo, Gold 50,000 credits at $100/mo. So team list price
+      // is exactly single-user price x seats (e.g. Pro 3 users = $20x3 = $60/mo
+      // = $720/yr; Gold 3 users = $100x3 = $300/mo = $3,600/yr). Both use the
+      // same 5-step ladder (3,5,10,15,20 units) and the same 10–50% volume
+      // discount, so Pro options = [15K,25K,50K,75K,100K] and Gold =
+      // [150K,250K,500K,750K,1M].
       const OFFER_LADDER = [0.10, 0.20, 0.30, 0.40, 0.50];
       const TEAM_PLANS = {
-        pro:  { unit: 5000,  list: 20, options: [15000, 25000, 50000, 75000, 100000],
+        pro:  { unit: 5000,  list: 20,  options: [15000, 25000, 50000, 75000, 100000],
                 ctaId: 'pro-team-cta',  hintId: 'pro-team-hint',  creditsId: 'pro-team-credits',  ctaLabel: 'Buy Pro Team' },
-        gold: { unit: 50000, list: 99, options: [150000, 250000, 500000, 750000, 1000000],
+        gold: { unit: 50000, list: 100, options: [150000, 250000, 500000, 750000, 1000000],
                 ctaId: 'gold-team-cta', hintId: 'gold-team-hint', creditsId: 'gold-team-credits', ctaLabel: 'Buy Gold Team' },
       };
       const offerFor = (planKey, credits) => OFFER_LADDER[TEAM_PLANS[planKey].options.indexOf(credits)] || 0;
