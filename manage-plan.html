@@ -58,6 +58,13 @@
     background: #ECFDF3; color: #067647; font-size: 14px; font-weight: 600;
   }
 
+  .upgrade-note {
+    max-width: 720px; margin: 22px auto 0; text-align: center;
+    display: flex; align-items: flex-start; justify-content: center; gap: 8px;
+    font-size: 13px; line-height: 1.5; color: #475467;
+  }
+  .upgrade-note.hidden { display: none; }
+
   /* ── Individual / Team segmented toggle ────────────────── */
   .view-seg { display: inline-flex; padding: 4px; background: #F2F4F7; border-radius: 999px; }
   .view-seg-btn {
@@ -215,6 +222,12 @@
       </div>
 
       <div class="pgrid mt-8" id="cards"></div>
+
+      <p class="upgrade-note hidden" id="upgrade-note">
+        <span aria-hidden="true">ℹ️</span>
+        Your current AI credits carry forward and are added to your new team pool.
+        No proration: you pay the full team price for the credits you pick, and renew at the team price next year.
+      </p>
     </div>
 
     <!-- Social-proof footer -->
@@ -546,6 +559,12 @@
           });
           buildEnterpriseCard();
         }
+
+        // Carry-forward / no-proration note: only when upgrading from an
+        // individual plan to a team plan.
+        const noteEl = document.getElementById('upgrade-note');
+        const showNote = currentView === 'team' && st.kind === 'individual';
+        noteEl.classList.toggle('hidden', !showNote);
 
         // Fit the grid to however many cards rendered (centered).
         const n = cardsEl.children.length;

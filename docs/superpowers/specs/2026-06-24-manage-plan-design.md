@@ -35,6 +35,15 @@ page (not the v6 absolute-positioned canvas).
 - No tier downgrades: Gold can only go to Gold Team. Pro can go to Pro Team or Gold Team.
   Gold Individual → Pro Team is a downgrade and is NOT shown.
 
+## Upgrade billing (Pro/Gold Individual → Pro Team / Gold Team)
+- **No proration at checkout.** The user pays the FULL team plan price for the
+  chosen credit pool (seats). Their remaining individual subscription is not
+  prorated, credited, or discounted against the team price.
+- **Credits carry forward.** On upgrade the pool = current plan's remaining AI
+  credits + the new team plan's AI credits (both added together).
+- **Renewal.** From the next billing cycle (next year) the user is billed the
+  team plan price on renewal.
+
 ## Components / wiring
 - `creditCard({planKey, mountId, owned, label, cta, recommended, flag})` — builds credit dropdown
   (filtered to `>= owned`), renders price via shared `monthlyNow`/`monthlyList`, animated gradient.
