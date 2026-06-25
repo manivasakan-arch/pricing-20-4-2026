@@ -2478,11 +2478,6 @@
         <h3 class="text-[18px] font-bold text-ink-primary mb-3 pl-5">Collaboration</h3>
         <div>
           <div class="grid pricing-grid grid-cols-[320px_1fr_1fr_1fr] text-[14px]">
-            <div class="feature-row-label">Guests <span class="feature-tip" title="External collaborators without a workspace seat"><i class="ph ph-info"></i></span></div>
-            <div class="feature-row-cell">Up to 5 guests</div>
-            <div class="feature-row-cell">Up to 10 guests</div>
-            <div class="feature-row-cell">Unlimited guests</div>
-
             <div class="feature-row-label">Present Remotely <span class="feature-tip" title="Share live presentation sessions"><i class="ph ph-info"></i></span></div>
             <div class="feature-row-cell"><i class="ph-fill ph-check-circle text-success-fg text-[18px]"></i></div>
             <div class="feature-row-cell"><i class="ph-fill ph-check-circle text-success-fg text-[18px]"></i></div>
@@ -2954,28 +2949,34 @@
       //   15,000=10% off · 25,000=20% · 50,000=30% · 75,000=40% · 100,000=50%
       //   15,000 credits = 3 units (the new starting pool).
       //   Pro list $20/unit · Gold list $99/unit.
-      const UNIT = 5000;
-      const CREDIT_OPTIONS = [15000, 25000, 50000, 75000, 100000];
-      const OFFERS = { 15000: 0.10, 25000: 0.20, 50000: 0.30, 75000: 0.40, 100000: 0.50 };
-      const offerFor = (credits) => OFFERS[credits] || 0;
-      const offerPct = (credits) => Math.round(offerFor(credits) * 100);
+      // Each plan's team unit = one seat of its individual plan: Pro 5,000
+      // credits at $20, Gold 50,000 credits at $99. Both use the same 5-step
+      // ladder (3,5,10,15,20 units) and the same 10–50% volume discount, so
+      // Pro options = [15K,25K,50K,75K,100K] and Gold = [150K,250K,500K,750K,1M].
+      const OFFER_LADDER = [0.10, 0.20, 0.30, 0.40, 0.50];
       const TEAM_PLANS = {
-        pro:  { list: 20, ctaId: 'pro-team-cta',  hintId: 'pro-team-hint',  creditsId: 'pro-team-credits',  ctaLabel: 'Buy Pro Team' },
-        gold: { list: 99, ctaId: 'gold-team-cta', hintId: 'gold-team-hint', creditsId: 'gold-team-credits', ctaLabel: 'Buy Gold Team' },
+        pro:  { unit: 5000,  list: 20, options: [15000, 25000, 50000, 75000, 100000],
+                ctaId: 'pro-team-cta',  hintId: 'pro-team-hint',  creditsId: 'pro-team-credits',  ctaLabel: 'Buy Pro Team' },
+        gold: { unit: 50000, list: 99, options: [150000, 250000, 500000, 750000, 1000000],
+                ctaId: 'gold-team-cta', hintId: 'gold-team-hint', creditsId: 'gold-team-credits', ctaLabel: 'Buy Gold Team' },
       };
+      const offerFor = (planKey, credits) => OFFER_LADDER[TEAM_PLANS[planKey].options.indexOf(credits)] || 0;
+      const offerPct = (planKey, credits) => Math.round(offerFor(planKey, credits) * 100);
 
       // Discounted monthly total for a plan at the current credit pool.
-      function monthlyNow(plan, credits) {
-        const units = credits / UNIT;
-        return Math.floor(units * plan.list * (1 - offerFor(credits)));
+      function monthlyNow(planKey, credits) {
+        const plan = TEAM_PLANS[planKey];
+        const units = credits / plan.unit;
+        return Math.floor(units * plan.list * (1 - offerFor(planKey, credits)));
       }
-      function monthlyList(plan, credits) {
-        return (credits / UNIT) * plan.list;
+      function monthlyList(planKey, credits) {
+        const plan = TEAM_PLANS[planKey];
+        return (credits / plan.unit) * plan.list;
       }
 
-      // Shared credit-pool state — Pro and Gold team cards mirror each other.
+      // Per-plan credit-pool state — Pro and Gold pick independently now.
       // period: 'annual' (per-month rate, billed yearly) | 'monthly' (2× rate, billed monthly).
-      const teamState = { credits: 15000, period: 'annual' };
+      const teamState = { credits: { pro: 15000, gold: 150000 }, period: 'annual' };
       const teamRenders = [];
       function renderAllTeams() {
         teamRenders.forEach(fn => fn());
@@ -2999,23 +3000,24 @@
 
         if (view === 'team') {
           const fGold = teamState.period === 'monthly' ? 2 : 1;   // only Gold Team has monthly
-          const proM  = monthlyNow(TEAM_PLANS.pro,  teamState.credits);       // Pro Team annual-only
-          const goldM = monthlyNow(TEAM_PLANS.gold, teamState.credits) * fGold;
+          const proM  = monthlyNow('pro',  teamState.credits.pro);           // Pro Team annual-only
+          const goldM = monthlyNow('gold', teamState.credits.gold) * fGold;
           const proNow  = proM.toLocaleString();
           const goldNow = goldM.toLocaleString();
-          const creditsStr = teamState.credits.toLocaleString();
-          const proCad  = `${creditsStr} credits · $${(proM * 12).toLocaleString()} billed annually`;
+          const proCreditsStr  = teamState.credits.pro.toLocaleString();
+          const goldCreditsStr = teamState.credits.gold.toLocaleString();
+          const proCad  = `${proCreditsStr} credits · $${(proM * 12).toLocaleString()} billed annually`;
           const goldCad = teamState.period === 'monthly'
-            ? `${creditsStr} credits · billed monthly`
-            : `${creditsStr} credits · $${(goldM * 12).toLocaleString()} billed annually`;
+            ? `${goldCreditsStr} credits · billed monthly`
+            : `${goldCreditsStr} credits · $${(goldM * 12).toLocaleString()} billed annually`;
           if (sPro)   sPro.innerHTML   = `<span class="usd">$</span>${proNow}`;
           if (sProC)  sProC.textContent = proCad;
           if (sProB)  sProB.textContent = 'Buy Pro Team';
           if (sGold)  sGold.innerHTML   = `<span class="usd">$</span>${goldNow}`;
           if (sGoldC) sGoldC.textContent= goldCad;
           if (sGoldB) sGoldB.textContent= 'Buy Gold Team';
-          if (tblP)   tblP.textContent  = creditsStr;
-          if (tblG)   tblG.textContent  = creditsStr;
+          if (tblP)   tblP.textContent  = proCreditsStr;
+          if (tblG)   tblG.textContent  = goldCreditsStr;
           // Suppress the Pro bumped-pill on the team view — the bump only
           // applies to Pro Annual on the individual plan.
           const sumPill = document.getElementById('sum-pro-pill-slot');
@@ -3048,21 +3050,22 @@
         const trigger = dd.querySelector('.credit-dd-trigger');
         const valueEl = dd.querySelector('.credit-dd-value');
         const menu    = dd.querySelector('.credit-dd-menu');
+        const OPTIONS = TEAM_PLANS[planKey].options;
 
-        menu.innerHTML = CREDIT_OPTIONS.map(c => `
-          <li class="credit-dd-opt" role="option" data-value="${c}" aria-selected="${c === teamState.credits}">
+        menu.innerHTML = OPTIONS.map(c => `
+          <li class="credit-dd-opt" role="option" data-value="${c}" aria-selected="${c === teamState.credits[planKey]}">
             <span class="credit-dd-optlabel"><svg class="text-brand-500" style="flex:none" width="16" height="16" viewBox="0 0 20 20" fill="currentColor" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M10 1.5C10.3939 1.5 10.871 1.70087 11.0547 2.19629L11.4316 3.21387H11.4326C12.4124 5.85615 14.7271 8.00421 17.7676 9.0293C18.1842 9.16981 18.4593 9.5102 18.4961 9.91016C18.5324 10.3064 18.3269 10.6925 17.9463 10.8945L17.9277 10.9043L17.9082 10.9121L17.8047 10.957L17.7861 10.9648L17.7676 10.9707C14.7273 11.9951 12.4122 14.1423 11.4326 16.7842L11.0547 17.8037C10.8836 18.265 10.4548 18.4721 10.083 18.4971C9.71655 18.5215 9.27311 18.3795 9.03125 17.9824L9.01953 17.9619L9.00879 17.9395L8.96387 17.8477L8.9541 17.8262L8.94531 17.8037L8.56641 16.7832C7.58645 14.1419 5.27208 11.9951 2.23242 10.9707C1.81581 10.8302 1.54073 10.4898 1.50391 10.0898C1.4676 9.69363 1.67314 9.30749 2.05371 9.10547L2.07227 9.0957L2.0918 9.08789L2.19531 9.04297L2.21387 9.03516L2.23242 9.0293C5.27234 8.00417 7.58717 5.85653 8.56738 3.21484L8.94531 2.19629C9.12904 1.70087 9.60608 1.5 10 1.5Z"/></svg>${c.toLocaleString()} credits</span>
-            <span class="credit-dd-pill">${offerPct(c)}% off</span>
+            <span class="credit-dd-pill">${offerPct(planKey, c)}% off</span>
           </li>`).join('');
 
         const opts = Array.from(menu.querySelectorAll('.credit-dd-opt'));
-        let activeIdx = CREDIT_OPTIONS.indexOf(teamState.credits);
+        let activeIdx = OPTIONS.indexOf(teamState.credits[planKey]);
 
         const highlight = () => opts.forEach((o, i) => o.classList.toggle('is-active', i === activeIdx));
         function open() {
           dd.classList.add('is-open');
           trigger.setAttribute('aria-expanded', 'true');
-          activeIdx = CREDIT_OPTIONS.indexOf(teamState.credits);
+          activeIdx = OPTIONS.indexOf(teamState.credits[planKey]);
           highlight();
         }
         function close() {
@@ -3070,7 +3073,7 @@
           trigger.setAttribute('aria-expanded', 'false');
         }
         function choose(credits) {
-          teamState.credits = credits;
+          teamState.credits[planKey] = credits;
           close();
           renderAllTeams();
           trigger.focus();
@@ -3087,15 +3090,15 @@
             if (!dd.classList.contains('is-open')) { open(); return; }
             if (e.key === 'ArrowDown')      { activeIdx = Math.min(opts.length - 1, activeIdx + 1); highlight(); }
             else if (e.key === 'ArrowUp')   { activeIdx = Math.max(0, activeIdx - 1); highlight(); }
-            else                            { choose(CREDIT_OPTIONS[activeIdx]); }
+            else                            { choose(OPTIONS[activeIdx]); }
           } else if (e.key === 'Escape') { close(); }
         });
         document.addEventListener('click', (e) => { if (!dd.contains(e.target)) close(); });
 
         return {
           sync() {
-            valueEl.textContent = `${teamState.credits.toLocaleString()} credits`;
-            opts.forEach(o => o.setAttribute('aria-selected', String(parseInt(o.dataset.value, 10) === teamState.credits)));
+            valueEl.textContent = `${teamState.credits[planKey].toLocaleString()} credits`;
+            opts.forEach(o => o.setAttribute('aria-selected', String(parseInt(o.dataset.value, 10) === teamState.credits[planKey])));
           }
         };
       }
@@ -3113,8 +3116,8 @@
           // Monthly billing = 2× the annual per-month rate (annual saves 50%).
           // Only Gold Team offers monthly; Pro Team is annual-only.
           const factor = (planKey === 'gold' && teamState.period === 'monthly') ? 2 : 1;
-          const baseNow  = monthlyNow(plan, teamState.credits);
-          const baseList = monthlyList(plan, teamState.credits);
+          const baseNow  = monthlyNow(planKey, teamState.credits[planKey]);
+          const baseList = monthlyList(planKey, teamState.credits[planKey]);
           const now  = baseNow * factor;
           const list = baseList * factor;
           const hasDiscount = now < list;
@@ -3134,7 +3137,7 @@
             </div>
             <p class="text-[12px] font-medium text-ink-tertiary">${cadence}</p>`;
 
-          if (credits) credits.textContent = teamState.credits.toLocaleString();
+          if (credits) credits.textContent = teamState.credits[planKey].toLocaleString();
           cta.textContent = plan.ctaLabel;
 
           const savings = (baseList - baseNow) * 12;
