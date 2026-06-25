@@ -3480,7 +3480,7 @@
     (function () {
       const FEELINGS = [
         { em: "😀", label: "Happy", qs: [
-          "In just 2 minutes I built an investment pitch from cofounder notes — slides were polished and ready to share.",
+          "In just 2 minutes I built an investment pitch from cofounder notes. Slides were polished and ready to share.",
           "Walked into the QBR with a deck I was actually proud of. Smooth flow, clean layout, zero last-minute panic.",
           "Built our annual offsite keynote in one afternoon. Looked like a pro deck, felt like a real story.",
           "My team applauded after the all-hands deck I shipped. First time that's ever happened.",
@@ -3488,17 +3488,17 @@
         ] },
         { em: "⚡️", label: "Fast", qs: [
           "Generated a full investor deck before my second coffee. Game-changer for exec reviews.",
-          "Shipped the board update in 8 minutes flat — that used to be a half-day job for my team.",
+          "Shipped the board update in 8 minutes flat. That used to be a half-day job for my team.",
           "Last-minute client pitch turned around in under 15 minutes.",
           "Three decks in one hour for three different stakeholders.",
           "Friday afternoon ask, Monday morning slides. AI did in minutes what my designer did in days.",
         ] },
         { em: "📝", label: "Detailed", qs: [
           "Notes from our offsite turned into a 30-slide narrative I felt proud to walk into the boardroom with.",
-          "My scrappy bullet points became a structured strategy deck — every slide earned its place.",
+          "My scrappy bullet points became a structured strategy deck. Every slide earned its place.",
           "It picked up the nuance in my data and turned it into slide-level stories, not just bullets.",
           "Detailed enough that even my CFO didn't have follow-up questions.",
-          "Each slide felt curated — narrative, visuals, data callouts.",
+          "Each slide felt curated: narrative, visuals, data callouts.",
         ] },
         { em: "🤯", label: "Mind blown", qs: [
           "Mind blown. AI nailed our brand voice on the first pass.",
@@ -3515,25 +3515,25 @@
           "Every slide feels intentional.",
         ] },
         { em: "😲", label: "Surprised", qs: [
-          "Did not see this coming — output landed sharper than our deck designer's work.",
+          "Did not see this coming. Output landed sharper than our deck designer's work.",
           "Surprised how on-brand the slides came out.",
           "Honestly didn't think AI could write a coherent investor narrative.",
           "Walked into the demo expecting rough drafts; got a presentation-ready deck instead.",
-          "Surprised the data viz was thoughtful — chart types matched the insight.",
+          "Surprised the data viz was thoughtful. Chart types matched the insight.",
         ] },
         { em: "🙌", label: "Grateful", qs: [
-          "Finally — investor storytelling that doesn't eat my weekend.",
+          "Finally, investor storytelling that doesn't eat my weekend.",
           "Grateful. Cleared 6 hours off my prep schedule for our last fundraise round.",
           "Saved my team during a brutal quarter.",
           "Thank you for building a tool that respects my time.",
           "Genuinely grateful. Helped me nail the keynote that got me promoted.",
         ] },
         { em: "🖌️", label: "Crafted", qs: [
-          "The narrative arc from my rough notes reads like I wrote it — only sharper.",
-          "Crafted slides — typography, spacing, hierarchy. Not template soup.",
+          "The narrative arc from my rough notes reads like I wrote it, only sharper.",
+          "Crafted slides: typography, spacing, hierarchy. Not template soup.",
           "Felt designed, not generated.",
           "The cover slide alone was worth it. Looked like a magazine spread.",
-          "Layouts varied across the deck — section dividers, data slides, quote slides.",
+          "Layouts varied across the deck: section dividers, data slides, quote slides.",
         ] },
       ];
       const pickRandomQuote = (label) => {
@@ -3673,7 +3673,7 @@
         stepForm.classList.remove('on');
         stepSuccess.classList.add('on');
         tag.textContent = 'Thank you';
-        lbl.textContent = 'off Pro Annual — unlocked';
+        lbl.textContent = 'off Pro Annual, unlocked';
         tickSuccessTimer();
         if (successTimerInterval) clearInterval(successTimerInterval);
         successTimerInterval = setInterval(tickSuccessTimer, 1000);
